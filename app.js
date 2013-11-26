@@ -54,11 +54,14 @@ app.set('view engine', 'handlebars');
 // Set bodyParser
 app.use(express.bodyParser());
 
+var entrystore = require('./modules/entrystore');
+
 /*
  * Sample Data
  */
+var dummyEntry = { type: 'locationinfo', userinfo: { latitude: '51.227152', longitude: '4.403433', deviceid: 'HT9CTP820988', devicetype: 'android'}};
 var entries = [
-    { type: 'locationinfo', userinfo: { latitude: '51.227152', longitude: '4.403433', deviceid: 'HT9CTP820988', devicetype: 'android'}}
+    dummyEntry  
 ];
 
 /*
@@ -71,6 +74,11 @@ app.get('/', function(request, response, next) {
 
 app.get('/entries', function(req, res) {    
   res.json(entries);
+});
+
+app.get('/entry/test', function(req, res) {
+  entrystore.saveEntry(dummyEntry);
+  res.json(true);
 });
 
 app.get('/entry/random', function(req, res) {

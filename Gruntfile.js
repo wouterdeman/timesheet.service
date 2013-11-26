@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                 ],
             },
             express: {
-                files:  [ 'app.js', '!**/node_modules/**', '!Gruntfile.js' ],
+                files:  [ 'app.js', 'modules/**/*.js', '!**/node_modules/**', '!Gruntfile.js' ],
                 tasks:  [ 'express:dev' ],
                 options: {
                     nospawn: true // Without this option specified express won't be reloaded
@@ -102,8 +102,8 @@ module.exports = function (grunt) {
             }
         },
 
-        // Open Config
-        open: {
+        // Open Config MAC ONLY...
+        /*open: {
             site: {
                 path: 'http://localhost:3000',
                 app: 'Google Chrome'
@@ -112,7 +112,7 @@ module.exports = function (grunt) {
                 path: './',
                 app: 'Sublime Text 2'
             },
-        },
+        },*/
 
         // Rev Config
         rev: {
@@ -257,8 +257,8 @@ module.exports = function (grunt) {
         'jshint',
         'sass:dev',
         'express:dev',
-        'open:site',
-        'open:editor',
+        //'open:site', Mac only...
+        //'open:editor',
         'watch'
     ]);
 
