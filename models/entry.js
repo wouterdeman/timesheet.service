@@ -1,20 +1,14 @@
+// set up mongoose
 var mongoose = require('mongoose');
-
-mongoose.connect('mongodb://timesheetService:bITe2014@dharma.mongohq.com:10009/TimesheetService/entrystore');
-
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function callback () {
-	console.log('connection open');	
-});
-
-var Schema = mongoose.Schema;
+var Schema = mongoose.Schema,
+ObjectId = Schema.ObjectId;
 
 var userinfoSchema = new Schema({
 	latitude: String,
 	longitude: String,
 	deviceid: String,
-	devicetype: String
+	devicetype: String,
+	//_id: { type: ObjectId } // not necessary, showing use of ObjectId	
 });
 
 var entrySchema = new Schema({
@@ -26,7 +20,12 @@ var entrySchema = new Schema({
 var UserInfo = mongoose.model('userinfo', userinfoSchema);
 var Entry = mongoose.model('entry', entrySchema);
 
-var saveEntry = function(entry) {	
+/**
+ * Saves an entry
+ * @param  {Entry} entry
+ * @return {void}
+ */
+var save = function(entry) {	
 	console.log('save entry time');	
 
 	var newUserInfo = new UserInfo(entry.userinfo);	
@@ -36,4 +35,5 @@ var saveEntry = function(entry) {
 	newEntry.save();
 };
 
-exports.saveEntry = saveEntry;
+exports.save = save;
+exports.entryModel = Entry;

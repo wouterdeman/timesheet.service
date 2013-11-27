@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                 ],
             },
             express: {
-                files:  [ 'app.js', 'modules/**/*.js', '!**/node_modules/**', '!Gruntfile.js' ],
+                files:  [ 'app.js', 'models/**/*.js', 'mongoose/**/*.js', 'routes/**/*.js', 'testdata/**/*.js', '!**/node_modules/**', '!Gruntfile.js' ],
                 tasks:  [ 'express:dev' ],
                 options: {
                     nospawn: true // Without this option specified express won't be reloaded
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: '.jshintrc'
             },
-            all: [
+            all:   [
                 'Gruntfile.js',
                 'assets/scripts/**/*.js',
                 '!assets/scripts/vendor/*',
@@ -271,7 +271,7 @@ module.exports = function (grunt) {
     
 
     // Build
-    grunt.registerTask('build', 'Build production ready assets and views.', [
+    grunt.registerTask('default', 'Build production ready assets and views.', [
         'clean:dist',
         'concurrent:dist',
         'useminPrepare',
