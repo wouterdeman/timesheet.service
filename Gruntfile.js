@@ -34,8 +34,8 @@ module.exports = function (grunt) {
                 ],
             },
             express: {
-                files:  [ 'app.js', 'models/**/*.js', 'mongoose/**/*.js', 'routes/**/*.js', 'testdata/**/*.js', '!**/node_modules/**', '!Gruntfile.js' ],
-                tasks:  [ 'express:dev' ],
+                files: ['app.js', 'models/**/*.js', 'mongoose/**/*.js', 'routes/**/*.js', 'testdata/**/*.js', '!**/node_modules/**', '!Gruntfile.js'],
+                tasks: ['express:dev'],
                 options: {
                     nospawn: true // Without this option specified express won't be reloaded
                 }
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: '.jshintrc'
             },
-            all:   [
+            all: [
                 'Gruntfile.js',
                 'assets/scripts/**/*.js',
                 '!assets/scripts/vendor/*',
@@ -93,7 +93,7 @@ module.exports = function (grunt) {
         // Express Config
         express: {
             options: {
-              // Override defaults here
+                // Override defaults here
             },
             dev: {
                 options: {
@@ -257,7 +257,8 @@ module.exports = function (grunt) {
         'jshint',
         'sass:dev',
         'express:dev',
-        //'open:site', Mac only...
+        //--Mac only.. --
+        //'open:site', 
         //'open:editor',
         'watch'
     ]);
@@ -268,7 +269,7 @@ module.exports = function (grunt) {
         'express:dev',
         'watch'
     ]);
-    
+
 
     // Build
     grunt.registerTask('default', 'Build production ready assets and views.', [
