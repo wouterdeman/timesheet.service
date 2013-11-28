@@ -10,6 +10,12 @@ module.exports = function(app) {
 		res.json(entries);
 	});
 
+	app.get('/entries/all', function(req, res) {
+		Entry.getAll(function(err, ent) {
+			res.send(ent);
+		});
+	});
+
 	app.get('/entry/test', function(req, res) {
 		Entry.save(dummyEntry);
 		res.json(true);
