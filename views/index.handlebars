@@ -1,15 +1,76 @@
 
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script>
+
+var app={};
+
+function getNearest(){
+	var data={
+		loc : app.coords
+	};
+	var url="/customer/nearest";
+	$.get(url,data).done(function(customers){
+		var customerNamesCommaSeperated = customers.map(function(c){
+			return c.name;
+		}).join();
+		$("#closestCustomer").text(customerNamesCommaSeperated);
+	});	
+};
+function createCustomersDropDown(customers){
+	//TODO : ipv hardcoded coordinaten in pagina :)
+};
+function initCustomersDropDown(){
+	$("#customers").change(function(){
+		var el=$(this);
+		var val =el.val();
+		if(!val || !app.coords)
+			return;
+		var customer=customers[val];
+		var data={
+			loc1:customer,
+			loc2 : app.coords
+		};
+		var url="/location/diff";
+		$.get(url,data).done(function(diff){
+			$("#distance").text(Math.round(diff* 100) / 100)
+		});
+	});	
+};
+
+function showInMaps(position){
+	
+	var mapcanvas = document.createElement('div');
+  mapcanvas.id = 'mapcanvas';
+  mapcanvas.style.height = '400px';
+  mapcanvas.style.width = '560px';
+    
+  document.querySelector('article').appendChild(mapcanvas);
+  
+  var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  var myOptions = {
+    zoom: 15,
+    center: latlng,
+    mapTypeControl: false,
+    navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+  
+  var marker = new google.maps.Marker({
+      position: latlng, 
+      map: map, 
+      title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)"
+  });
+};
 function success(position) {
-	document.getElementById("test").innerHTML = JSON.stringify(position.coords);
+	app.coords=position.coords;
+	showInMaps(position);
+	getNearest();
 }
 
 function error(msg) {
-  var s = document.querySelector('#status');
-  s.innerHTML = typeof msg == 'string' ? msg : "failed";
-  s.className = 'fail';
-  
-  // console.log(arguments);
+   console.log(arguments);
 }
 
 if (navigator.geolocation) {
@@ -18,13 +79,47 @@ if (navigator.geolocation) {
   error('not supported');
 }
 
+var customers={
+	SD:{latitude: 51.226956, longitude: 4.401744},
+	ACERTA:{latitude:50.882657,longitude: 4.713809}
+};
+	$(function(){
+
+		$.get("/customer/getAll").done(function(customers){
+			if(!customers || !customers.length){
+				alert("nog geen testdata. Klik on generate en refresh pagina");
+				return;
+			}
+			createCustomersDropDown(customers);
+			initCustomersDropDown();		
+		});
+	})
+
 </script>
 
 <div class="container">
 
     <h1>Timesheet service</h1>
 
+    <p>
+    	<a href="/customer/generateTestData">Generate Testdata</a>
+    </p>
 
-    You are <span id="test"></span>
+
+    afstand tot 
+    <select id="customers">
+    	<option value="">Select customer</option>
+    	<option value="SD">SDWorx brouwersvliet</option>
+    	<option value="ACERTA">Acerta leuven</option>
+    </select>
+    bedraagt <span id="distance"></span> km  (via node package voor geoJSON berekend)<br/>
+
+    De dichtstbijzijnde klant is <span id="closestCustomer"></span> (via mongo query berekend)
+
+	<br/>
+    <br/>
+    Current location:
+     <article>
+     </article>
 
 </div>

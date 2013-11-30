@@ -2,6 +2,8 @@
 
 // models
 Entry = require('./entry');
+Customer= require('./customer');
 
 // exports
 exports.entryModel = Entry;
+exports.customerModel = Customer;
