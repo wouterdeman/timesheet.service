@@ -17,7 +17,7 @@
     ^ CUSTOM FONT MIXINS
 */
 /**
- * Any variables you find set in inuit.css’ `_vars.scss` that you do not wish to
+ * Any variables you find set in inuit.cssÔÇÖ `_vars.scss` that you do not wish to
  * keep, simply redefine here. This means that if inuit.css, for example, sets
  * your `$base-font-size` at 16px and you wish it to be 14px, simply redeclare
  * that variable in this file. inuit.css ignores its own variables in favour of
@@ -28,7 +28,7 @@
     $OBJECTS-AND-ABSTRACTIONS
 \*------------------------------------*/
 /**
- * All of inuit.css’ objects and abstractions are initially turned off by
+ * All of inuit.cssÔÇÖ objects and abstractions are initially turned off by
  * default. This means that you start any project with as little as possible,
  * and introducing objects and abstractions is as simple as switching the
  * following variables to `true`.
@@ -37,22 +37,22 @@
     $OVERRIDES
 \*------------------------------------*/
 /**
- * Place any variables that should override inuit.css’ defaults here.
+ * Place any variables that should override inuit.cssÔÇÖ defaults here.
  */
 /**
  * Other overrides to inuit
  */
-/* line 85, sass/_vars.scss */
+/* line 85, assets/styles/sass/_vars.scss */
 label {
   cursor: default !important;
 }
 
-/* line 86, sass/_vars.scss */
+/* line 86, assets/styles/sass/_vars.scss */
 .form-fields input[type=text] {
   cursor: text;
 }
 
-/* line 87, sass/_vars.scss */
+/* line 87, assets/styles/sass/_vars.scss */
 .check-list label {
   cursor: pointer !important;
 }
@@ -109,7 +109,7 @@ label {
 /*------------------------------------*\
     $GLOBAL
 \*------------------------------------*/
-/* line 23, sass/ui/_typography.scss */
+/* line 23, assets/styles/sass/ui/_typography.scss */
 html {
   font-weight: 300;
   font-style: normal;
@@ -124,7 +124,7 @@ html {
 /*------------------------------------*\
     $ICONS
 \*------------------------------------*/
-/* line 59, sass/ui/_typography.scss */
+/* line 59, assets/styles/sass/ui/_typography.scss */
 [data-icon]:before {
   content: attr(data-icon);
   text-transform: none;
@@ -142,11 +142,11 @@ html {
 /*------------------------------------*\
     $LINKS
 \*------------------------------------*/
-/* line 86, sass/ui/_typography.scss */
+/* line 86, assets/styles/sass/ui/_typography.scss */
 a {
   color: #58585b;
 }
-/* line 90, sass/ui/_typography.scss */
+/* line 90, assets/styles/sass/ui/_typography.scss */
 a:hover {
   color: #d70014;
 }
@@ -154,29 +154,29 @@ a:hover {
 /*------------------------------------*\
     $OTHER
 \*------------------------------------*/
-/* line 102, sass/ui/_typography.scss */
+/* line 102, assets/styles/sass/ui/_typography.scss */
 strong,
 .bold {
   font-weight: bold;
 }
 
-/* line 104, sass/ui/_typography.scss */
+/* line 104, assets/styles/sass/ui/_typography.scss */
 em {
   font-style: italic;
 }
 
-/* line 106, sass/ui/_typography.scss */
+/* line 106, assets/styles/sass/ui/_typography.scss */
 .no-underline {
   text-decoration: none;
 }
 
-/* line 108, sass/ui/_typography.scss */
+/* line 108, assets/styles/sass/ui/_typography.scss */
 ::selection {
   background: #d70014;
   color: white;
 }
 
-/* line 112, sass/ui/_typography.scss */
+/* line 112, assets/styles/sass/ui/_typography.scss */
 ::-moz-selection {
   background: #d70014;
   color: white;
@@ -194,110 +194,110 @@ em {
 /*------------------------------------*\
     $TEXT
 \*------------------------------------*/
-/* line 19, sass/ui/_color.scss */
+/* line 19, assets/styles/sass/ui/_color.scss */
 body {
   color: #808284;
 }
 
-/* line 22, sass/ui/_color.scss */
+/* line 22, assets/styles/sass/ui/_color.scss */
 .white {
   color: white;
 }
 
-/* line 23, sass/ui/_color.scss */
+/* line 23, assets/styles/sass/ui/_color.scss */
 .gray1 {
   color: #f7f7f7;
 }
 
-/* line 24, sass/ui/_color.scss */
+/* line 24, assets/styles/sass/ui/_color.scss */
 .gray2 {
   color: #eeeeee;
 }
 
-/* line 25, sass/ui/_color.scss */
+/* line 25, assets/styles/sass/ui/_color.scss */
 .gray3 {
   color: #d8d8d8;
 }
 
-/* line 26, sass/ui/_color.scss */
+/* line 26, assets/styles/sass/ui/_color.scss */
 .gray4 {
   color: #9a9ea1;
 }
 
-/* line 27, sass/ui/_color.scss */
+/* line 27, assets/styles/sass/ui/_color.scss */
 .gray5 {
   color: #808284;
 }
 
-/* line 28, sass/ui/_color.scss */
+/* line 28, assets/styles/sass/ui/_color.scss */
 .gray6 {
   color: #58585b;
 }
 
-/* line 29, sass/ui/_color.scss */
+/* line 29, assets/styles/sass/ui/_color.scss */
 .black {
   color: black;
 }
 
-/* line 33, sass/ui/_color.scss */
+/* line 33, assets/styles/sass/ui/_color.scss */
 .color-twitter,
 .hover-color-twitter:hover {
   color: #63cdf7;
 }
 
-/* line 36, sass/ui/_color.scss */
+/* line 36, assets/styles/sass/ui/_color.scss */
 .color-linkedin,
 .hover-color-linkedin:hover {
   color: #00659b;
 }
 
-/* line 39, sass/ui/_color.scss */
+/* line 39, assets/styles/sass/ui/_color.scss */
 .color-facebook,
 .hover-color-facebook:hover {
   color: #3b5895;
 }
 
-/* line 42, sass/ui/_color.scss */
+/* line 42, assets/styles/sass/ui/_color.scss */
 .color-google,
 .hover-color-google:hover {
   color: #ff0017;
 }
 
-/* line 45, sass/ui/_color.scss */
+/* line 45, assets/styles/sass/ui/_color.scss */
 .color-mail,
 .hover-color-mail:hover {
   color: #6cba16;
 }
 
-/* line 50, sass/ui/_color.scss */
+/* line 50, assets/styles/sass/ui/_color.scss */
 .color1,
 .hover-color1:hover,
 .hover-color1.active {
   color: #d70014 !important;
 }
 
-/* line 54, sass/ui/_color.scss */
+/* line 54, assets/styles/sass/ui/_color.scss */
 .color2,
 .hover-color2:hover,
 .hover-color2.active {
   color: #2f7dc4 !important;
 }
 
-/* line 58, sass/ui/_color.scss */
+/* line 58, assets/styles/sass/ui/_color.scss */
 .color3,
 .hover-color3:hover,
 .hover-color3.active {
   color: #6cba16 !important;
 }
 
-/* line 62, sass/ui/_color.scss */
+/* line 62, assets/styles/sass/ui/_color.scss */
 .color4,
 .hover-color4:hover,
 .hover-color4.active {
   color: #ffa501 !important;
 }
 
-/* line 66, sass/ui/_color.scss */
+/* line 66, assets/styles/sass/ui/_color.scss */
 .color5,
 .hover-color5:hover,
 .hover-color5.active {
@@ -307,72 +307,72 @@ body {
 /*------------------------------------*\
     $BACKGROUND
 \*------------------------------------*/
-/* line 76, sass/ui/_color.scss */
+/* line 76, assets/styles/sass/ui/_color.scss */
 .bg-white {
   background-color: white;
 }
 
-/* line 77, sass/ui/_color.scss */
+/* line 77, assets/styles/sass/ui/_color.scss */
 .bg-gray1 {
   background-color: #f7f7f7;
 }
 
-/* line 78, sass/ui/_color.scss */
+/* line 78, assets/styles/sass/ui/_color.scss */
 .bg-gray2 {
   background-color: #eeeeee;
 }
 
-/* line 79, sass/ui/_color.scss */
+/* line 79, assets/styles/sass/ui/_color.scss */
 .bg-gray3 {
   background-color: #d8d8d8;
 }
 
-/* line 80, sass/ui/_color.scss */
+/* line 80, assets/styles/sass/ui/_color.scss */
 .bg-gray4 {
   background-color: #9a9ea1;
 }
 
-/* line 81, sass/ui/_color.scss */
+/* line 81, assets/styles/sass/ui/_color.scss */
 .bg-gray5 {
   background-color: #808284;
 }
 
-/* line 82, sass/ui/_color.scss */
+/* line 82, assets/styles/sass/ui/_color.scss */
 .bg-gray6 {
   background-color: #58585b;
 }
 
-/* line 83, sass/ui/_color.scss */
+/* line 83, assets/styles/sass/ui/_color.scss */
 .bg-black {
   background-color: black;
 }
 
-/* line 85, sass/ui/_color.scss */
+/* line 85, assets/styles/sass/ui/_color.scss */
 .bg-color1 {
   background-color: #d70014;
 }
 
-/* line 86, sass/ui/_color.scss */
+/* line 86, assets/styles/sass/ui/_color.scss */
 .bg-color2 {
   background-color: #2f7dc4;
 }
 
-/* line 87, sass/ui/_color.scss */
+/* line 87, assets/styles/sass/ui/_color.scss */
 .bg-color3 {
   background-color: #6cba16;
 }
 
-/* line 88, sass/ui/_color.scss */
+/* line 88, assets/styles/sass/ui/_color.scss */
 .bg-color4 {
   background-color: #ffa501;
 }
 
-/* line 89, sass/ui/_color.scss */
+/* line 89, assets/styles/sass/ui/_color.scss */
 .bg-color5 {
   background-color: #8a2ca1;
 }
 
-/* line 100, sass/ui/_color.scss */
+/* line 100, assets/styles/sass/ui/_color.scss */
 .bg-gray4,
 .bg-gray5,
 .bg-gray6,
@@ -388,27 +388,27 @@ body {
 /*------------------------------------*\
     $BORDERS
 \*------------------------------------*/
-/* line 112, sass/ui/_color.scss */
+/* line 112, assets/styles/sass/ui/_color.scss */
 .border-color1 {
   border-color: #d70014;
 }
 
-/* line 113, sass/ui/_color.scss */
+/* line 113, assets/styles/sass/ui/_color.scss */
 .border-color2 {
   border-color: #2f7dc4;
 }
 
-/* line 114, sass/ui/_color.scss */
+/* line 114, assets/styles/sass/ui/_color.scss */
 .border-color3 {
   border-color: #6cba16;
 }
 
-/* line 115, sass/ui/_color.scss */
+/* line 115, assets/styles/sass/ui/_color.scss */
 .border-color4 {
   border-color: #ffa501;
 }
 
-/* line 117, sass/ui/_color.scss */
+/* line 117, assets/styles/sass/ui/_color.scss */
 .border-none {
   border: none !important;
 }
@@ -448,7 +448,7 @@ body {
 /*------------------------------------*\
     $OVERRIDES
 \*------------------------------------*/
-/* line 23, sass/ui/_forms.scss */
+/* line 23, assets/styles/sass/ui/_forms.scss */
 input[type=text]:active,
 input[type=text]:focus,
 input[type=password]:active,
@@ -466,17 +466,17 @@ input[type=password]:focus {
 /*------------------------------------*\ 
     $ERRORS    
 \*------------------------------------*/
-/* line 65, sass/ui/_forms.scss */
+/* line 65, assets/styles/sass/ui/_forms.scss */
 .field-with-errors {
   position: relative;
   display: inline-block;
 }
-/* line 70, sass/ui/_forms.scss */
+/* line 70, assets/styles/sass/ui/_forms.scss */
 .field-with-errors label,
 .field-with-errors .label {
   color: #ffa501;
 }
-/* line 77, sass/ui/_forms.scss */
+/* line 77, assets/styles/sass/ui/_forms.scss */
 .field-with-errors input,
 .field-with-errors .select2-container .select2-choice,
 .field-with-errors .select2-container-multi .select2-choices {
