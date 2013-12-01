@@ -18,7 +18,11 @@ function getNearest(){
 	});	
 };
 function createCustomersDropDown(customers){
-	//TODO : ipv hardcoded coordinaten in pagina :)
+	customers.forEach(function(cust){
+		$("#customers")
+			.append($('<option>', { value : cust.name })
+          	.text(cust.name)); 
+	});
 };
 function initCustomersDropDown(){
 	$("#customers").change(function(){
@@ -108,9 +112,7 @@ var customers={
 
     afstand tot 
     <select id="customers">
-    	<option value="">Select customer</option>
-    	<option value="SD">SDWorx brouwersvliet</option>
-    	<option value="ACERTA">Acerta leuven</option>
+    	<option value="">Select customer</option> 	
     </select>
     bedraagt <span id="distance"></span> km  (via node package voor geoJSON berekend)<br/>
 
