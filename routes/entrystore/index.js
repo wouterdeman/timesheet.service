@@ -46,10 +46,11 @@ module.exports = function(app) {
 
 		var newEntry = {
 			type: req.body.type,
-			userinfo: req.body.userinfo
+			userinfo: req.body.userinfo,
+			loc:req.body.loc
 		};
 
-		entries.push(newEntry);
+		Entry.save(newEntry);
 		res.json(true);
 	});
 }
