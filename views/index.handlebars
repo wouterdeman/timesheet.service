@@ -67,10 +67,34 @@ function showInMaps(position){
       title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)"
   });
 };
+
+function showTimePassed(arrivedAt){	
+	app.arrivedAt = arrivedAt;
+	$('#arrivedAt').text(arrivedAt.toLocaleDateString() + ' at ' + arrivedAt.toLocaleTimeString());
+
+	window.setInterval(function(){
+		var now = new Date(),
+			duration = now - app.arrivedAt; //difference in milliseconds
+
+		$('#timePassed').text(msToTime(duration));
+				
+	}, 10000);	
+}
+
+function msToTime(duration) {
+   var seconds = parseInt((duration/1000)%60), 
+	  minutes = parseInt((duration/(1000*60))%60),
+	  hours = parseInt((duration/(1000*60*60))%24);
+
+    return hours + ' hours ' + minutes + ' minutes ' + seconds + ' seconds ';
+}
+
+
 function success(position) {
 	app.coords=position.coords;
 	showInMaps(position);
 	getNearest();
+	showTimePassed(new Date());
 }
 
 function error(msg) {
@@ -123,5 +147,7 @@ var customers={
     Current location:
      <article>
      </article>
+     <br />
+     You arrived here on <span id="arrivedAt"></span> and you have been here for <span id="timePassed">0 seconds</span> (updates every 10 seconds)
 
 </div>
