@@ -5,7 +5,8 @@ var Schema = mongoose.Schema,
 
 var userinfoSchema = new Schema({
 	deviceid: String,
-	devicetype: String
+	devicetype: String,
+	mail:String
 });
 
 var entrySchema = new Schema({
