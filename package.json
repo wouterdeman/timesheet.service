@@ -6,7 +6,9 @@
     "express": "~3.4.0",
     "express3-handlebars": "0.4.x",
     "mongoose": "~3.8.1",
-    "geojson-utils": "~1.0.2"
+    "geojson-utils": "~1.0.2",
+    "passport": "~0.1.17",
+    "passport-google": "~0.3.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
