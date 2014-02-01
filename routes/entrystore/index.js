@@ -5,6 +5,7 @@ module.exports = function(app) {
 
 	var models = require('../../models');
 	var Entry = models.entryModel;
+	var User = models.userModel;
 
 	app.get('/entries', function(req, res) {
 		res.json(entries);
@@ -38,19 +39,22 @@ module.exports = function(app) {
 	});
 
 	app.post('/entry', function(req, res) {
-		console.log(req.body);
-		if (!req.body.hasOwnProperty('type') || !req.body.hasOwnProperty('userinfo')) {
+		if (!req.body.hasOwnProperty('type') || !req.body.hasOwnProperty('userinfo') || !req.body.hasOwnProperty('token')) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
 		}
+		var token = req.body.token;		
+		User.findOne({ 'token.token': token }, function(error, user) {			
+			var newEntry = {
+				type: req.body.type,
+				userinfo: req.body.userinfo,
+				loc:req.body.loc,
+				user: user._id
+			};			
 
-		var newEntry = {
-			type: req.body.type,
-			userinfo: req.body.userinfo,
-			loc:req.body.loc
-		};
-
-		Entry.save(newEntry);
-		res.json(true);
+			Entry.save(newEntry);
+			res.json(true);
+		});
+		res.json(false);
 	});
 }
