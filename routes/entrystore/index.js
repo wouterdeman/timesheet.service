@@ -43,6 +43,9 @@ module.exports = function(app) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
 		}
+
+		res.setHeader('Access-Control-Allow-Origin', '*');
+
 		var token = req.body.token;		
 		User.findOne({ 'token.token': token }, function(error, user) {			
 			var newEntry = {
