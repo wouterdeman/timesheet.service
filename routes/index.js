@@ -15,6 +15,8 @@ module.exports = function(app) {
 	require('./entrystore')(app);
 	require('./location')(app);
 	require('./customer')(app);
+	require('./dashboard')(app);
+	require('./auth')(app);
 	// other routes entered here as require(route)(app);
 	// we basically pass 'app' around to each route
 
@@ -23,5 +25,4 @@ module.exports = function(app) {
 			return next(); }
 		res.redirect('/login')
 	}
-
 }
