@@ -38,8 +38,14 @@ var save = function(entry) {
 };
 
 var getLast10 = function(callback) {
-	Entry.find().limit(10).sort({ updated: 'desc' }).exec(function(err, entries) {
+	Entry.find().limit(10).sort({ updated: 'desc' }).populate('user').exec(function(err, entries) {
     	callback(err, entries);
+	});
+}
+
+var count = function(callback) {
+	Entry.count().exec(function(err, count) {
+    	callback(err, count);
 	});
 }
 
@@ -58,3 +64,4 @@ exports.save = save;
 exports.getLast10 = getLast10;
 exports.getUniqueLocations = getUniqueLocations;
 exports.entryModel = Entry;
+exports.count = count;

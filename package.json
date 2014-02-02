@@ -10,7 +10,8 @@
     "passport": "~0.1.17",
     "passport-google": "~0.3.0",
     "q": "~1.0.0",
-    "requester": "~0.1.20"
+    "requester": "~0.1.20",
+    "lodash-node": "~2.4.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
