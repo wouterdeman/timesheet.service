@@ -3,6 +3,7 @@ var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId,
   authTypes = ['github', 'twitter', 'facebook', 'google'];
 var token = require('./token');
+var _ = require('lodash-node');
 
 var UserSchema = new Schema({
   name: String,
@@ -46,4 +47,9 @@ var findOne = function(conditions, callback) {
   User.findOne(conditions, callback);
 }
 
+var find = function(conditions, callback) {
+  User.find(conditions, callback);
+}
+
 exports.findOne = findOne;
+exports.find = find;
