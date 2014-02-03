@@ -48,6 +48,11 @@ module.exports = function(app) {
 
 		var token = req.body.token;		
 		User.findOne({ 'token.token': token }, function(error, user) {			
+			if(!user) {
+				json(false);
+				return;
+			}
+
 			var newEntry = {
 				type: req.body.type,
 				userinfo: req.body.userinfo,
