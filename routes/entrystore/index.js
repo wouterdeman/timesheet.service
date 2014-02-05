@@ -49,7 +49,7 @@ module.exports = function(app) {
 		var token = req.body.token;		
 		User.findOne({ 'token.token': token }, function(error, user) {			
 			if(!user) {
-				json(false);
+				res.json(false);
 				return;
 			}
 
