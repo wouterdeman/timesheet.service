@@ -9,7 +9,7 @@ Required:
 - Yeoman 1.0+ (Bower, Grunt, Yeoman)
 
 1. Install node package => npm install
-2. Run dev server => grunt workon
+2. Run dev server => grunt debug
 
 ## Deployment guidelines
 
