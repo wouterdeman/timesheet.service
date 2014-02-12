@@ -39,6 +39,7 @@ var Entry = mongoose.model('entry', entrySchema);
 var save = function(entry) {
 	var newUserInfo = new UserInfo(entry.userinfo);
 	var newEntry = new Entry(entry);
+	var newEntry = new Entry(entry);
 	newEntry.userinfo = newUserInfo;
 
 	newEntry.save();
@@ -55,23 +56,6 @@ var getLast10 = function(callback) {
 var count = function(callback) {
 	Entry.count().exec(function(err, count) {
 		callback(err, count);
-	});
-};
-
-var getUniqueLocations = function(callback) {
-	Entry.find({
-		loc: Math.round(value * 100) / 100
-	}).aggregate({
-		$group: {
-			_id: "$loc",
-			entriesPerLocation: {
-				$sum: 1
-			}
-		}
-	}).sort({
-		entriesPerLocation: 'desc'
-	}).limit(100).exec(function(err, entries) {
-		callback(err, entries);
 	});
 };
 

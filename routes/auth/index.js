@@ -1,12 +1,4 @@
 module.exports = function(app) {
-  var Requester = require('requester'),
-    requester = new Requester({
-      debug: 1
-    });
-  var crypto = require('crypto');
-  var models = require('../../models');
-  var User = models.userModel;
-  var Token = models.tokenModel;
   var AuthService = require('../../services/auth');
 
   app.post('/auth/token', function(req, res) {

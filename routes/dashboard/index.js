@@ -66,14 +66,4 @@ module.exports = function(app) {
 				});
 		});
 	});
-
-	app.get('/dashboard/uniquelocations', function(req, res) {
-		Entry.getUniqueLocations(function(err, entries) {
-			if (err) {
-				res.json(err);
-				return;
-			}
-			res.json(entries);
-		})
-	});
 };
