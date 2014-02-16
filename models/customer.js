@@ -1,3 +1,5 @@
+'use strict';
+
 // set up mongoose
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -16,29 +18,29 @@ var customerSchema = new Schema({
 
 var Customer = mongoose.model('customer', customerSchema);
 
-var deleteAll = function() {
+var deleteAll = function () {
 	Customer.remove().exec();
 };
-var save = function(cust) {
+var save = function (cust) {
 	console.log('save entry time');
 
 	var newCustomer = new Customer(cust);
 	newCustomer.save();
 };
 
-var getAll = function(callback) {
-	Customer.find({}, function(err, custs) {
+var getAll = function (callback) {
+	Customer.find({}, function (err, custs) {
 		callback(err, custs);
 	});
 };
-var getNearest = function(coord, callback) {
+var getNearest = function (coord, callback) {
 	Customer.find({
 		loc: {
 			$nearSphere: coord,
 			$maxDistance: 100000
 		}
-	},function(err,cust){
-		callback(err,cust);
+	}, function (err, cust) {
+		callback(err, cust);
 	});
 };
 

@@ -7,7 +7,35 @@ module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
-
+        mochaTest: {
+            test: {
+                options: {
+                    reporter: 'spec'
+                },
+                src: ['<%= allTests %>']
+            }
+        },
+        allTests: 'test/**/*.js',
+        // Hint Config
+        jshint: {
+            options: {
+                jshintrc: '.jshintrc'
+            },
+            all: [
+                'Gruntfile.js',
+                'assets/scripts/**/*.js',
+                '!assets/scripts/vendor/*',
+                'test/**/*.js',
+                'modules',
+                'express',
+                'mongoose',
+                'passport',
+                'models',
+                'routes',
+                'services',
+                'app.js'
+            ]
+        },
         // Watch Config
         watch: {
             files: ['views/**/*'],
@@ -40,6 +68,10 @@ module.exports = function (grunt) {
                     nospawn: true // Without this option specified express won't be reloaded
                 }
             },
+            test: {
+                files: 'test/**/*.js',
+                tasks: ['jshint', 'mochaTest']
+            }
         },
 
         // Clean Config
@@ -55,19 +87,6 @@ module.exports = function (grunt) {
                 }]
             },
             server: ['.tmp'],
-        },
-
-        // Hint Config
-        jshint: {
-            options: {
-                jshintrc: '.jshintrc'
-            },
-            all: [
-                'Gruntfile.js',
-                'assets/scripts/**/*.js',
-                '!assets/scripts/vendor/*',
-                'test/spec/**/*.js'
-            ]
         },
 
         // Sass Config
@@ -270,6 +289,8 @@ module.exports = function (grunt) {
         'watch'
     ]);
 
+    // Test task.
+    grunt.registerTask('test', ['jshint', 'mochaTest', 'watch:test']);
 
     // Build
     grunt.registerTask('default', 'Build production ready assets and views.', [
@@ -283,5 +304,6 @@ module.exports = function (grunt) {
         'copy:dist',
         'rev',
         'usemin',
+        'nodeunit'
     ]);
 };

@@ -1,11 +1,13 @@
+'use strict';
+
 // Logic here is to keep a good reference of what's used
 
 // models
-Entry = require('./entry');
-Customer= require('./customer');
-User = require('./user');
-Token = require('./token');
-Location = require('./location');
+var Entry = require('./entry');
+var Customer = require('./customer');
+var User = require('./user');
+var Token = require('./token');
+var Location = require('./location');
 
 // exports
 exports.entryModel = Entry;

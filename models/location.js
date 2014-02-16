@@ -1,9 +1,9 @@
+'use strict';
+
 // set up mongoose
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema,
 	ObjectId = Schema.ObjectId;
-var User = require('./user');
-var async = require('async');
 
 var locationSchema = new Schema({
 	type: String,
@@ -24,7 +24,7 @@ var locationSchema = new Schema({
 
 var Location = mongoose.model('location', locationSchema);
 
-var save = function(location) {	
+var save = function (location) {
 	var newLocation = new Location(location);
 	newLocation.save();
 };

@@ -1,8 +1,9 @@
+'use strict';
+
 // set up mongoose
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema,
 	ObjectId = Schema.ObjectId;
-var User = require('./user');
 var async = require('async');
 
 var userinfoSchema = new Schema({
@@ -36,50 +37,48 @@ var Entry = mongoose.model('entry', entrySchema);
  * @param  {Entry} entry
  * @return {void}
  */
-var save = function(entry) {
+var save = function (entry) {
 	var newUserInfo = new UserInfo(entry.userinfo);
-	var newEntry = new Entry(entry);
 	var newEntry = new Entry(entry);
 	newEntry.userinfo = newUserInfo;
 
 	newEntry.save();
 };
 
-var getLast10 = function(callback) {
+var getLast10 = function (callback) {
 	Entry.find().limit(10).sort({
 		updated: 'desc'
-	}).populate('user').exec(function(err, entries) {
+	}).populate('user').exec(function (err, entries) {
 		callback(err, entries);
 	});
 };
 
-var count = function(callback) {
-	Entry.count().exec(function(err, count) {
+var count = function (callback) {
+	Entry.count().exec(function (err, count) {
 		callback(err, count);
 	});
 };
 
-var getLastLocationForUsers = function(userIds, callback) {
+var getLastLocationForUsers = function (userIds, callback) {
 	var result = [];
-	async.forEach(userIds, function(userId, iterateCallback) {
+	async.forEach(userIds, function (userId, iterateCallback) {
 		Entry.find({
 			user: userId
 		}).sort({
 			updated: 'desc'
-		}).limit(1).populate('user').exec(function(err, entries) {
+		}).limit(1).populate('user').exec(function (err, entries) {
 			if (entries && entries.length > 0) {
 				result.push(entries[0]);
 			}
 			iterateCallback();
 		});
-	}, function(err) {
+	}, function (err) {
 		callback(err, result);
 	});
 };
 
 exports.save = save;
 exports.getLast10 = getLast10;
-exports.getUniqueLocations = getUniqueLocations;
 exports.entryModel = Entry;
 exports.count = count;
 exports.getLastLocationForUsers = getLastLocationForUsers;

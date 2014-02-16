@@ -1,7 +1,9 @@
-module.exports = function(app) {
+'use strict';
+
+module.exports = function (app) {
 	var geoUtils = require('geojson-utils');
 
-	app.get('/location/diff', function(req, res) {
+	app.get('/location/diff', function (req, res) {
 		console.log(req.query);
 		var point1 = req.query.loc1;
 		var point2 = req.query.loc2;
@@ -12,7 +14,7 @@ module.exports = function(app) {
 		}, {
 			type: 'Point',
 			coordinates: [point2.latitude, point2.longitude]
-		})
+		});
 		res.json(distance / 1000);
 	});
 };

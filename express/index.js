@@ -1,8 +1,10 @@
-module.exports = function(app, express, rootDir) {
+'use strict';
+
+module.exports = function (app, express, rootDir) {
 	/*
 	 * Use Handlebars for templating
 	 */
-	var exphbs = require('express3-handlebars');	
+	var exphbs = require('express3-handlebars');
 
 	// For gzip compression
 	app.use(express.compress());
@@ -48,4 +50,4 @@ module.exports = function(app, express, rootDir) {
 	app.use(express.session({
 		secret: 'veryverysecret'
 	}));
-}
+};

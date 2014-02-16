@@ -1,6 +1,6 @@
 'use strict';
 
-var db = require('./mongoose');
+require('./mongoose');
 var express = require('express');
 var app = express();
 var port = 3000;

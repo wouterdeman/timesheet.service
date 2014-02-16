@@ -1,9 +1,11 @@
-module.exports = function(app) {
+'use strict';
+
+module.exports = function (app) {
 	var models = require('../../models');
 	var Entry = models.entryModel;
 	var User = models.userModel;
 
-	app.post('/entry', function(req, res) {
+	app.post('/entry', function (req, res) {
 		if (!req.body.hasOwnProperty('type') || !req.body.hasOwnProperty('userinfo') || !req.body.hasOwnProperty('token')) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
@@ -14,7 +16,7 @@ module.exports = function(app) {
 		var token = req.body.token;
 		User.findOne({
 			'token.token': token
-		}, function(error, user) {
+		}, function (error, user) {
 			if (!user) {
 				res.json(false);
 				return;
@@ -32,4 +34,4 @@ module.exports = function(app) {
 		});
 		res.json(false);
 	});
-}
+};
