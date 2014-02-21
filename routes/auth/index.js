@@ -2,7 +2,7 @@
 
 module.exports = function (app) {
 	var services = require('../../services');
-	var AuthService = services.authService;
+	var TimesheetService = services.timesheetService;
 
 	app.post('/auth/token', function (req, res) {
 		if (!req.body.hasOwnProperty('refreshtoken') || !req.body.hasOwnProperty('provider')) {
@@ -20,12 +20,10 @@ module.exports = function (app) {
 			res.json(false);
 		}
 
-		AuthService.getGoogleAuthToken(refreshtoken).then(function (accessToken) {
-			AuthService.getUserEmail(accessToken).then(function (email) {
-				AuthService.getNewTokenAndUpdateUser(email, refreshtoken, provider).then(function (token) {
-					res.json(token);
-				});
-			});
+		TimesheetService.registerGoogleAuth(refreshtoken).then(function (token) {
+			res.json(token);
+		}).fail(function () {
+			res.json(false);
 		});
 	});
 };

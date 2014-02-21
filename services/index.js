@@ -1,4 +1,4 @@
 // Services
-var AuthService = require('./auth');
+var TimesheetService = require('./timesheet');
 
-exports.authService = AuthService;
+exports.timesheetService = TimesheetService;

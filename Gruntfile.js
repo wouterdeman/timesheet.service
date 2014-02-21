@@ -13,6 +13,12 @@ module.exports = function (grunt) {
                     reporter: 'spec'
                 },
                 src: ['<%= allTests %>']
+            },
+            migrate: {
+                options: {
+                    reporter: 'spec'
+                },
+                src: ['migrations/entrytocrumble.js']
             }
         },
         allTests: 'test/**/*.js',
@@ -290,7 +296,10 @@ module.exports = function (grunt) {
     ]);
 
     // Test task.
-    grunt.registerTask('test', ['jshint', 'mochaTest', 'watch:test']);
+    grunt.registerTask('test', ['jshint', 'mochaTest:test', 'watch:test']);
+
+    // Migrate task.
+    grunt.registerTask('migrate', ['mochaTest:migrate']);
 
     // Build
     grunt.registerTask('default', 'Build production ready assets and views.', [

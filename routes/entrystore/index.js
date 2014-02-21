@@ -1,12 +1,11 @@
 'use strict';
 
 module.exports = function (app) {
-	var models = require('../../models');
-	var Entry = models.entryModel;
-	var User = models.userModel;
+	var services = require('../../services');
+	var TimesheetService = services.timesheetService;
 
 	app.post('/entry', function (req, res) {
-		if (!req.body.hasOwnProperty('type') || !req.body.hasOwnProperty('userinfo') || !req.body.hasOwnProperty('token')) {
+		if (!req.body.hasOwnProperty('token') || !req.body.hasOwnProperty('loc')) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
 		}
@@ -14,24 +13,13 @@ module.exports = function (app) {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 
 		var token = req.body.token;
-		User.findOne({
-			'token.token': token
-		}, function (error, user) {
-			if (!user) {
-				res.json(false);
-				return;
-			}
+		var loc = req.body.loc;
 
-			var newEntry = {
-				type: req.body.type,
-				userinfo: req.body.userinfo,
-				loc: req.body.loc,
-				user: user._id
-			};
-
-			Entry.save(newEntry);
+		TimesheetService.saveCrumble(token, loc).then(function () {
 			res.json(true);
+		}).fail(function () {
+			res.statusCode = 401;
+			return res.send('Error 401: Invalid token.');
 		});
-		res.json(false);
 	});
 };

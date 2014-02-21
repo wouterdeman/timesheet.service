@@ -26,30 +26,20 @@ var crumbleSchema = new Schema({
 var Crumble = mongoose.model('crumble', crumbleSchema);
 
 exports.save = function (crumbleData, callback) {
-	Crumble.findOne({
+	Crumble.update({
 		entity: crumbleData.entity,
 		date: crumbleData.date
-	}, function (err, existingCrumble) {
-		if (err) {
-			callback(err);
+	}, {
+		$push: {
+			crumbles: {
+				loc: crumbleData.loc,
+				time: crumbleData.time
+			}
 		}
-
-		if (!existingCrumble) {
-			existingCrumble = new Crumble({
-				entity: crumbleData.entity,
-				date: crumbleData.date,
-				crumbles: []
-			});
-		}
-
-		existingCrumble.crumbles.push({
-			loc: crumbleData.loc,
-			time: crumbleData.time
-		});
-
-		existingCrumble.save(function (err) {
-			callback(err);
-		});
+	}, {
+		upsert: true
+	}, function (err) {
+		callback(err);
 	});
 };
 
