@@ -17,6 +17,7 @@ var GoogleAuthSchema = new Schema({
 });
 
 var AuthSchema = new Schema({
+    entity: String,
     provider: String,
     google: [GoogleAuthSchema],
     tokens: [TokenSchema],
@@ -84,6 +85,8 @@ exports.saveGoogleAuth = function (authData, callback) {
 
 exports.findByToken = function (token, callback) {
     Auth.findOne({
-        'tokens.token': token
-    }, 'entity', null, callback);
+            'tokens.token': token
+        },
+        'entity',
+        callback);
 };
