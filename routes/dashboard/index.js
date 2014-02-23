@@ -5,24 +5,17 @@ module.exports = function (app) {
 	var Entry = models.entryModel;
 	var User = models.userModel;
 	var _ = require('lodash-node');
+	var services = require('../../services');
+	var timesheetService = services.timesheetService;
 
 	app.get('/dashboard/last10', function (req, res) {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 
-		Entry.getLast10(function (err, entries) {
-			if (err) {
-				res.json(err);
-				return;
-			}
-			var result = _.map(entries, function (entry) {
-				return {
-					loc: entry.loc,
-					user: entry.user.name,
-					time: entry.updated
-				};
-			});
-
-			res.json(result);
+		timesheetService.getLast10Entries().then(function (results) {
+			res.json(results);
+		}).fail(function (err) {
+			console.log(err);
+			res.json(false);
 		});
 	});
 

@@ -57,3 +57,7 @@ exports.find = function (query, callback) {
 		callback(err, crumbles);
 	});
 };
+
+exports.aggregate = function (aggregate, callback) {
+	Crumble.aggregate(aggregate).exec(callback);
+};

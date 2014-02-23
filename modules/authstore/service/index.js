@@ -87,13 +87,11 @@ exports.registerGoogleAuth = function (refreshToken, callback) {
 exports.verifyToken = function (token) {
     var deferred = Q.defer();
 
-    Auth.findByToken(token, function (err, entity) {
-        console.log(entity);
-        console.log(err);
-        if (err || !entity) {
+    Auth.findByToken(token, function (err, result) {
+        if (err || !result) {
             deferred.reject(err);
         }
-        deferred.resolve(entity);
+        deferred.resolve(result.entity);
     });
 
     return deferred.promise;

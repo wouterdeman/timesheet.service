@@ -48,3 +48,32 @@ exports.getTodaysCrumbles = function (data) {
 
 	return deferred.promise;
 };
+
+exports.getLast10Crumbles = function () {
+	var deferred = Q.defer();
+
+	crumbleModel.aggregate(
+		[{
+			$project: {
+				entity: 1,
+				crumbles: 1
+			}
+		}, {
+			$unwind: '$crumbles'
+		}, {
+			$sort: {
+				'crumbles.time': -1
+			}
+		}, {
+			$limit: 10
+		}], function (err, result) {
+			console.log(result);
+			if (err) {
+				deferred.reject(err);
+			} else {
+				deferred.resolve(result);
+			}
+		});
+
+	return deferred.promise;
+};

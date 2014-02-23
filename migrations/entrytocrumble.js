@@ -85,7 +85,7 @@ var saveCrumble = function (crumbleData, callback) {
 };
 
 var run = function (callback) {
-  var stream = Entry.find().stream();
+  /* var stream = Entry.find().stream();
 
   stream.on('data', function (entry) {
     var self = this;
@@ -103,7 +103,7 @@ var run = function (callback) {
   }).on('close', function () {
     console.log('closed');
     callback();
-  });
+  });*/
 };
 
 describe('Timetracker entry to crumble migration', function () {
