@@ -67,11 +67,40 @@ exports.getLast10Crumbles = function () {
 		}, {
 			$limit: 10
 		}], function (err, result) {
-			console.log(result);
 			if (err) {
 				deferred.reject(err);
 			} else {
 				deferred.resolve(result);
+			}
+		});
+
+	return deferred.promise;
+};
+
+exports.getTotalCountOfCrumbles = function () {
+	var deferred = Q.defer();
+
+	crumbleModel.aggregate(
+		[{
+			$unwind: '$crumbles'
+		}, {
+			$group: {
+				_id: null,
+				count: {
+					$sum: 1
+				}
+			}
+		}, {
+			$project: {
+				_id: 0,
+				count: 1
+			}
+		}],
+		function (err, result) {
+			if (err || !result) {
+				deferred.reject(err);
+			} else {
+				deferred.resolve(result[0].count);
 			}
 		});
 

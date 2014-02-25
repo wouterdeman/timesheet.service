@@ -22,13 +22,22 @@ module.exports = function (app) {
 	app.get('/dashboard/count', function (req, res) {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 
-		Entry.count(function (err, count) {
-			if (err) {
-				res.json(err);
-				return;
-			}
-
+		timesheetService.getTotalCountOfEntries().then(function (count) {
 			res.json(count);
+		}).fail(function (err) {
+			console.log(err);
+			res.json(false);
+		});
+	});
+
+	app.get('/dashboard/trackedminutes', function (req, res) {
+		res.setHeader('Access-Control-Allow-Origin', '*');
+
+		timesheetService.getTotalAmountOfTrackedMinutes().then(function (amount) {
+			res.json(amount);
+		}).fail(function (err) {
+			console.log(err);
+			res.json(false);
 		});
 	});
 

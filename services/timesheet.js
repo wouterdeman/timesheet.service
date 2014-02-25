@@ -58,7 +58,6 @@ exports.getLast10Entries = function () {
                 $in: entitiesInResults
             }
         }, function (err, users) {
-            console.log(entitiesInResults + ' -> ' + users);
             if (err) {
                 deferred.reject(err);
             } else {
@@ -75,6 +74,26 @@ exports.getLast10Entries = function () {
                 deferred.resolve(result);
             }
         });
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.getTotalCountOfEntries = function () {
+    var deferred = Q.defer();
+
+    TimeTracker.getTotalCountOfCrumbles().then(function (count) {
+        deferred.resolve(count);
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.getTotalAmountOfTrackedMinutes = function () {
+    var deferred = Q.defer();
+
+    TimeTracker.getTotalCountOfCrumbles().then(function (count) {
+        deferred.resolve(count * 5);
     }).fail(deferred.reject);
 
     return deferred.promise;
