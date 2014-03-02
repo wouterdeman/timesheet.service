@@ -85,6 +85,10 @@ var saveCrumble = function (crumbleData, callback) {
 };
 
 var run = function (callback) {
+  // 
+  // DON'T RUN AGAIN
+  // 
+
   /* var stream = Entry.find().stream();
 
   stream.on('data', function (entry) {

@@ -1,10 +1,6 @@
 'use strict';
 
 module.exports = function (app) {
-	var models = require('../../models/');
-	var Entry = models.entryModel;
-	var User = models.userModel;
-	var _ = require('lodash-node');
 	var services = require('../../services');
 	var timesheetService = services.timesheetService;
 
@@ -44,30 +40,11 @@ module.exports = function (app) {
 	app.get('/dashboard/lastuserlocation', function (req, res) {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 
-		User.find({}, function (err, users) {
-			if (err) {
-				res.json(err);
-				return;
-			}
-
-			var userIds = _.pluck(users, '_id');
-
-			Entry.getLastLocationForUsers(userIds,
-				function (err, entries) {
-					if (err) {
-						res.json(err);
-						return;
-					}
-					var result = _.map(entries, function (entry) {
-						return {
-							loc: entry.loc,
-							user: entry.user.name,
-							time: entry.updated
-						};
-					});
-
-					res.json(result);
-				});
+		timesheetService.getLastLocations().then(function (entries) {
+			res.json(entries);
+		}).fail(function (err) {
+			console.log(err);
+			res.json(false);
 		});
 	});
 };

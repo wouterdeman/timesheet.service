@@ -36,8 +36,20 @@ var mockVerifyToken = function () {
     });
 };
 
+var mockUserFindById = function () {
+    sinon.stub(User, 'findById', function (condition, callback) {
+        callback(null, {
+            _id: dummyEntityId,
+            firstname: 'Joske',
+            lastname: 'Vermeulen',
+            emails: ['joske.vermeulen@gmail.com']
+        });
+    });
+};
+
 describe('Timesheet service', function () {
     mockVerifyToken();
+    mockUserFindById();
     describe('when saving 20 crumbles and getting the last 10 saved crumbles', function () {
         clearDB();
         it('should save 20 crumbles without errors', function (done) {
@@ -58,16 +70,9 @@ describe('Timesheet service', function () {
             });
         });
         it('should return the last 10 crumbles when we ask for the last 10 crumbles', function (done) {
-            sinon.stub(User, 'find', function (condition, callback) {
-                callback(null, [{
-                    _id: dummyEntityId,
-                    name: 'Joske vermeulen'
-                }]);
-            });
-
             timesheetService.getLast10Entries().then(function (last10) {
                 assert.equal(last10.length, 10);
-                assert.equal(last10[0].user, 'Joske vermeulen');
+                assert.equal(last10[0].user, 'Joske Vermeulen');
                 done();
             });
         });
@@ -120,6 +125,32 @@ describe('Timesheet service', function () {
         it('should return the correct total amount of time spent', function (done) {
             timesheetService.getTotalAmountOfTrackedMinutes().then(function (amount) {
                 assert.equal(amount, 4 * 5);
+                done();
+            });
+        });
+    });
+    describe('when retrieving the last location for all entities', function () {
+        clearDB();
+        it('should save 2 crumbles without errors', function (done) {
+            var data = [];
+
+            data.push({
+                token: 'bla',
+                loc: [51.226956, 4.401744]
+            });
+
+            async.each(data, function (crumble, iterateCallback) {
+                timesheetService.saveCrumble(crumble.token, crumble.loc).then(iterateCallback);
+            }, function (err) {
+                if (!err) {
+                    done();
+                }
+            });
+        });
+        it('should return the last location for each entity', function (done) {
+            timesheetService.getLastLocations().then(function (lastlocations) {
+                assert.equal(lastlocations[0].user, 'Joske Vermeulen');
+                assert.equal(lastlocations[0].loc[0], 51.226956);
                 done();
             });
         });

@@ -14,13 +14,24 @@ exports.saveCrumble = function (token, loc) {
             deferred.reject();
             return;
         }
+        User.findById(entity, function (err, user) {
+            if (err && !user) {
+                deferred.reject(err);
+                return;
+            }
 
-        var data = {
-            entity: entity,
-            loc: loc
-        };
+            var data = {
+                entity: entity,
+                details: {
+                    emails: user.emails,
+                    firstname: user.firstname,
+                    lastname: user.lastname
+                },
+                loc: loc
+            };
 
-        TimeTracker.saveCrumble(data).then(deferred.resolve).fail(deferred.reject);
+            TimeTracker.saveCrumble(data).then(deferred.resolve).fail(deferred.reject);
+        });
     }).fail(deferred.reject);
 
     return deferred.promise;
@@ -50,30 +61,14 @@ exports.getLast10Entries = function () {
     var deferred = Q.defer();
 
     TimeTracker.getLast10Crumbles().then(function (results) {
-        var entitiesInResults = _.uniq(_.pluck(results, 'entity'), function (entity) {
-            return '' + entity;
+        var result = _.map(results, function (crumble) {
+            return {
+                loc: crumble.loc,
+                user: crumble.details.firstname + ' ' + crumble.details.lastname,
+                time: crumble.time
+            };
         });
-        User.find({
-            _id: {
-                $in: entitiesInResults
-            }
-        }, function (err, users) {
-            if (err) {
-                deferred.reject(err);
-            } else {
-                var result = _.map(results, function (crumble) {
-                    var user = _.find(users, {
-                        '_id': crumble.entity
-                    });
-                    return {
-                        loc: crumble.crumbles.loc,
-                        user: user ? user.name : 'unrecognised user',
-                        time: crumble.crumbles.time
-                    };
-                });
-                deferred.resolve(result);
-            }
-        });
+        deferred.resolve(result);
     }).fail(deferred.reject);
 
     return deferred.promise;
@@ -94,6 +89,23 @@ exports.getTotalAmountOfTrackedMinutes = function () {
 
     TimeTracker.getTotalCountOfCrumbles().then(function (count) {
         deferred.resolve(count * 5);
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.getLastLocations = function () {
+    var deferred = Q.defer();
+
+    TimeTracker.getLastLocations().then(function (results) {
+        var result = _.map(results, function (crumble) {
+            return {
+                loc: crumble.loc,
+                user: crumble.details.firstname + ' ' + crumble.details.lastname,
+                time: crumble.time
+            };
+        });
+        deferred.resolve(result);
     }).fail(deferred.reject);
 
     return deferred.promise;

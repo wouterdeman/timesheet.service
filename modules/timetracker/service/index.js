@@ -40,7 +40,7 @@ exports.getTodaysCrumbles = function (data) {
 			deferred.reject(err);
 		}
 		if (result[0]) {
-			deferred.resolve(result[0].crumbles);
+			deferred.resolve(result[0]);
 		} else {
 			deferred.resolve(null);
 		}
@@ -54,15 +54,17 @@ exports.getLast10Crumbles = function () {
 
 	crumbleModel.aggregate(
 		[{
-			$project: {
-				entity: 1,
-				crumbles: 1
-			}
-		}, {
 			$unwind: '$crumbles'
 		}, {
 			$sort: {
 				'crumbles.time': -1
+			}
+		}, {
+			$project: {
+				entity: 1,
+				details: 1,
+				time: '$crumbles.time',
+				loc: '$crumbles.loc'
 			}
 		}, {
 			$limit: 10
@@ -104,5 +106,39 @@ exports.getTotalCountOfCrumbles = function () {
 			}
 		});
 
+	return deferred.promise;
+};
+
+exports.getLastLocations = function () {
+	var deferred = Q.defer();
+
+	crumbleModel.aggregate(
+		[{
+			$unwind: '$crumbles'
+		}, {
+			$sort: {
+				'crumbles.time': -1
+			}
+		}, {
+			$group: {
+				_id: '$entity',
+				time: {
+					$first: '$crumbles.time'
+				},
+				loc: {
+					$first: '$crumbles.loc'
+				},
+				details: {
+					$first: '$details'
+				}
+			}
+		}],
+		function (err, result) {
+			if (err || !result) {
+				deferred.reject(err);
+			} else {
+				deferred.resolve(result);
+			}
+		});
 	return deferred.promise;
 };

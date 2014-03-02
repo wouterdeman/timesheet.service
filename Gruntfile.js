@@ -18,7 +18,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['migrations/entrytocrumble.js']
+                src: ['migrations/migrateentitydetails.js']
             }
         },
         allTests: 'test/**/*.js',

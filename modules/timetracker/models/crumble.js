@@ -6,9 +6,8 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var crumbleSchema = new Schema({
-	entity: {
-		type: ObjectId
-	},
+	entity: ObjectId,
+	details: Schema.Types.Mixed,
 	date: {
 		type: Date
 	},
@@ -35,6 +34,9 @@ exports.save = function (crumbleData, callback) {
 				loc: crumbleData.loc,
 				time: crumbleData.time
 			}
+		},
+		$set: {
+			details: crumbleData.details
 		}
 	}, {
 		upsert: true
@@ -46,6 +48,7 @@ exports.save = function (crumbleData, callback) {
 exports.create = function (data) {
 	return {
 		entity: data.entity,
+		details: data.details,
 		date: Date.today(),
 		loc: data.loc,
 		time: new Date()

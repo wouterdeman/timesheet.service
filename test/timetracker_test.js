@@ -3,6 +3,7 @@
 var timetracker = require('../modules/timetracker/service');
 var mongoose = require('mongoose');
 var dummyEntityId = mongoose.Types.ObjectId('52fd4c431a142e5826f0b1e1');
+var dummyEntityId2 = mongoose.Types.ObjectId('52fd4c431a142e5826f0b1e2');
 var db = require('./mongoose');
 var async = require('async');
 
@@ -41,7 +42,7 @@ describe('Timetracker crumbles', function () {
 			});
 		});
 		it('and we should have one crumble', function (done) {
-			assert.equal(todayscrumblesResult.length, 1);
+			assert.equal(todayscrumblesResult.crumbles.length, 1);
 			done();
 		});
 	});
@@ -83,7 +84,7 @@ describe('Timetracker crumbles', function () {
 			});
 		});
 		it('and we should have 2 crumbles', function (done) {
-			assert.equal(todayscrumblesResult.length, 2);
+			assert.equal(todayscrumblesResult.crumbles.length, 2);
 			done();
 		});
 	});
@@ -116,6 +117,9 @@ describe('Timetracker crumbles', function () {
 			for (var i = 0; i < 20; i++) {
 				data.push({
 					entity: dummyEntityId,
+					details: {
+						name: 'Joske Vermeulen'
+					},
 					loc: [51.226956, 4.401744]
 				});
 			}
@@ -132,13 +136,95 @@ describe('Timetracker crumbles', function () {
 			timetracker.getTodaysCrumbles({
 				entity: dummyEntityId
 			}).then(function (todayscrumbles) {
-				assert.equal(todayscrumbles.length, 20);
+				assert.equal(todayscrumbles.crumbles.length, 20);
 				done();
 			});
 		});
 		it('should return the last 10 crumbles when we ask for the last 10 crumbles', function (done) {
 			timetracker.getLast10Crumbles().then(function (last10crumbles) {
 				assert.equal(last10crumbles.length, 10);
+				assert.equal(last10crumbles[0].details.name, 'Joske Vermeulen');
+				done();
+			});
+		});
+	});
+	describe('when saving a crumble with details', function () {
+		clearDB();
+		it('should save without errors', function (done) {
+			var data = {
+				entity: dummyEntityId,
+				details: {
+					type: 'BMW 316D',
+					platenumber: '1-AHQ-481',
+					area: 'Geel'
+				},
+				loc: [51.226956, 4.401744]
+			};
+
+			timetracker.saveCrumble(data).then(done);
+		});
+		var todayscrumbleResult;
+		it('and we retrieve todays crumbles', function (done) {
+			timetracker.getTodaysCrumbles({
+				entity: dummyEntityId
+			}).then(function (todayscrumble) {
+				todayscrumbleResult = todayscrumble;
+				done();
+			});
+		});
+		it('and we should have one crumble', function (done) {
+			assert.equal(todayscrumbleResult.crumbles.length, 1);
+			done();
+		});
+		it('and we should have still have our entity details', function (done) {
+			assert.equal(todayscrumbleResult.details.type, 'BMW 316D');
+			assert.equal(todayscrumbleResult.details.platenumber, '1-AHQ-481');
+			assert.equal(todayscrumbleResult.details.area, 'Geel');
+			done();
+		});
+	});
+	describe('when retrieving the last location for all entities', function () {
+		clearDB();
+		it('should save 2 crumbles without errors', function (done) {
+			var data = [];
+
+			data.push({
+				entity: dummyEntityId,
+				details: {
+					name: 'Joske Vermeulen'
+				},
+				loc: [51.226956, 4.401744]
+			});
+
+
+			data.push({
+				entity: dummyEntityId,
+				details: {
+					name: 'Joske Vermeulen'
+				},
+				loc: [55.226956, 4.401744]
+			});
+
+			data.push({
+				entity: dummyEntityId2,
+				details: {
+					name: 'Jefke Vermeulen'
+				},
+				loc: [60.226956, 4.401744]
+			});
+
+			async.each(data, function (crumble, iterateCallback) {
+				timetracker.saveCrumble(crumble).then(iterateCallback);
+			}, function (err) {
+				if (!err) {
+					done();
+				}
+			});
+		});
+		it('should return the last location for each entity', function (done) {
+			timetracker.getLastLocations().then(function (lastlocations) {
+				assert.equal(lastlocations[0].details.name, 'Joske Vermeulen');
+				assert.equal(lastlocations[0].loc[0], 55.226956);
 				done();
 			});
 		});
