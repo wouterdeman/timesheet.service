@@ -6,6 +6,8 @@ var Q = require('q');
 require('date-utils');
 var validators = require('./validators');
 var crumbleValidator = validators.crumbleValidator;
+var gju = require('geojson-utils');
+var _ = require('lodash-node');
 
 exports.saveCrumble = function (data) {
 	var deferred = Q.defer();
@@ -14,13 +16,49 @@ exports.saveCrumble = function (data) {
 		return deferred.promise;
 	}
 
-	var crumble = crumbleModel.create(data);
-	crumbleModel.save(crumble, function (err) {
-		if (err) {
-			deferred.reject(err);
-		}
-		deferred.resolve();
+	var nowMinus5Minutes = new Date().add({
+		minutes: -5
 	});
+	crumbleModel.lastCrumbles(data.entity, nowMinus5Minutes, function (lastCrumbles) {
+		var crumble = crumbleModel.create(data);
+		var timeCopy = new Date(crumble.time.getTime());
+		if (lastCrumbles && lastCrumbles.length) {
+			var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
+				var distance = gju.pointDistance({
+					type: 'Point',
+					coordinates: lastCrumble.loc
+				}, {
+					type: 'Point',
+					coordinates: crumble.loc
+				});
+
+				return distance < 30;
+			});
+
+			if (lastCrumbleInRange) {
+				lastCrumbleInRange.endtime = timeCopy;
+				crumbleModel.updateEndtime(lastCrumbleInRange, function (err) {
+					if (err) {
+						deferred.reject(err);
+					}
+					deferred.resolve();
+				});
+				return;
+			}
+		}
+
+		crumble.endtime = timeCopy;
+		crumble.endtime.add({
+			minutes: 5
+		});
+
+		crumbleModel.save(crumble, function (err) {
+			if (err) {
+				deferred.reject(err);
+			}
+			deferred.resolve();
+		});
+	}, deferred.reject);
 
 	return deferred.promise;
 };
@@ -32,9 +70,11 @@ exports.getTodaysCrumbles = function (data) {
 		return deferred.promise;
 	}
 
+	var today = Date.UTCtoday();
+
 	crumbleModel.find({
 		entity: data.entity,
-		date: Date.today()
+		date: today
 	}, function (err, result) {
 		if (err) {
 			deferred.reject(err);
@@ -64,6 +104,7 @@ exports.getLast10Crumbles = function () {
 				entity: 1,
 				details: 1,
 				time: '$crumbles.time',
+				endtime: '$crumbles.endtime',
 				loc: '$crumbles.loc'
 			}
 		}, {
@@ -125,12 +166,24 @@ exports.getLastLocations = function () {
 				time: {
 					$first: '$crumbles.time'
 				},
+				endtime: {
+					$first: '$crumbles.endtime'
+				},
 				loc: {
 					$first: '$crumbles.loc'
 				},
 				details: {
 					$first: '$details'
 				}
+			}
+		}, {
+			$project: {
+				_id: 0,
+				entity: '$_id',
+				time: 1,
+				endtime: 1,
+				loc: 1,
+				details: 1
 			}
 		}],
 		function (err, result) {
