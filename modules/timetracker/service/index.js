@@ -37,6 +37,7 @@ exports.saveCrumble = function (data) {
 
 			if (lastCrumbleInRange) {
 				lastCrumbleInRange.endtime = timeCopy;
+				lastCrumbleInRange.duration = lastCrumbleInRange.endtime.getTime() - lastCrumbleInRange.starttime.getTime();
 				crumbleModel.updateEndtime(lastCrumbleInRange, function (err) {
 					if (err) {
 						deferred.reject(err);
@@ -51,6 +52,7 @@ exports.saveCrumble = function (data) {
 		crumble.endtime.add({
 			minutes: 5
 		});
+		crumble.duration = crumble.endtime.getTime() - crumble.starttime.getTime();
 
 		crumbleModel.save(crumble, function (err) {
 			if (err) {

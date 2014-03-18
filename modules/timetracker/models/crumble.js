@@ -16,7 +16,8 @@ var crumbleSchema = new Schema({
 		},
 		starttime: Date,
 		endtime: Date,
-		counter: Number
+		counter: Number,
+		duration: Number
 	}]
 });
 
@@ -32,7 +33,8 @@ exports.save = function (crumbleData, callback) {
 				loc: crumbleData.loc,
 				starttime: crumbleData.starttime,
 				endtime: crumbleData.endtime,
-				counter: crumbleData.counter
+				counter: crumbleData.counter,
+				duration: crumbleData.duration
 			}
 		},
 		$set: {
@@ -55,7 +57,8 @@ exports.create = function (data) {
 		date: today,
 		loc: data.loc,
 		starttime: now,
-		counter: 1
+		counter: 1,
+		duration: 0
 	};
 };
 
@@ -110,7 +113,8 @@ exports.updateEndtime = function (crumbleData, callback) {
 	}, {
 		$set: {
 			details: crumbleData.details,
-			'crumbles.$.endtime': crumbleData.endtime
+			'crumbles.$.endtime': crumbleData.endtime,
+			'crumbles.$.duration': crumbleData.duration
 		},
 		$inc: {
 			'crumbles.$.counter': 1

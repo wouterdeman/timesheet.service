@@ -47,6 +47,10 @@ describe('Timetracker crumbles', function () {
 			assert.equal(todayscrumblesResult.crumbles[0].counter, 1);
 			done();
 		});
+		it('and the duration should be set to 5 minutes', function (done) {
+			assert.equal(todayscrumblesResult.crumbles[0].duration, 300000);
+			done();
+		});
 	});
 	describe('when getting todays crumbles when there are none', function () {
 		clearDB();

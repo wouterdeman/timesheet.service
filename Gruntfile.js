@@ -12,7 +12,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['test/timetracker_detectsamelocation_test.js']
+                src: ['test/timetracker_save_test.js']
             },
             test: {
                 options: {
@@ -24,7 +24,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['migrations/combinecrumbles.js']
+                src: ['migrations/renametimetostarttime.js']
             }
         },
         allTests: 'test/**/*.js',
