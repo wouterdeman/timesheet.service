@@ -24,7 +24,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['migrations/renametimetostarttime.js']
+                src: ['migrations/setdurationcrumbles.js']
             }
         },
         allTests: 'test/**/*.js',
