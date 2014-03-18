@@ -113,13 +113,13 @@ var run = function (callback) {
         //console.log(crumble.crumbles[0].counter);
        //self.resume();
 
-        crumble.save(function (err) {
+        /*crumble.save(function (err) {
             if (err) {
                 throw err;
             } else {
                 self.resume();
             }
-        });
+        });*/
     }).on('error', function (err) {
         console.log(err);
     }).on('close', function () {

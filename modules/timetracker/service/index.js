@@ -21,7 +21,7 @@ exports.saveCrumble = function (data) {
 	});
 	crumbleModel.lastCrumbles(data.entity, nowMinus5Minutes, function (lastCrumbles) {
 		var crumble = crumbleModel.create(data);
-		var timeCopy = new Date(crumble.time.getTime());
+		var timeCopy = new Date(crumble.starttime.getTime());
 		if (lastCrumbles && lastCrumbles.length) {
 			var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
 				var distance = gju.pointDistance({
@@ -97,13 +97,13 @@ exports.getLast10Crumbles = function () {
 			$unwind: '$crumbles'
 		}, {
 			$sort: {
-				'crumbles.time': -1
+				'crumbles.endtime': -1
 			}
 		}, {
 			$project: {
 				entity: 1,
 				details: 1,
-				time: '$crumbles.time',
+				starttime: '$crumbles.starttime',
 				endtime: '$crumbles.endtime',
 				loc: '$crumbles.loc'
 			}
@@ -158,13 +158,13 @@ exports.getLastLocations = function () {
 			$unwind: '$crumbles'
 		}, {
 			$sort: {
-				'crumbles.time': -1
+				'crumbles.endtime': -1
 			}
 		}, {
 			$group: {
 				_id: '$entity',
-				time: {
-					$first: '$crumbles.time'
+				starttime: {
+					$first: '$crumbles.starttime'
 				},
 				endtime: {
 					$first: '$crumbles.endtime'
@@ -180,7 +180,7 @@ exports.getLastLocations = function () {
 			$project: {
 				_id: 0,
 				entity: '$_id',
-				time: 1,
+				starttime: 1,
 				endtime: 1,
 				loc: 1,
 				details: 1

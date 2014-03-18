@@ -14,7 +14,7 @@ var crumbleSchema = new Schema({
 			type: [Number],
 			index: '2d'
 		},
-		time: Date,
+		starttime: Date,
 		endtime: Date,
 		counter: Number
 	}]
@@ -30,7 +30,7 @@ exports.save = function (crumbleData, callback) {
 		$push: {
 			crumbles: {
 				loc: crumbleData.loc,
-				time: crumbleData.time,
+				starttime: crumbleData.starttime,
 				endtime: crumbleData.endtime,
 				counter: crumbleData.counter
 			}
@@ -54,7 +54,7 @@ exports.create = function (data) {
 		details: data.details,
 		date: today,
 		loc: data.loc,
-		time: now,
+		starttime: now,
 		counter: 1
 	};
 };
@@ -89,7 +89,7 @@ exports.lastCrumbles = function (entity, time, callback, failedCallback) {
 			$project: {
 				entity: 1,
 				details: 1,
-				time: '$crumbles.time',
+				starttime: '$crumbles.starttime',
 				endtime: '$crumbles.endtime',
 				loc: '$crumbles.loc',
 				crumbleId: '$crumbles._id'

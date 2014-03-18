@@ -65,7 +65,7 @@ exports.getLast10Entries = function () {
             return {
                 loc: crumble.loc,
                 user: crumble.details.firstname + ' ' + crumble.details.lastname,
-                time: crumble.time
+                time: crumble.endtime
             };
         });
         deferred.resolve(result);
@@ -102,7 +102,7 @@ exports.getLastLocations = function () {
             return {
                 loc: crumble.loc,
                 user: crumble.details.firstname + ' ' + crumble.details.lastname,
-                time: crumble.time
+                time: crumble.endtime
             };
         });
         deferred.resolve(result);
