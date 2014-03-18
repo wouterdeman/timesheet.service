@@ -81,7 +81,11 @@ var run = function (callback) {
 
                 if (within10Minutes && within60meters) {
                     subject.endtime = checkme.time;
-                    subject.counter++;
+                    if(subject.counter) {
+                        subject.counter++;
+                    } else {
+                        subject.counter = 2;
+                    }
                     crumble.crumbles.splice(j, 1);
                     i--;
                     j--;
@@ -89,7 +93,7 @@ var run = function (callback) {
             }
         }
 
-        /*var lengthafter = crumble.crumbles.length;
+       /* var lengthafter = crumble.crumbles.length;
 
         console.log('before: ' + lengthbefore);
         console.log('after: ' + lengthafter);

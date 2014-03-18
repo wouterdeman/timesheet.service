@@ -72,18 +72,19 @@ exports.aggregate = function (aggregate, callback) {
 exports.lastCrumbles = function (entity, time, callback, failedCallback) {
 	Crumble.aggregate(
 		[{
+			$unwind: '$crumbles'
+		},
+		{
 			$sort: {
 				'crumbles.endtime': -1
 			}
 		}, {
 			$match: {
-				'entity': entity,
+				'entity': mongoose.Types.ObjectId('' + entity),
 				'crumbles.endtime': {
 					$gte: time
 				}
 			}
-		}, {
-			$unwind: '$crumbles'
 		}, {
 			$project: {
 				entity: 1,
@@ -109,10 +110,10 @@ exports.updateEndtime = function (crumbleData, callback) {
 	}, {
 		$set: {
 			details: crumbleData.details,
-			'crumbles.0.endtime': crumbleData.endtime
+			'crumbles.$.endtime': crumbleData.endtime
 		},
 		$inc: {
-			'crumbles.0.counter': 1
+			'crumbles.$.counter': 1
 		}
 	}, function (err) {
 		callback(err);
