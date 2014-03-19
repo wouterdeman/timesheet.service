@@ -87,8 +87,8 @@ exports.getTotalCountOfEntries = function () {
 exports.getTotalAmountOfTrackedMinutes = function () {
     var deferred = Q.defer();
 
-    TimeTracker.getTotalCountOfCrumbles().then(function (count) {
-        deferred.resolve(count * 5);
+    TimeTracker.getTotalTrackedTime().then(function (duration) {
+        deferred.resolve(duration / 1000 / 60);
     }).fail(deferred.reject);
 
     return deferred.promise;

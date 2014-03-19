@@ -132,7 +132,7 @@ exports.getTotalCountOfCrumbles = function () {
 			$group: {
 				_id: null,
 				count: {
-					$sum: 1
+					$sum: '$crumbles.counter'
 				}
 			}
 		}, {
@@ -146,6 +146,36 @@ exports.getTotalCountOfCrumbles = function () {
 				deferred.reject(err);
 			} else {
 				deferred.resolve(result[0].count);
+			}
+		});
+
+	return deferred.promise;
+};
+
+exports.getTotalTrackedTime = function () {
+	var deferred = Q.defer();
+
+	crumbleModel.aggregate(
+		[{
+			$unwind: '$crumbles'
+		}, {
+			$group: {
+				_id: null,
+				duration: {
+					$sum: '$crumbles.duration'
+				}
+			}
+		}, {
+			$project: {
+				_id: 0,
+				duration: 1
+			}
+		}],
+		function (err, result) {
+			if (err || !result) {
+				deferred.reject(err);
+			} else {
+				deferred.resolve(result[0].duration);
 			}
 		});
 
