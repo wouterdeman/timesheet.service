@@ -17,7 +17,9 @@ var crumbleSchema = new Schema({
 		starttime: Date,
 		endtime: Date,
 		counter: Number,
-		duration: Number
+		duration: Number,
+		object: String,
+		objectdetails: Schema.Types.Mixed
 	}]
 });
 
@@ -34,7 +36,9 @@ exports.save = function (crumbleData, callback) {
 				starttime: crumbleData.starttime,
 				endtime: crumbleData.endtime,
 				counter: crumbleData.counter,
-				duration: crumbleData.duration
+				duration: crumbleData.duration,
+				object: crumbleData.object,
+				objectdetails: crumbleData.objectdetails
 			}
 		},
 		$set: {
@@ -58,7 +62,9 @@ exports.create = function (data) {
 		loc: data.loc,
 		starttime: now,
 		counter: 1,
-		duration: 0
+		duration: 0,
+		object: data.object,
+		objectdetails: data.objectdetails
 	};
 };
 
@@ -114,7 +120,9 @@ exports.updateEndtime = function (crumbleData, callback) {
 		$set: {
 			details: crumbleData.details,
 			'crumbles.$.endtime': crumbleData.endtime,
-			'crumbles.$.duration': crumbleData.duration
+			'crumbles.$.duration': crumbleData.duration,
+			'crumbles.$.object': crumbleData.object || '',
+			'crumbles.$.objectdetails': crumbleData.objectdetails || {}
 		},
 		$inc: {
 			'crumbles.$.counter': 1

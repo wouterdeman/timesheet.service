@@ -7,7 +7,7 @@ var TimeTracker = require('../modules/timetracker/service');
 var AuthStore = require('../modules/authstore/service');
 var _ = require('lodash-node');
 
-exports.saveCrumble = function (token, loc) {
+exports.saveCrumble = function (token, loc, objectid, objectdetails) {
     var deferred = Q.defer();
     AuthStore.verifyToken(token).then(function (entity) {
         if (!entity) {
@@ -27,7 +27,9 @@ exports.saveCrumble = function (token, loc) {
                     firstname: user.firstname,
                     lastname: user.lastname
                 },
-                loc: loc
+                loc: loc,
+                object: objectid,
+                objectdetails: objectdetails
             };
 
             TimeTracker.saveCrumble(data).then(deferred.resolve).fail(deferred.reject);

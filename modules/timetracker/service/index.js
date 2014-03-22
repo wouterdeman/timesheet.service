@@ -2,12 +2,59 @@
 
 var models = require('../models');
 var crumbleModel = models.crumbleModel;
+var objectTrackingModel = models.objectTrackingModel;
 var Q = require('q');
 require('date-utils');
 var validators = require('./validators');
 var crumbleValidator = validators.crumbleValidator;
 var gju = require('geojson-utils');
 var _ = require('lodash-node');
+
+var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCrumbles, timeCopy, objectTracking) {
+	if (lastCrumbles && lastCrumbles.length) {
+		var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
+			var distance = gju.pointDistance({
+				type: 'Point',
+				coordinates: lastCrumble.loc
+			}, {
+				type: 'Point',
+				coordinates: crumble.loc
+			});
+
+			return distance < 30;
+		});
+
+		if (lastCrumbleInRange) {
+			lastCrumbleInRange.endtime = timeCopy;
+			lastCrumbleInRange.duration = lastCrumbleInRange.endtime.getTime() - lastCrumbleInRange.starttime.getTime();
+			lastCrumbleInRange.object = objectTracking.object;
+			lastCrumbleInRange.objectdetails = objectTracking.details;
+			crumbleModel.updateEndtime(lastCrumbleInRange, function (err) {
+				if (err) {
+					deferred.reject(err);
+				}
+				deferred.resolve();
+			});
+			return true;
+		}
+	}
+	return false;
+};
+
+var saveNewCrumble = function (deferred, crumble, timeCopy) {
+	crumble.endtime = timeCopy;
+	crumble.endtime.add({
+		minutes: 5
+	});
+	crumble.duration = crumble.endtime.getTime() - crumble.starttime.getTime();
+
+	crumbleModel.save(crumble, function (err) {
+		if (err) {
+			deferred.reject(err);
+		}
+		deferred.resolve();
+	});
+};
 
 exports.saveCrumble = function (data) {
 	var deferred = Q.defer();
@@ -19,47 +66,29 @@ exports.saveCrumble = function (data) {
 	var nowMinus5Minutes = new Date().add({
 		minutes: -5
 	});
+
 	crumbleModel.lastCrumbles(data.entity, nowMinus5Minutes, function (lastCrumbles) {
 		var crumble = crumbleModel.create(data);
+		var objectTracking = objectTrackingModel.create(data);
 		var timeCopy = new Date(crumble.starttime.getTime());
-		if (lastCrumbles && lastCrumbles.length) {
-			var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
-				var distance = gju.pointDistance({
-					type: 'Point',
-					coordinates: lastCrumble.loc
-				}, {
-					type: 'Point',
-					coordinates: crumble.loc
-				});
 
-				return distance < 30;
-			});
+		var crumbleDataSaved = Q.defer();
 
-			if (lastCrumbleInRange) {
-				lastCrumbleInRange.endtime = timeCopy;
-				lastCrumbleInRange.duration = lastCrumbleInRange.endtime.getTime() - lastCrumbleInRange.starttime.getTime();
-				crumbleModel.updateEndtime(lastCrumbleInRange, function (err) {
-					if (err) {
-						deferred.reject(err);
-					}
-					deferred.resolve();
-				});
-				return;
-			}
+		if (!checkIfWeHaveCrumblesInRangeAndUpdate(crumbleDataSaved, crumble, lastCrumbles, timeCopy, objectTracking)) {
+			saveNewCrumble(crumbleDataSaved, crumble, timeCopy);
 		}
 
-		crumble.endtime = timeCopy;
-		crumble.endtime.add({
-			minutes: 5
-		});
-		crumble.duration = crumble.endtime.getTime() - crumble.starttime.getTime();
+		var crumbleDataSavedPromise = crumbleDataSaved.promise;
 
-		crumbleModel.save(crumble, function (err) {
-			if (err) {
-				deferred.reject(err);
-			}
-			deferred.resolve();
-		});
+		crumbleDataSavedPromise.then(function () {
+			objectTrackingModel.save(objectTracking, function (err) {
+				if (err) {
+					deferred.reject(err);
+				}
+				deferred.resolve();
+			});
+		}).fail(deferred.reject);
+
 	}, deferred.reject);
 
 	return deferred.promise;
