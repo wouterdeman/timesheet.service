@@ -20,7 +20,8 @@ exports.save = function (objectTrackingData, callback) {
         object: objectTrackingData.object
     }, {
         $set: {
-            details: objectTrackingData.details
+            details: objectTrackingData.details,
+            lastmodified: objectTrackingData.lastmodified
         }
     }, {
         upsert: true
@@ -33,7 +34,8 @@ exports.create = function (data) {
     return {
         entity: data.entity,
         object: data.object,
-        details: data.objectdetails
+        details: data.objectdetails,
+        lastmodified: new Date()
     };
 };
 
