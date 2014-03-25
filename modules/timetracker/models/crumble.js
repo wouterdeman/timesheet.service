@@ -1,24 +1,25 @@
 'use strict';
 
-require('date-utils');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
+require('date-utils');
 
 var crumbleSchema = new Schema({
 	entity: ObjectId,
 	details: Schema.Types.Mixed,
-	date: {
-		type: Date
-	},
+	date: Date,
 	crumbles: [{
 		loc: {
 			type: [Number],
 			index: '2d'
 		},
-		time: {
-			type: Date
-		}
+		starttime: Date,
+		endtime: Date,
+		counter: Number,
+		duration: Number,
+		object: String,
+		objectdetails: Schema.Types.Mixed
 	}]
 });
 
@@ -32,7 +33,12 @@ exports.save = function (crumbleData, callback) {
 		$push: {
 			crumbles: {
 				loc: crumbleData.loc,
-				time: crumbleData.time
+				starttime: crumbleData.starttime,
+				endtime: crumbleData.endtime,
+				counter: crumbleData.counter,
+				duration: crumbleData.duration,
+				object: crumbleData.object,
+				objectdetails: crumbleData.objectdetails
 			}
 		},
 		$set: {
@@ -46,12 +52,19 @@ exports.save = function (crumbleData, callback) {
 };
 
 exports.create = function (data) {
+	var today = Date.UTCtoday();
+	var now = new Date();
+
 	return {
 		entity: data.entity,
 		details: data.details,
-		date: Date.today(),
+		date: today,
 		loc: data.loc,
-		time: new Date()
+		starttime: now,
+		counter: 1,
+		duration: 0,
+		object: data.object,
+		objectdetails: data.objectdetails
 	};
 };
 
@@ -63,4 +76,58 @@ exports.find = function (query, callback) {
 
 exports.aggregate = function (aggregate, callback) {
 	Crumble.aggregate(aggregate).exec(callback);
+};
+
+exports.lastCrumbles = function (entity, time, callback, failedCallback) {
+	Crumble.aggregate(
+		[{
+			$unwind: '$crumbles'
+		},
+		{
+			$sort: {
+				'crumbles.endtime': -1
+			}
+		}, {
+			$match: {
+				'entity': mongoose.Types.ObjectId('' + entity),
+				'crumbles.endtime': {
+					$gte: time
+				}
+			}
+		}, {
+			$project: {
+				entity: 1,
+				details: 1,
+				starttime: '$crumbles.starttime',
+				endtime: '$crumbles.endtime',
+				loc: '$crumbles.loc',
+				crumbleId: '$crumbles._id'
+			}
+		}]).exec(
+		function (err, result) {
+			if (err) {
+				failedCallback(err);
+			} else {
+				callback(result);
+			}
+		});
+};
+
+exports.updateEndtime = function (crumbleData, callback) {
+	Crumble.update({
+		'crumbles._id': mongoose.Types.ObjectId('' + crumbleData.crumbleId)
+	}, {
+		$set: {
+			details: crumbleData.details,
+			'crumbles.$.endtime': crumbleData.endtime,
+			'crumbles.$.duration': crumbleData.duration,
+			'crumbles.$.object': crumbleData.object || '',
+			'crumbles.$.objectdetails': crumbleData.objectdetails || {}
+		},
+		$inc: {
+			'crumbles.$.counter': 1
+		}
+	}, function (err) {
+		callback(err);
+	});
 };

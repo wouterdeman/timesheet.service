@@ -7,7 +7,7 @@ var TimeTracker = require('../modules/timetracker/service');
 var AuthStore = require('../modules/authstore/service');
 var _ = require('lodash-node');
 
-exports.saveCrumble = function (token, loc) {
+exports.saveCrumble = function (token, loc, objectid, objectdetails) {
     var deferred = Q.defer();
     AuthStore.verifyToken(token).then(function (entity) {
         if (!entity) {
@@ -27,7 +27,9 @@ exports.saveCrumble = function (token, loc) {
                     firstname: user.firstname,
                     lastname: user.lastname
                 },
-                loc: loc
+                loc: loc,
+                object: objectid,
+                objectdetails: objectdetails
             };
 
             TimeTracker.saveCrumble(data).then(deferred.resolve).fail(deferred.reject);
@@ -65,7 +67,7 @@ exports.getLast10Entries = function () {
             return {
                 loc: crumble.loc,
                 user: crumble.details.firstname + ' ' + crumble.details.lastname,
-                time: crumble.time
+                time: crumble.endtime
             };
         });
         deferred.resolve(result);
@@ -87,8 +89,8 @@ exports.getTotalCountOfEntries = function () {
 exports.getTotalAmountOfTrackedMinutes = function () {
     var deferred = Q.defer();
 
-    TimeTracker.getTotalCountOfCrumbles().then(function (count) {
-        deferred.resolve(count * 5);
+    TimeTracker.getTotalTrackedTime().then(function (duration) {
+        deferred.resolve(duration / 1000 / 60);
     }).fail(deferred.reject);
 
     return deferred.promise;
@@ -102,7 +104,7 @@ exports.getLastLocations = function () {
             return {
                 loc: crumble.loc,
                 user: crumble.details.firstname + ' ' + crumble.details.lastname,
-                time: crumble.time
+                time: crumble.endtime
             };
         });
         deferred.resolve(result);

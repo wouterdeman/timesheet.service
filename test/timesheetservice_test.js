@@ -57,7 +57,7 @@ describe('Timesheet service', function () {
             for (var i = 0; i < 20; i++) {
                 data.push({
                     token: 'bla',
-                    loc: [51.226956, 4.401744]
+                    loc: [51.226956 + i, 4.401744]
                 });
             }
 
@@ -84,7 +84,7 @@ describe('Timesheet service', function () {
             for (var i = 0; i < 23; i++) {
                 data.push({
                     token: 'bla',
-                    loc: [51.226956, 4.401744]
+                    loc: [51.226956 + i, 4.401744]
                 });
             }
 
@@ -110,7 +110,7 @@ describe('Timesheet service', function () {
             for (var i = 0; i < 4; i++) {
                 data.push({
                     token: 'bla',
-                    loc: [51.226956, 4.401744]
+                    loc: [51.226956 + i, 4.401744]
                 });
             }
 
@@ -131,7 +131,7 @@ describe('Timesheet service', function () {
     });
     describe('when retrieving the last location for all entities', function () {
         clearDB();
-        it('should save 2 crumbles without errors', function (done) {
+        it('should save our crumble without errors', function (done) {
             var data = [];
 
             data.push({

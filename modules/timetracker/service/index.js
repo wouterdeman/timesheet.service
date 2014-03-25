@@ -2,10 +2,59 @@
 
 var models = require('../models');
 var crumbleModel = models.crumbleModel;
+var objectTrackingModel = models.objectTrackingModel;
 var Q = require('q');
 require('date-utils');
 var validators = require('./validators');
 var crumbleValidator = validators.crumbleValidator;
+var gju = require('geojson-utils');
+var _ = require('lodash-node');
+
+var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCrumbles, timeCopy, objectTracking) {
+	if (lastCrumbles && lastCrumbles.length) {
+		var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
+			var distance = gju.pointDistance({
+				type: 'Point',
+				coordinates: lastCrumble.loc
+			}, {
+				type: 'Point',
+				coordinates: crumble.loc
+			});
+
+			return distance < 30;
+		});
+
+		if (lastCrumbleInRange) {
+			lastCrumbleInRange.endtime = timeCopy;
+			lastCrumbleInRange.duration = lastCrumbleInRange.endtime.getTime() - lastCrumbleInRange.starttime.getTime();
+			lastCrumbleInRange.object = objectTracking.object;
+			lastCrumbleInRange.objectdetails = objectTracking.details;
+			crumbleModel.updateEndtime(lastCrumbleInRange, function (err) {
+				if (err) {
+					deferred.reject(err);
+				}
+				deferred.resolve();
+			});
+			return true;
+		}
+	}
+	return false;
+};
+
+var saveNewCrumble = function (deferred, crumble, timeCopy) {
+	crumble.endtime = timeCopy;
+	crumble.endtime.add({
+		minutes: 5
+	});
+	crumble.duration = crumble.endtime.getTime() - crumble.starttime.getTime();
+
+	crumbleModel.save(crumble, function (err) {
+		if (err) {
+			deferred.reject(err);
+		}
+		deferred.resolve();
+	});
+};
 
 exports.saveCrumble = function (data) {
 	var deferred = Q.defer();
@@ -14,13 +63,33 @@ exports.saveCrumble = function (data) {
 		return deferred.promise;
 	}
 
-	var crumble = crumbleModel.create(data);
-	crumbleModel.save(crumble, function (err) {
-		if (err) {
-			deferred.reject(err);
-		}
-		deferred.resolve();
+	var nowMinus5Minutes = new Date().add({
+		minutes: -5
 	});
+
+	crumbleModel.lastCrumbles(data.entity, nowMinus5Minutes, function (lastCrumbles) {
+		var crumble = crumbleModel.create(data);
+		var objectTracking = objectTrackingModel.create(data);
+		var timeCopy = new Date(crumble.starttime.getTime());
+
+		var crumbleDataSaved = Q.defer();
+
+		if (!checkIfWeHaveCrumblesInRangeAndUpdate(crumbleDataSaved, crumble, lastCrumbles, timeCopy, objectTracking)) {
+			saveNewCrumble(crumbleDataSaved, crumble, timeCopy);
+		}
+
+		var crumbleDataSavedPromise = crumbleDataSaved.promise;
+
+		crumbleDataSavedPromise.then(function () {
+			objectTrackingModel.save(objectTracking, function (err) {
+				if (err) {
+					deferred.reject(err);
+				}
+				deferred.resolve();
+			});
+		}).fail(deferred.reject);
+
+	}, deferred.reject);
 
 	return deferred.promise;
 };
@@ -32,9 +101,11 @@ exports.getTodaysCrumbles = function (data) {
 		return deferred.promise;
 	}
 
+	var today = Date.UTCtoday();
+
 	crumbleModel.find({
 		entity: data.entity,
-		date: Date.today()
+		date: today
 	}, function (err, result) {
 		if (err) {
 			deferred.reject(err);
@@ -57,13 +128,14 @@ exports.getLast10Crumbles = function () {
 			$unwind: '$crumbles'
 		}, {
 			$sort: {
-				'crumbles.time': -1
+				'crumbles.endtime': -1
 			}
 		}, {
 			$project: {
 				entity: 1,
 				details: 1,
-				time: '$crumbles.time',
+				starttime: '$crumbles.starttime',
+				endtime: '$crumbles.endtime',
 				loc: '$crumbles.loc'
 			}
 		}, {
@@ -89,7 +161,7 @@ exports.getTotalCountOfCrumbles = function () {
 			$group: {
 				_id: null,
 				count: {
-					$sum: 1
+					$sum: '$crumbles.counter'
 				}
 			}
 		}, {
@@ -109,6 +181,36 @@ exports.getTotalCountOfCrumbles = function () {
 	return deferred.promise;
 };
 
+exports.getTotalTrackedTime = function () {
+	var deferred = Q.defer();
+
+	crumbleModel.aggregate(
+		[{
+			$unwind: '$crumbles'
+		}, {
+			$group: {
+				_id: null,
+				duration: {
+					$sum: '$crumbles.duration'
+				}
+			}
+		}, {
+			$project: {
+				_id: 0,
+				duration: 1
+			}
+		}],
+		function (err, result) {
+			if (err || !result) {
+				deferred.reject(err);
+			} else {
+				deferred.resolve(result[0].duration);
+			}
+		});
+
+	return deferred.promise;
+};
+
 exports.getLastLocations = function () {
 	var deferred = Q.defer();
 
@@ -117,13 +219,16 @@ exports.getLastLocations = function () {
 			$unwind: '$crumbles'
 		}, {
 			$sort: {
-				'crumbles.time': -1
+				'crumbles.endtime': -1
 			}
 		}, {
 			$group: {
 				_id: '$entity',
-				time: {
-					$first: '$crumbles.time'
+				starttime: {
+					$first: '$crumbles.starttime'
+				},
+				endtime: {
+					$first: '$crumbles.endtime'
 				},
 				loc: {
 					$first: '$crumbles.loc'
@@ -131,6 +236,15 @@ exports.getLastLocations = function () {
 				details: {
 					$first: '$details'
 				}
+			}
+		}, {
+			$project: {
+				_id: 0,
+				entity: '$_id',
+				starttime: 1,
+				endtime: 1,
+				loc: 1,
+				details: 1
 			}
 		}],
 		function (err, result) {

@@ -8,6 +8,12 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         mochaTest: {
+            specific: {
+                options: {
+                    reporter: 'spec'
+                },
+                src: ['test/timetracker_objectracking_test.js']
+            },
             test: {
                 options: {
                     reporter: 'spec'
@@ -18,7 +24,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['migrations/migrateentitydetails.js']
+                src: ['migrations/setdurationcrumbles.js']
             }
         },
         allTests: 'test/**/*.js',
@@ -299,6 +305,9 @@ module.exports = function (grunt) {
 
     // Test task.
     grunt.registerTask('test', ['jshint', 'mochaTest:test', 'watch:test']);
+
+    // Test specific task
+    grunt.registerTask('testspecific', ['jshint', 'mochaTest:specific']);
 
     // Migrate task.
     grunt.registerTask('migrate', ['mochaTest:migrate']);
