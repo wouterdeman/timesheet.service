@@ -12,7 +12,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['test/timetracker_detectzoneandactivity_test.js']
+                src: ['test/timesheetservice_mapsshowcase.js']
             },
             test: {
                 options: {

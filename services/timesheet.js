@@ -238,3 +238,12 @@ exports.getCustomers = function (token) {
 
     return deferred.promise;
 };
+
+exports.getMapsShowCase = function () {
+    var deferred = Q.defer();
+
+    TimeTracker.getMapsShowCase().then(function (showCaseData) {
+        deferred.resolve(showCaseData);
+    }).fail(deferred.reject);
+    return deferred.promise;
+};

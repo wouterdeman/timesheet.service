@@ -90,9 +90,9 @@ var run = function (callback) {
 
         var lengthafter = crumble.crumbles.length;
 
-        console.log('before: ' + lengthbefore);
+        /*console.log('before: ' + lengthbefore);
         console.log('after: ' + lengthafter);
-        console.log('******************');
+        console.log('******************');*/
 
         /*if (crumble.date !== 0) {
             console.log('hour diff in date: ' + crumble.date.getHours());
@@ -106,7 +106,7 @@ var run = function (callback) {
             console.log('===============================================');
         }*/
         //console.log(crumble.crumbles[0].counter);
-       self.resume();
+       //self.resume();
 
         /*crumble.save(function (err) {
             if (err) {

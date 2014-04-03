@@ -47,4 +47,15 @@ module.exports = function (app) {
 			res.json(false);
 		});
 	});
+
+	app.get('/dashboard/mapsshowcase', function (req, res) {
+		res.setHeader('Access-Control-Allow-Origin', '*');
+
+		timesheetService.getMapsShowCase().then(function (showcaseData) {
+			res.json(showcaseData);
+		}).fail(function (err) {
+			console.log(err);
+			res.json(false);
+		});
+	});
 };
