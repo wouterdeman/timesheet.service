@@ -1,41 +1,24 @@
 'use strict';
 
 module.exports = function (app) {
-	var models = require('../../models/');
-	var Customer = models.customerModel;
+	var services = require('../../services');
+	var TimesheetService = services.timesheetService;
 
-	app.get('/customer/generateTestData', function (req, res) {
-		Customer.deleteAll();
-		var testData = [{
-			name: 'SD',
-			loc: [51.226956, 4.401744]
+	app.post('/customers/all', function (req, res) {
+		if (!req.body.hasOwnProperty('token')) {
+			res.statusCode = 400;
+			return res.send('Error 400: Post syntax incorrect.');
+		}
 
-		}, {
-			name: 'ACERTA',
-			loc: [50.882657, 4.713809]
-		}];
-		testData.forEach(function (testData) {
-			Customer.save(testData);
-		});
+		res.setHeader('Access-Control-Allow-Origin', '*');
 
-		res.json(testData);
-	});
+		var token = req.body.token;
 
-	app.get('/customer/getAll', function (req, res) {
-		Customer.getAll(function (err, customers) {
-			if (err) {
-				res.json(err);
-				return;
-			}
+		TimesheetService.getCustomers(token).then(function (customers) {
 			res.json(customers);
-		});
-	});
-
-	app.get('/customer/nearest', function (req, res) {
-		var point = req.query.loc;
-		var coords = [point.latitude, point.longitude];
-		Customer.getNearest(coords, function (err, customers) {
-			res.json(customers);
+		}).fail(function () {
+			res.statusCode = 401;
+			return res.send('Error 401: Invalid token.');
 		});
 	});
 };

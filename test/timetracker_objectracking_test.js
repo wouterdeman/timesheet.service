@@ -14,13 +14,14 @@ var describe = mocha.describe;
 
 var clearDB = function () {
     before(function (done) {
-        db.dropCollections(function () {
+        db.removeAllFromCollections(function () {
             done();
         });
     });
 };
 
 describe('Timetracker entity object tracking', function () {
+    this.timeout(3600);
     describe('when saving a crumble we should track the object that send us the information', function () {
         clearDB();
         it('should save without errors', function (done) {

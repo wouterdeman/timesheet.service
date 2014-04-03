@@ -14,7 +14,7 @@ var describe = mocha.describe;
 
 var clearDB = function () {
     before(function (done) {
-        db.dropCollections(function () {
+        db.removeAllFromCollections(function () {
             done();
         });
     });

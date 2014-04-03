@@ -16,13 +16,14 @@ var _ = require('lodash-node');
 
 var clearDB = function () {
     before(function (done) {
-        db.dropCollections(function () {
+        db.removeAllFromCollections(function () {
             done();
         });
     });
 };
 
 describe('Timetracker last locations', function () {
+    this.timeout(3600);
     describe('when retrieving the last location for all entities', function () {
         clearDB();
         it('should save 2 crumbles without errors', function (done) {

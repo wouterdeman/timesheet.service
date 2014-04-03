@@ -19,7 +19,11 @@ var crumbleSchema = new Schema({
 		counter: Number,
 		duration: Number,
 		object: String,
-		objectdetails: Schema.Types.Mixed
+		objectdetails: Schema.Types.Mixed,
+		zone: ObjectId,
+		zoneDetails: Schema.Types.Mixed,
+		activity: ObjectId,
+		activityDetails: Schema.Types.Mixed
 	}]
 });
 
@@ -38,7 +42,11 @@ exports.save = function (crumbleData, callback) {
 				counter: crumbleData.counter,
 				duration: crumbleData.duration,
 				object: crumbleData.object,
-				objectdetails: crumbleData.objectdetails
+				objectdetails: crumbleData.objectdetails,
+				zone: crumbleData.zone,
+				zoneDetails: crumbleData.zoneDetails,
+				activity: crumbleData.activity,
+				activityDetails: crumbleData.activityDetails
 			}
 		},
 		$set: {
@@ -62,9 +70,7 @@ exports.create = function (data) {
 		loc: data.loc,
 		starttime: now,
 		counter: 1,
-		duration: 0,
-		object: data.object,
-		objectdetails: data.objectdetails
+		duration: 0
 	};
 };
 

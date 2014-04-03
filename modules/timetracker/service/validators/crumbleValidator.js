@@ -1,10 +1,5 @@
 'use strict';
-
-var required = function (entity, field, message, results) {
-	if (!entity || !entity[field]) {
-		results.push(new Error(message));
-	}
-};
+var required = require('./validationHelper').required;
 
 exports.validateIncomingCrumble = function (data, deferred) {
 	var validationResults = [];

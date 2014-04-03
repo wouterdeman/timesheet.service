@@ -2,6 +2,7 @@
 
 var models = require('../models');
 var User = models.userModel;
+var Customer = models.customerModel;
 var Q = require('q');
 var TimeTracker = require('../modules/timetracker/service');
 var AuthStore = require('../modules/authstore/service');
@@ -108,6 +109,131 @@ exports.getLastLocations = function () {
             };
         });
         deferred.resolve(result);
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.getZone = function (token, loc) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+
+        TimeTracker.getZoneAndActivities({
+            entity: entity,
+            loc: loc
+        }).then(function (zone) {
+            deferred.resolve(zone);
+        }).fail(deferred.reject);
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.registerNewZone = function (token, data) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+
+        Customer.getById(data.customer, function (err, customer) {
+            if (err) {
+                deferred.reject(err);
+            }
+
+            TimeTracker.saveZone({
+                entity: entity,
+                loc: data.loc,
+                zoneDetails: {
+                    name: data.name,
+                    description: data.description
+                },
+                activity: customer._id, // TODO: should be customer...
+                activityDetails: customer
+            }).then(deferred.resolve).fail(deferred.reject);
+        });
+
+
+    }).fail(deferred.reject);
+    return deferred.promise;
+};
+
+exports.changeCustomer = function (token, data) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+
+        Customer.getById(data.customer, function (err, customer) {
+            if (err) {
+                deferred.reject(err);
+            }
+
+            TimeTracker.addActivityToZone({
+                entity: entity,
+                loc: data.loc,
+                activity: customer._id,
+                activityDetails: customer
+            }).then(deferred.resolve).fail(deferred.reject);
+        });
+
+
+    }).fail(deferred.reject);
+    return deferred.promise;
+};
+
+exports.saveCustomer = function (token, customer) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+        User.findById(entity, function (err, user) {
+            if (err && !user) {
+                deferred.reject(err);
+                return;
+            }
+
+            Customer.save(customer, function (err) {
+                if (err) {
+                    deferred.reject(err);
+                }
+                deferred.resolve();
+            });
+        });
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.getCustomers = function (token) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+        User.findById(entity, function (err, user) {
+            if (err && !user) {
+                deferred.reject(err);
+                return;
+            }
+
+            Customer.getAll(function (err, customers) {
+                if (err) {
+                    deferred.reject(err);
+                }
+                deferred.resolve(customers);
+            });
+        });
     }).fail(deferred.reject);
 
     return deferred.promise;

@@ -3,14 +3,16 @@
 var models = require('../models');
 var crumbleModel = models.crumbleModel;
 var objectTrackingModel = models.objectTrackingModel;
+var zoneModel = models.zoneModel;
 var Q = require('q');
 require('date-utils');
 var validators = require('./validators');
 var crumbleValidator = validators.crumbleValidator;
+var zoneValidator = validators.zoneValidator;
 var gju = require('geojson-utils');
 var _ = require('lodash-node');
 
-var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCrumbles, timeCopy, objectTracking) {
+var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCrumbles, timeCopy, objectTracking, zone) {
 	if (lastCrumbles && lastCrumbles.length) {
 		var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
 			var distance = gju.pointDistance({
@@ -29,6 +31,18 @@ var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCru
 			lastCrumbleInRange.duration = lastCrumbleInRange.endtime.getTime() - lastCrumbleInRange.starttime.getTime();
 			lastCrumbleInRange.object = objectTracking.object;
 			lastCrumbleInRange.objectdetails = objectTracking.details;
+
+			//TODO: check if we are updating for the same zone/activity/object
+
+			if (zone) {
+				lastCrumbleInRange.zone = zone._id;
+				lastCrumbleInRange.zoneDetails = zone.zoneDetails;
+				var activeActivity = _.find(zone.activities, {
+					'active': true
+				});
+				lastCrumbleInRange.activity = activeActivity._id;
+				lastCrumbleInRange.activityDetails = activeActivity.activityDetails;
+			}
 			crumbleModel.updateEndtime(lastCrumbleInRange, function (err) {
 				if (err) {
 					deferred.reject(err);
@@ -41,12 +55,23 @@ var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCru
 	return false;
 };
 
-var saveNewCrumble = function (deferred, crumble, timeCopy) {
+var saveNewCrumble = function (deferred, crumble, timeCopy, objectTracking, zone) {
 	crumble.endtime = timeCopy;
 	crumble.endtime.add({
 		minutes: 5
 	});
 	crumble.duration = crumble.endtime.getTime() - crumble.starttime.getTime();
+	crumble.object = objectTracking.object;
+	crumble.objectdetails = objectTracking.details;
+	if (zone) {
+		crumble.zone = zone._id;
+		crumble.zoneDetails = zone.zoneDetails;
+		var activeActivity = _.find(zone.activities, {
+			'active': true
+		});
+		crumble.activity = activeActivity._id;
+		crumble.activityDetails = activeActivity.activityDetails;
+	}
 
 	crumbleModel.save(crumble, function (err) {
 		if (err) {
@@ -63,32 +88,42 @@ exports.saveCrumble = function (data) {
 		return deferred.promise;
 	}
 
-	var nowMinus5Minutes = new Date().add({
-		minutes: -5
+	var nowMinus10Minutes = new Date().add({
+		minutes: -10
 	});
 
-	crumbleModel.lastCrumbles(data.entity, nowMinus5Minutes, function (lastCrumbles) {
+	crumbleModel.lastCrumbles(data.entity, nowMinus10Minutes, function (lastCrumbles) {
 		var crumble = crumbleModel.create(data);
 		var objectTracking = objectTrackingModel.create(data);
 		var timeCopy = new Date(crumble.starttime.getTime());
+		zoneModel.findZoneWithin30Meters(data, function (err, result) {
+			if (err) {
+				deferred.reject(err);
+				return;
+			}
 
-		var crumbleDataSaved = Q.defer();
+			var zone;
+			if (result.length) {
+				zone = result[0];
+			}
 
-		if (!checkIfWeHaveCrumblesInRangeAndUpdate(crumbleDataSaved, crumble, lastCrumbles, timeCopy, objectTracking)) {
-			saveNewCrumble(crumbleDataSaved, crumble, timeCopy);
-		}
+			var crumbleDataSaved = Q.defer();
 
-		var crumbleDataSavedPromise = crumbleDataSaved.promise;
+			if (!checkIfWeHaveCrumblesInRangeAndUpdate(crumbleDataSaved, crumble, lastCrumbles, timeCopy, objectTracking, zone)) {
+				saveNewCrumble(crumbleDataSaved, crumble, timeCopy, objectTracking, zone);
+			}
 
-		crumbleDataSavedPromise.then(function () {
-			objectTrackingModel.save(objectTracking, function (err) {
-				if (err) {
-					deferred.reject(err);
-				}
-				deferred.resolve();
-			});
-		}).fail(deferred.reject);
+			var crumbleDataSavedPromise = crumbleDataSaved.promise;
 
+			crumbleDataSavedPromise.then(function () {
+				objectTrackingModel.save(objectTracking, function (err) {
+					if (err) {
+						deferred.reject(err);
+					}
+					deferred.resolve();
+				});
+			}).fail(deferred.reject);
+		});
 	}, deferred.reject);
 
 	return deferred.promise;
@@ -254,5 +289,175 @@ exports.getLastLocations = function () {
 				deferred.resolve(result);
 			}
 		});
+	return deferred.promise;
+};
+
+exports.saveZone = function (data) {
+	var deferred = Q.defer();
+
+	if (zoneValidator.validateRequiredZoneData(data, deferred)) {
+		return deferred.promise;
+	}
+
+	var zone = zoneModel.create(data);
+
+	zoneModel.save(zone, function (err) {
+		if (err) {
+			deferred.reject(err);
+		}
+		deferred.resolve();
+	});
+
+	return deferred.promise;
+};
+
+exports.getActiveActivity = function (data) {
+	var deferred = Q.defer();
+
+	if (zoneValidator.hasEntity(data, deferred)) {
+		return deferred.promise;
+	}
+
+	zoneModel.findZoneWithin30Meters(data, function (err, result) {
+		if (err || !result) {
+			deferred.reject(err);
+			return;
+		}
+
+		var activeActivity;
+		if (result.length && result[0].activities.length) {
+			var zone = result[0];
+			activeActivity = _.find(zone.activities, function (activity) {
+				return activity.active;
+			});
+			activeActivity.zoneDetails = zone.zoneDetails;
+		}
+		deferred.resolve(activeActivity);
+	});
+
+	return deferred.promise;
+};
+
+exports.removeActivityFromZone = function (data) {
+	var deferred = Q.defer();
+
+	if (zoneValidator.validateRequiredZoneData(data, deferred)) {
+		return deferred.promise;
+	}
+
+	zoneModel.findZoneWithin30Meters(data, function (err, result) {
+		if (err || !result) {
+			deferred.reject(err);
+			return;
+		}
+		if (result.length) {
+			zoneModel.removeActivityFromZone({
+				zone: result[0]._id,
+				activity: data.activity
+			}, function (err) {
+				if (err) {
+					deferred.reject(err);
+					return;
+				}
+				deferred.resolve();
+			});
+		}
+	});
+
+	return deferred.promise;
+};
+
+exports.addActivityToZone = function (data) {
+	var deferred = Q.defer();
+
+	if (zoneValidator.validateRequiredZoneData(data, deferred)) {
+		return deferred.promise;
+	}
+
+	zoneModel.findZoneWithin30Meters(data, function (err, result) {
+		if (err || !result) {
+			deferred.reject(err);
+			return;
+		}
+
+		if (result.length) {
+			var zone = result[0];
+
+			var activityAlreadyExists = _.find(zone.activities, {
+				'activity': data.activity
+			});
+
+			if (activityAlreadyExists) {
+				zoneModel.setActivityActiveInZone(zone._id, data.activity, function (err) {
+					if (err) {
+						deferred.reject(err);
+						return;
+					}
+					deferred.resolve();
+				});
+			} else {
+				var newActivityAndZone = zoneModel.create(data);
+
+				zoneModel.addActivityToZone(zone._id, newActivityAndZone, function (err) {
+					if (err) {
+						deferred.reject(err);
+						return;
+					}
+					deferred.resolve();
+				});
+			}
+		}
+	});
+
+	return deferred.promise;
+};
+
+exports.setActivityActiveInZone = function (data) {
+	var deferred = Q.defer();
+
+	if (zoneValidator.validateRequiredZoneData(data, deferred)) {
+		return deferred.promise;
+	}
+
+	zoneModel.findZoneWithin30Meters(data, function (err, result) {
+		if (err || !result) {
+			deferred.reject(err);
+			return;
+		}
+
+		if (result.length) {
+			zoneModel.setActivityActiveInZone(result[0]._id, data.activity, function (err) {
+				if (err) {
+					deferred.reject(err);
+					return;
+				}
+				deferred.resolve();
+			});
+		}
+	});
+
+	return deferred.promise;
+};
+
+exports.getZoneAndActivities = function (data) {
+	var deferred = Q.defer();
+
+	if (zoneValidator.hasEntity(data, deferred)) {
+		return deferred.promise;
+	}
+
+	zoneModel.findZoneWithin30Meters(data, function (err, result) {
+		if (err || !result) {
+			deferred.reject(err);
+			return;
+		}
+
+		var zone;
+		if (result.length) {
+			zone = result[0];
+		}
+		deferred.resolve(zone);
+	});
+
 	return deferred.promise;
 };

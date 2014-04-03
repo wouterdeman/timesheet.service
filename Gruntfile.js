@@ -12,7 +12,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['test/timetracker_objectracking_test.js']
+                src: ['test/timetracker_detectzoneandactivity_test.js']
             },
             test: {
                 options: {
@@ -24,7 +24,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec'
                 },
-                src: ['migrations/setdurationcrumbles.js']
+                src: ['migrations/combinecrumbles.js']
             }
         },
         allTests: 'test/**/*.js',

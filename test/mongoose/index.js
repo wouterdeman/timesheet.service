@@ -3,7 +3,8 @@
 // Mongoose connect is called once by the app.js & connection established
 // No need to include it elsewhere
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://testable:bITe2014@troup.mongohq.com:10000/Testable');
+//mongoose.connect('mongodb://testable:bITe2014@troup.mongohq.com:10000/Testable');
+mongoose.connect('mongodb://localhost');
 
 var connection = mongoose.connection;
 connection.on('error', console.error.bind(console, 'connection error:'));
@@ -17,6 +18,19 @@ exports.dropCollections = function (callback) {
 	async.forEach(collections, function (collectionName, done) {
 		var collection = connection.collections[collectionName];
 		collection.drop(function (err) {
+			if (err && err.message !== 'ns not found') {
+				done(err);
+			}
+			done(null);
+		});
+	}, callback);
+};
+
+exports.removeAllFromCollections = function (callback) {
+	var collections = _.keys(connection.collections);
+	async.forEach(collections, function (collectionName, done) {
+		var collection = connection.collections[collectionName];
+		collection.remove({}, function (err) {
 			if (err && err.message !== 'ns not found') {
 				done(err);
 			}

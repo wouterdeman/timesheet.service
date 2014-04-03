@@ -28,11 +28,19 @@ var crumbleSchema = new Schema({
             type: [Number],
             index: '2d'
         },
-        time: Date,
+        starttime: Date,
         endtime: Date,
-        counter: Number
+        counter: Number,
+        duration: Number,
+        object: String,
+        objectdetails: Schema.Types.Mixed,
+        zone: ObjectId,
+        zoneDetails: Schema.Types.Mixed,
+        activity: ObjectId,
+        activityDetails: Schema.Types.Mixed
     }]
 });
+
 var Crumble = mongoose.model('crumble', crumbleSchema);
 
 var run = function (callback) {
@@ -51,20 +59,11 @@ var run = function (callback) {
                 continue;
             }
 
-            if (!subject.endtime) {
-                var copiedDate = new Date(subject.time.getTime());
-                copiedDate.add({
-                    minutes: 5
-                });
-                subject.endtime = copiedDate;
-                subject.counter = 1;
-            }
-
             for (var j = i + 1; j < crumble.crumbles.length; j++) {
                 var checkme = crumble.crumbles[j];
 
                 // time
-                var minutesBetween = subject.endtime.getMinutesBetween(checkme.time);
+                var minutesBetween = subject.endtime.getMinutesBetween(checkme.starttime);
                 var within10Minutes = minutesBetween <= 20;
 
                 // distance
@@ -80,12 +79,8 @@ var run = function (callback) {
                 //console.log('- distance: ' + distance + ' minutesbetween: ' + minutesBetween);
 
                 if (within10Minutes && within60meters) {
-                    subject.endtime = checkme.time;
-                    if(subject.counter) {
-                        subject.counter++;
-                    } else {
-                        subject.counter = 2;
-                    }
+                    subject.endtime = checkme.endtime;
+                    subject.counter += checkme.counter;
                     crumble.crumbles.splice(j, 1);
                     i--;
                     j--;
@@ -93,11 +88,11 @@ var run = function (callback) {
             }
         }
 
-       /* var lengthafter = crumble.crumbles.length;
+        var lengthafter = crumble.crumbles.length;
 
         console.log('before: ' + lengthbefore);
         console.log('after: ' + lengthafter);
-        console.log('******************');*/
+        console.log('******************');
 
         /*if (crumble.date !== 0) {
             console.log('hour diff in date: ' + crumble.date.getHours());
@@ -111,7 +106,7 @@ var run = function (callback) {
             console.log('===============================================');
         }*/
         //console.log(crumble.crumbles[0].counter);
-       //self.resume();
+       self.resume();
 
         /*crumble.save(function (err) {
             if (err) {

@@ -6,45 +6,24 @@ var Schema = mongoose.Schema;
 
 var customerSchema = new Schema({
 	name: String,
-	loc: {
-		type: [Number],
-		index: '2d'
-	},
-	updated: {
-		type: Date,
-		default: Date.now
-	}
+	street: String,
+	number: String,
+	postalcode: String,
+	city: String,
+	phone: String
 });
 
 var Customer = mongoose.model('customer', customerSchema);
 
-var deleteAll = function () {
-	Customer.remove().exec();
-};
-var save = function (cust) {
-	console.log('save entry time');
-
-	var newCustomer = new Customer(cust);
-	newCustomer.save();
+exports.save = function (customer, callback) {
+	var newCustomer = new Customer(customer);
+	newCustomer.save(callback);
 };
 
-var getAll = function (callback) {
-	Customer.find({}, function (err, custs) {
-		callback(err, custs);
-	});
-};
-var getNearest = function (coord, callback) {
-	Customer.find({
-		loc: {
-			$nearSphere: coord,
-			$maxDistance: 100000
-		}
-	}, function (err, cust) {
-		callback(err, cust);
-	});
+exports.getAll = function (callback) {
+	Customer.find().lean().exec(callback);
 };
 
-exports.save = save;
-exports.getAll = getAll;
-exports.deleteAll = deleteAll;
-exports.getNearest = getNearest;
+exports.getById = function (id, callback) {
+	Customer.findById(id).exec(callback);
+};
