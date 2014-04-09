@@ -25,5 +25,5 @@ exports.getAll = function (callback) {
 };
 
 exports.getById = function (id, callback) {
-	Customer.findById(id).exec(callback);
+	Customer.findById(id).lean().exec(callback);
 };

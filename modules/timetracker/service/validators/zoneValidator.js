@@ -27,3 +27,15 @@ exports.hasEntity = function (data, deferred) {
 
     return validationResults.length;
 };
+
+exports.validateRequiredZoneId = function (data, deferred) {
+    var validationResults = [];
+
+    required(data, 'zone', 'Zone is required.', validationResults);
+
+    if (validationResults.length) {
+        deferred.reject(validationResults);
+    }
+
+    return validationResults.length;
+};

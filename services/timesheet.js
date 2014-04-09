@@ -153,7 +153,7 @@ exports.registerNewZone = function (token, data) {
                     name: data.name,
                     description: data.description
                 },
-                activity: customer._id, // TODO: should be customer...
+                activity: customer._id,
                 activityDetails: customer
             }).then(deferred.resolve).fail(deferred.reject);
         });
@@ -185,6 +185,35 @@ exports.changeCustomer = function (token, data) {
         });
 
 
+    }).fail(deferred.reject);
+    return deferred.promise;
+};
+
+exports.updateZone = function (token, data) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+
+        Customer.getById(data.customer, function (err, customer) {
+            if (err) {
+                deferred.reject(err);
+            }
+
+            TimeTracker.updateZone({
+                entity: entity,
+                loc: data.loc,
+                zone: data.zone,
+                zoneDetails: {
+                    name: data.name,
+                    description: data.description
+                },
+                activity: customer._id,
+                activityDetails: customer
+            }).then(deferred.resolve).fail(deferred.reject);
+        });
     }).fail(deferred.reject);
     return deferred.promise;
 };

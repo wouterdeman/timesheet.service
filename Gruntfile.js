@@ -10,19 +10,22 @@ module.exports = function (grunt) {
         mochaTest: {
             specific: {
                 options: {
-                    reporter: 'spec'
+                    reporter: 'spec',
+                    ui: 'bdd'
                 },
-                src: ['test/timesheetservice_mapsshowcase.js']
+                src: ['test/timetracker_zones_update_test.js']
             },
             test: {
                 options: {
-                    reporter: 'spec'
+                    reporter: 'spec',
+                    ui: 'bdd'
                 },
                 src: ['<%= allTests %>']
             },
             migrate: {
                 options: {
-                    reporter: 'spec'
+                    reporter: 'spec',
+                    ui: 'bdd'
                 },
                 src: ['migrations/combinecrumbles.js']
             }

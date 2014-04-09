@@ -39,6 +39,7 @@ exports.aggregate = function (aggregate, callback) {
 
 exports.create = function (data) {
 	return {
+		_id: data.zone,
 		entity: data.entity,
 		loc: data.loc,
 		zoneDetails: data.zoneDetails,
@@ -67,6 +68,18 @@ exports.save = function (zoneData, callback) {
 		}
 	}, {
 		upsert: true
+	}, function (err) {
+		callback(err);
+	});
+};
+
+exports.updateZone = function (zoneData, callback) {
+	Zone.update({
+		_id: zoneData._id
+	}, {
+		$set: {
+			zoneDetails: zoneData.zoneDetails
+		}
 	}, function (err) {
 		callback(err);
 	});
@@ -118,7 +131,7 @@ exports.addActivityToZone = function (zone, activityData, callback) {
 			return;
 		}
 		Zone.update({
-			_id: zone,
+			_id: zone
 		}, {
 			$push: {
 				activities: {
@@ -155,6 +168,38 @@ exports.setActivityActiveInZone = function (zone, activity, callback) {
 				'activities.$.active': true,
 			}
 		}, function (err) {
+			callback(err);
+		});
+	});
+};
+
+exports.getById = function (id, callback) {
+	Zone.findById(id).exec(callback);
+};
+
+exports.updateAndSetActivityActiveInZone = function (zone, data, callback) {
+	Zone.update({
+		_id: zone,
+		'activities.active': true
+	}, {
+		$set: {
+			'activities.$.active': false,
+		}
+	}, function (err) {		
+		if (err) {
+			callback(err);
+			return;
+		}
+
+		Zone.update({
+			_id: zone,
+			'activities.activity': data.activity
+		}, {
+			$set: {
+				'activities.$.active': true,
+				'activities.$.activityDetails': data.activityDetails
+			}
+		}, function (err) {			
 			callback(err);
 		});
 	});
