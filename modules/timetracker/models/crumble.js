@@ -88,8 +88,7 @@ exports.lastCrumbles = function (entity, time, callback, failedCallback) {
 	Crumble.aggregate(
 		[{
 			$unwind: '$crumbles'
-		},
-		{
+		}, {
 			$sort: {
 				'crumbles.endtime': -1
 			}
@@ -136,4 +135,42 @@ exports.updateEndtime = function (crumbleData, callback) {
 	}, function (err) {
 		callback(err);
 	});
+};
+
+exports.getTrackedTimeForActivity = function (data, callback) {
+	Crumble.aggregate(
+		[{
+			$unwind: '$crumbles'
+		}, {
+			$match: {
+				'date': {
+					$gte: data.from,
+					$lte: data.to
+				},
+				'entity': mongoose.Types.ObjectId('' + data.entity),
+				'crumbles.activity': mongoose.Types.ObjectId('' + data.activity)
+			}
+		}, {
+			$group: {
+				_id: {
+					date: '$date'
+				},
+				date: {
+					$first: '$date'
+				},
+				duration: {
+					$sum: '$crumbles.duration'
+				}
+			}
+		}, {
+			$sort: {
+				'date': 1
+			}
+		}, {
+			$project: {
+				_id: 0,
+				date: 1,
+				duration: 1
+			}
+		}]).exec(callback);
 };

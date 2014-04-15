@@ -243,9 +243,9 @@ exports.saveCustomer = function (token, customer) {
     return deferred.promise;
 };
 
-exports.getCustomers = function (token) {
+exports.getCustomers = function () {
     var deferred = Q.defer();
-    AuthStore.verifyToken(token).then(function (entity) {
+    /*AuthStore.verifyToken(token).then(function (entity) {
         if (!entity) {
             deferred.reject();
             return;
@@ -254,16 +254,16 @@ exports.getCustomers = function (token) {
             if (err && !user) {
                 deferred.reject(err);
                 return;
-            }
+            }*/
 
-            Customer.getAll(function (err, customers) {
-                if (err) {
-                    deferred.reject(err);
-                }
-                deferred.resolve(customers);
-            });
-        });
-    }).fail(deferred.reject);
+    Customer.getAll(function (err, customers) {
+        if (err) {
+            deferred.reject(err);
+        }
+        deferred.resolve(customers);
+    });
+    //});
+    //}).fail(deferred.reject);
 
     return deferred.promise;
 };
@@ -274,5 +274,32 @@ exports.getMapsShowCase = function () {
     TimeTracker.getMapsShowCase().then(function (showCaseData) {
         deferred.resolve(showCaseData);
     }).fail(deferred.reject);
+    return deferred.promise;
+};
+
+exports.getTrackedTimeForCustomer = function (data) {
+    var deferred = Q.defer();
+    /*AuthStore.verifyToken(token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }*/
+    User.findByEmail(data.email, function (err, user) {
+        if (err && !user) {
+            deferred.reject(err);
+            return;
+        }
+
+        TimeTracker.getTrackedTimeForActivity({
+            entity: user._id,
+            activity: data.customer,
+            from: new Date(data.year, data.month - 1, 1),
+            to: new Date(data.year, data.month, 0)
+        }).then(function (trackedTimeForActivity) {
+            deferred.resolve(trackedTimeForActivity);
+        }).fail(deferred.reject);
+    });
+    //}).fail(deferred.reject);
+
     return deferred.promise;
 };

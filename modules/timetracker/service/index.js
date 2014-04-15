@@ -40,7 +40,7 @@ var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCru
 				var activeActivity = _.find(zone.activities, {
 					'active': true
 				});
-				lastCrumbleInRange.activity = activeActivity._id;
+				lastCrumbleInRange.activity = activeActivity.activity;
 				lastCrumbleInRange.activityDetails = activeActivity.activityDetails;
 			}
 			crumbleModel.updateEndtime(lastCrumbleInRange, function (err) {
@@ -69,7 +69,7 @@ var saveNewCrumble = function (deferred, crumble, timeCopy, objectTracking, zone
 		var activeActivity = _.find(zone.activities, {
 			'active': true
 		});
-		crumble.activity = activeActivity._id;
+		crumble.activity = activeActivity.activity;
 		crumble.activityDetails = activeActivity.activityDetails;
 	}
 
@@ -548,6 +548,20 @@ exports.updateZone = function (data) {
 				});
 			}
 		});
+	});
+
+	return deferred.promise;
+};
+
+exports.getTrackedTimeForActivity = function (data) {
+	var deferred = Q.defer();
+
+	crumbleModel.getTrackedTimeForActivity(data, function (err, result) {
+		if (err || !result) {
+			deferred.reject(err);
+		} else {
+			deferred.resolve(result);
+		}
 	});
 
 	return deferred.promise;

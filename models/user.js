@@ -29,3 +29,7 @@ exports.findById = function (id, callback) {
         '_id': mongoose.Types.ObjectId(id)
     }, callback);
 };
+
+exports.findByEmail = function (email, callback) {
+    User.find({ emails: email }).lean().exec(callback);
+};

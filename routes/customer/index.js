@@ -21,4 +21,31 @@ module.exports = function (app) {
 			return res.send('Error 401: Invalid token.');
 		});
 	});
+
+	app.get('/customers/all', function (req, res) {
+		res.setHeader('Access-Control-Allow-Origin', '*');
+
+		TimesheetService.getCustomers().then(function (customers) {
+			res.json(customers);
+		}).fail(function () {
+			res.statusCode = 401;
+			return res.send('Error 401: Invalid token.');
+		});
+	});
+
+	app.post('/customers/trackedTime', function (req, res) {
+		res.setHeader('Access-Control-Allow-Origin', '*');
+
+		TimesheetService.getTrackedTimeForCustomer({
+			email: req.body.email,
+			month: req.body.month,
+			year: req.body.year,
+			customer: req.body.customer
+		}).then(function (customers) {
+			res.json(customers);
+		}).fail(function () {
+			res.statusCode = 401;
+			return res.send('Error 401: Invalid token.');
+		});
+	});
 };

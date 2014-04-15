@@ -185,7 +185,7 @@ exports.updateAndSetActivityActiveInZone = function (zone, data, callback) {
 		$set: {
 			'activities.$.active': false,
 		}
-	}, function (err) {		
+	}, function (err) {
 		if (err) {
 			callback(err);
 			return;
@@ -199,7 +199,7 @@ exports.updateAndSetActivityActiveInZone = function (zone, data, callback) {
 				'activities.$.active': true,
 				'activities.$.activityDetails': data.activityDetails
 			}
-		}, function (err) {			
+		}, function (err) {
 			callback(err);
 		});
 	});
