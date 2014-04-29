@@ -293,8 +293,8 @@ exports.getTrackedTimeForCustomer = function (data) {
         TimeTracker.getTrackedTimeForActivity({
             entity: entity._id,
             activity: data.customer,
-            from: new Date(data.year, data.month - 1, 1),
-            to: new Date(data.year, data.month, 0)
+            from: new Date(data.year, data.month, 1),
+            to: new Date(data.year, data.month + 1, 0)
         }).then(function (trackedTimeForActivity) {
             deferred.resolve(trackedTimeForActivity);
         }).fail(deferred.reject);
