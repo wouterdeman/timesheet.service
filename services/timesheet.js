@@ -303,3 +303,52 @@ exports.getTrackedTimeForCustomer = function (data) {
 
     return deferred.promise;
 };
+
+exports.getTrackedTimeAndCustomer = function (data) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(data.token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+
+        TimeTracker.getTrackedTimeAndActivity({
+            entity: entity,
+            from: new Date(data.year, data.month, 1),
+            to: new Date(data.year, data.month + 1, 0)
+        }).then(function (trackedTimeAndActivity) {
+            var result = _.map(trackedTimeAndActivity, function (trackedTime) {
+                return {
+                    date: trackedTime.date,
+                    duration: trackedTime.duration,
+                    device: trackedTime.object,
+                    devicedetails: trackedTime.objectdetails,
+                    customer: trackedTime.activity
+                };
+            });
+
+            deferred.resolve(result);
+        }).fail(deferred.reject);
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.updateCustomerForTrackedTime = function (data) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(data.token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+
+        TimeTracker.updateCustomerForTrackedTime({
+            entity: entity,
+            date: new Date(Date.UTC(data.year, data.month, data.day)),
+            activity: data.customer,
+            object: data.device
+        }).then(deferred.resolve).fail(deferred.reject);
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};

@@ -174,3 +174,69 @@ exports.getTrackedTimeForActivity = function (data, callback) {
 			}
 		}]).exec(callback);
 };
+
+exports.getTrackedTimeAndActivity = function (data, callback) {
+	Crumble.aggregate(
+		[{
+			$unwind: '$crumbles'
+		}, {
+			$match: {
+				'date': {
+					$gte: data.from,
+					$lte: data.to
+				},
+				'entity': mongoose.Types.ObjectId('' + data.entity)
+			}
+		}, {
+			'$group': {
+				_id: {
+					date: '$date',
+					object: '$crumbles.object'
+				},
+				date: {
+					$first: '$date'
+				},
+				duration: {
+					$sum: '$crumbles.duration'
+				},
+				object: {
+					$first: '$crumbles.object'
+				},
+				objectdetails: {
+					$first: '$crumbles.objectdetails'
+				},
+				activity: {
+					$first: '$crumbles.activity'
+				}
+			}
+		}, {
+			$sort: {
+				'date': 1
+			}
+		}, {
+			$project: {
+				_id: 0,
+				date: 1,
+				duration: 1,
+				object: 1,
+				objectdetails: 1,
+				activity: 1
+			}
+		}]).exec(callback);
+};
+
+exports.updateCustomerForTrackedTime = function (data, callback) {
+	Crumble.update({
+		'entity': mongoose.Types.ObjectId('' + data.entity),
+		'date': data.date,
+		'crumbles.object': data.object
+	}, {
+		$set: {
+			'crumbles.$.activity': mongoose.Types.ObjectId('' + data.activity)
+		}
+	}, {
+		multi: true
+	}, function (err) {
+		callback(err);
+	});
+};

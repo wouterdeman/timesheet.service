@@ -566,3 +566,31 @@ exports.getTrackedTimeForActivity = function (data) {
 
 	return deferred.promise;
 };
+
+exports.getTrackedTimeAndActivity = function (data) {
+	var deferred = Q.defer();
+
+	crumbleModel.getTrackedTimeAndActivity(data, function (err, result) {
+		if (err || !result) {
+			deferred.reject(err);
+		} else {
+			deferred.resolve(result);
+		}
+	});
+
+	return deferred.promise;
+};
+
+exports.updateCustomerForTrackedTime = function (data) {
+	var deferred = Q.defer();
+
+	crumbleModel.updateCustomerForTrackedTime(data, function (err) {
+		if (err) {
+			deferred.reject(err);
+		} else {
+			deferred.resolve();
+		}
+	});
+
+	return deferred.promise;
+};
