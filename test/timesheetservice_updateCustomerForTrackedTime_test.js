@@ -161,4 +161,74 @@ describe('Timesheet service', function () {
             });
         });
     });
+
+    describe('when retrieving the tracked time and updating the customer for an unexisting device', function () {
+        clearDB();
+        it('should save crumbles without errors', function (done) {
+            var data = [];
+            data.push({
+                token: 'bla',
+                loc: [51.226956, 4.401744],
+                object: dummyObjectId,
+                objectdetails: {
+                    devicestate: 'active',
+                    devicetype: 'chrome',
+                    appversion: '2.0.5'
+                }
+            });
+
+            async.each(data, function (crumble, iterateCallback) {
+                timesheetService.saveCrumble(crumble.token, crumble.loc, crumble.object, crumble.objectdetails).then(iterateCallback);
+            }, function (err) {
+                if (!err) {
+                    done();
+                }
+            });
+        });
+        it('should return the total tracked time per day for a given month and with no customer', function (done) {
+            var getTrackedTimeAndCustomerData = {
+                token: 'bla',
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
+            };
+            timesheetService.getTrackedTimeAndCustomer(getTrackedTimeAndCustomerData).then(function (trackedTime) {
+                assert.equal(trackedTime.length, 1);
+                assert.ok(trackedTime[0].date);
+                assert.ok(trackedTime[0].duration);
+                assert.ok(trackedTime[0].device);
+                assert.ok(trackedTime[0].devicedetails);
+                assert.ok(!trackedTime[0].customer);
+                done();
+            });
+        });
+        it('should not update the tracked time data if the update query does not match', function (done) {
+            var data = {
+                token: 'bla',
+                day: new Date().getDate(),
+                month: new Date().getMonth(),
+                year: new Date().getFullYear(),
+                device: 'invalid device',
+                customer: dummyActivityId
+            };
+            timesheetService.updateCustomerForTrackedTime(data).then(function () {
+                done();
+            });
+        });
+        it('should return the total tracked time per day for a given month and without the customer', function (done) {
+            var getTrackedTimeAndCustomerData = {
+                token: 'bla',
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
+            };
+            timesheetService.getTrackedTimeAndCustomer(getTrackedTimeAndCustomerData).then(function (trackedTime) {
+                assert.equal(trackedTime.length, 1);
+                assert.ok(trackedTime[0].date);
+                assert.ok(trackedTime[0].duration);
+                assert.ok(trackedTime[0].device);
+                assert.ok(trackedTime[0].devicedetails);
+                assert.ok(!trackedTime[0].customer);
+                done();
+            });
+        });
+    });
 });
