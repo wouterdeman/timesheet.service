@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 require('date-utils');
+var _ = require('lodash-node');
 
 var crumbleSchema = new Schema({
 	entity: ObjectId,
@@ -191,7 +192,8 @@ exports.getTrackedTimeAndActivity = function (data, callback) {
 			'$group': {
 				_id: {
 					date: '$date',
-					object: '$crumbles.object'
+					object: '$crumbles.object',
+					activity: '$crumbles.activity'
 				},
 				date: {
 					$first: '$date'
@@ -226,17 +228,27 @@ exports.getTrackedTimeAndActivity = function (data, callback) {
 };
 
 exports.updateCustomerForTrackedTime = function (data, callback) {
-	Crumble.update({
+	Crumble.findOne({
 		'entity': mongoose.Types.ObjectId('' + data.entity),
-		'date': data.date,
-		'crumbles.object': data.object
-	}, {
-		$set: {
-			'crumbles.$.activity': mongoose.Types.ObjectId('' + data.activity)
+		'date': data.date
+	}, function (err, item) {
+		if (item) {
+			_.forEach(item.crumbles, function (crumble) {
+				if (crumble.object === data.object) {
+					Crumble.update({
+						'crumbles._id': mongoose.Types.ObjectId('' + crumble._id),
+					}, {
+						$set: {
+							'crumbles.$.activity': mongoose.Types.ObjectId('' + data.activity)
+						}
+					}, function (err) {
+						if (err) {
+							callback(err);
+						}
+					});
+				}
+			});
+			callback();
 		}
-	}, {
-		multi: true
-	}, function (err) {
-		callback(err);
 	});
 };

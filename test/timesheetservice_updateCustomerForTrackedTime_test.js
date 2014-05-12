@@ -231,4 +231,84 @@ describe('Timesheet service', function () {
             });
         });
     });
+
+    describe('when retrieving the tracked time and updating the customer having multiple crumbles', function () {
+        clearDB();
+        it('should save crumbles without errors', function (done) {
+            var data = [];
+            data.push({
+                token: 'bla',
+                loc: [51.226956, 4.401744],
+                object: dummyObjectId,
+                objectdetails: {
+                    devicestate: 'active',
+                    devicetype: 'chrome',
+                    appversion: '2.0.5'
+                }
+            });
+            data.push({
+                token: 'bla',
+                loc: [51.226956, 8.401744],
+                object: dummyObjectId,
+                objectdetails: {
+                    devicestate: 'active',
+                    devicetype: 'chrome',
+                    appversion: '2.0.5'
+                }
+            });
+
+            async.each(data, function (crumble, iterateCallback) {
+                timesheetService.saveCrumble(crumble.token, crumble.loc, crumble.object, crumble.objectdetails).then(iterateCallback);
+            }, function (err) {
+                if (!err) {
+                    done();
+                }
+            });
+        });
+        it('should return the total tracked time per day for a given month and with no customer', function (done) {
+            var getTrackedTimeAndCustomerData = {
+                token: 'bla',
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
+            };
+            timesheetService.getTrackedTimeAndCustomer(getTrackedTimeAndCustomerData).then(function (trackedTime) {
+                assert.equal(trackedTime.length, 1);
+                assert.ok(trackedTime[0].date);
+                assert.ok(trackedTime[0].duration);
+                assert.ok(trackedTime[0].device);
+                assert.ok(trackedTime[0].devicedetails);
+                assert.ok(!trackedTime[0].customer);
+                done();
+            });
+        });
+        it('should be able to update the customer for a given device and day', function (done) {
+            var data = {
+                token: 'bla',
+                day: new Date().getDate(),
+                month: new Date().getMonth(),
+                year: new Date().getFullYear(),
+                device: dummyObjectId,
+                customer: dummyActivityId
+            };
+            timesheetService.updateCustomerForTrackedTime(data).then(function () {
+                done();
+            });
+        });
+        it('should return the total tracked time per day for a given month and with the customer', function (done) {
+            var getTrackedTimeAndCustomerData = {
+                token: 'bla',
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
+            };
+            timesheetService.getTrackedTimeAndCustomer(getTrackedTimeAndCustomerData).then(function (trackedTime) {
+                assert.equal(trackedTime.length, 1);
+                assert.ok(trackedTime[0].date);
+                assert.ok(trackedTime[0].duration);
+                assert.ok(trackedTime[0].device);
+                assert.ok(trackedTime[0].devicedetails);
+                assert.ok(trackedTime[0].customer);
+                done();
+            });
+        });
+    });
 });
