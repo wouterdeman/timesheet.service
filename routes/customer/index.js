@@ -57,7 +57,7 @@ module.exports = function (app) {
 
 		res.setHeader('Access-Control-Allow-Origin', '*');
 
-		TimesheetService.getTrackedTimeForCustomer({
+		TimesheetService.getTrackedTimeAndCustomer({
 			token: req.body.token,
 			month: req.body.month,
 			year: req.body.year
