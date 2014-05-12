@@ -27,7 +27,7 @@ module.exports = function (grunt) {
                     reporter: 'spec',
                     ui: 'bdd'
                 },
-                src: ['migrations/combinecrumbles.js']
+                src: ['migrations/setdurationcrumbles.js']
             }
         },
         allTests: 'test/**/*.js',

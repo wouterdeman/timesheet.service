@@ -48,8 +48,15 @@ var run = function (callback) {
 
             if (!subject) {
                 continue;
-            }           
+            }
+
+            var durationBefore = subject.duration;
+
             subject.duration = subject.endtime.getTime() - subject.starttime.getTime();
+
+            if (durationBefore != subject.duration) {
+                console.log('old: ' + durationBefore + ' new: ' + subject.duration + ' ' + crumble.date + ' ' + crumble.details.firstname);
+            }
         }
 
         /*if (crumble.crumbles.length > 1) {
@@ -59,13 +66,13 @@ var run = function (callback) {
         //console.log(crumble.crumbles[0].counter);
         //self.resume();
 
-        crumble.save(function (err) {
+        /*crumble.save(function (err) {
             if (err) {
                 throw err;
             } else {
                 self.resume();
             }
-        });
+        });*/
     }).on('error', function (err) {
         console.log(err);
     }).on('close', function () {
