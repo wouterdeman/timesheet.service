@@ -95,25 +95,6 @@ describe('Timesheet service', function () {
     cleanupSandbox();
     describe('when saving crumbles and getting the the tracked customer time data', function () {
         clearDB();
-        it('should save a zone without errors', function (done) {
-            var data = {
-                entity: dummyEntityId,
-                loc: [51.226956, 4.401744],
-                zoneDetails: {
-                    name: 'Business-IT-Engineering bvba',
-                    street: 'Puttestraat',
-                    number: '105',
-                    city: 'Begijnendijk',
-                    postalcode: '3130',
-                    mobilephone: '+32 476 29 87 56'
-                },
-                activity: dummyActivityId,
-                activityDetails: {
-                    name: 'Working for bITe'
-                }
-            };
-            timetracker.saveZone(data).then(done);
-        });
         it('should save crumbles without errors', function (done) {
             var data = [];
             data.push({
@@ -135,6 +116,25 @@ describe('Timesheet service', function () {
                 }
             });
         });
+        it('should save a zone without errors', function (done) {
+            var data = {
+                entity: dummyEntityId,
+                loc: [51.226956, 4.401744],
+                zoneDetails: {
+                    name: 'Business-IT-Engineering bvba',
+                    street: 'Puttestraat',
+                    number: '105',
+                    city: 'Begijnendijk',
+                    postalcode: '3130',
+                    mobilephone: '+32 476 29 87 56'
+                },
+                activity: dummyActivityId,
+                activityDetails: {
+                    name: 'Working for bITe'
+                }
+            };
+            timetracker.saveZone(data).then(done);
+        });
         it('should return the total tracked time per day for a given month', function (done) {
             var getTrackedTimeAndCustomerData = {
                 token: 'bla',
@@ -147,7 +147,9 @@ describe('Timesheet service', function () {
                 assert.ok(trackedTime[0].duration);
                 assert.ok(trackedTime[0].device);
                 assert.ok(trackedTime[0].devicedetails);
-                assert.ok(trackedTime[0].customer);
+                assert.ok(!trackedTime[0].customer);
+                assert.ok(trackedTime[0].suggestedCustomer);
+                assert.ok(trackedTime[0].suggestedCustomerDetails);
                 done();
             });
         });

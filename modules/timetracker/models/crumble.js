@@ -209,6 +209,9 @@ exports.getTrackedTimeAndActivity = function (data, callback) {
 				},
 				activity: {
 					$first: '$crumbles.activity'
+				},
+				loc: {
+					$first: '$crumbles.loc'
 				}
 			}
 		}, {
@@ -222,7 +225,8 @@ exports.getTrackedTimeAndActivity = function (data, callback) {
 				duration: 1,
 				object: 1,
 				objectdetails: 1,
-				activity: 1
+				activity: 1,
+				loc: 1
 			}
 		}]).exec(callback);
 };

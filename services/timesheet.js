@@ -7,6 +7,7 @@ var Q = require('q');
 var TimeTracker = require('../modules/timetracker/service');
 var AuthStore = require('../modules/authstore/service');
 var _ = require('lodash-node');
+var async = require('async');
 
 exports.saveCrumble = function (token, loc, objectid, objectdetails) {
     var deferred = Q.defer();
@@ -317,17 +318,36 @@ exports.getTrackedTimeAndCustomer = function (data) {
             from: new Date(data.year, data.month, 1),
             to: new Date(data.year, data.month + 1, 0)
         }).then(function (trackedTimeAndActivity) {
-            var result = _.map(trackedTimeAndActivity, function (trackedTime) {
-                return {
-                    date: trackedTime.date,
-                    duration: trackedTime.duration,
-                    device: trackedTime.object,
-                    devicedetails: trackedTime.objectdetails,
-                    customer: trackedTime.activity
-                };
-            });
+            async.forEach(trackedTimeAndActivity, function (item, callback) {
+                if (!item.activity) {
+                    TimeTracker.getActiveActivity({
+                        entity: entity,
+                        loc: item.loc
+                    }).done(function (suggestion) {
+                        if (suggestion) {
+                            item.suggestedCustomer = suggestion.activity;
+                            item.suggestedCustomerDetails = suggestion.activityDetails;
+                        }
+                        callback();
+                    });
+                } else {
+                    callback();
+                }
+            }, function () {
+                var result = _.map(trackedTimeAndActivity, function (trackedTime) {
 
-            deferred.resolve(result);
+                    return {
+                        date: trackedTime.date,
+                        duration: trackedTime.duration,
+                        device: trackedTime.object,
+                        devicedetails: trackedTime.objectdetails,
+                        customer: trackedTime.activity,
+                        suggestedCustomer: trackedTime.suggestedCustomer,
+                        suggestedCustomerDetails: trackedTime.suggestedCustomerDetails
+                    };
+                });
+                deferred.resolve(result);
+            });
         }).fail(deferred.reject);
     }).fail(deferred.reject);
 
