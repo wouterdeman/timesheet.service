@@ -13,6 +13,7 @@ var AuthStore = require('../modules/authstore/service');
 var Q = require('q');
 var models = require('../models');
 var User = models.userModel;
+var Customer = models.customerModel;
 
 var mocha = require('mocha');
 var assert = require('assert');
@@ -71,6 +72,19 @@ var mockUserFindByEmail = function () {
     });
 };
 
+var mockGetCustomerById = function () {
+    before(function (done) {
+        sandbox.stub(Customer, 'getById', function (condition, callback) {
+            callback(null, {
+                _id: condition,
+                name: 'Working for bITe'
+
+            });
+        });
+        done();
+    });
+};
+
 var createSandbox = function () {
     before(function (done) {
         sandbox = sinon.sandbox.create();
@@ -91,6 +105,7 @@ describe('Timesheet service', function () {
     mockVerifyToken();
     mockUserFindById();
     mockUserFindByEmail();
+    mockGetCustomerById();
     cleanupSandbox();
     describe('when retrieving the tracked time and updating the customer', function () {
         clearDB();

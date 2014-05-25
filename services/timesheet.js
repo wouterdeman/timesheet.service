@@ -335,7 +335,6 @@ exports.getTrackedTimeAndCustomer = function (data) {
                 }
             }, function () {
                 var result = _.map(trackedTimeAndActivity, function (trackedTime) {
-
                     return {
                         date: trackedTime.date,
                         duration: trackedTime.duration,
@@ -343,7 +342,8 @@ exports.getTrackedTimeAndCustomer = function (data) {
                         devicedetails: trackedTime.objectdetails,
                         customer: trackedTime.activity,
                         suggestedCustomer: trackedTime.suggestedCustomer,
-                        suggestedCustomerDetails: trackedTime.suggestedCustomerDetails
+                        suggestedCustomerDetails: trackedTime.suggestedCustomerDetails,
+                        reference: trackedTime.reference
                     };
                 });
                 deferred.resolve(result);
@@ -362,11 +362,59 @@ exports.updateCustomerForTrackedTime = function (data) {
             return;
         }
 
-        TimeTracker.updateCustomerForTrackedTime({
+        Customer.getById(data.customer, function (err, customer) {
+            if (err) {
+                deferred.reject(err);
+            }
+            TimeTracker.updateActivityForTrackedTime({
+                entity: entity,
+                date: new Date(Date.UTC(data.year, data.month, data.day)),
+                activity: data.customer,
+                activityDetails: customer,
+                object: data.device
+            }).then(deferred.resolve).fail(deferred.reject);
+        });
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.copyReferencedTrackedTime = function (data) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(data.token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }
+
+        Customer.getById(data.customer, function (err, customer) {
+            if (err) {
+                deferred.reject(err);
+            }
+
+            TimeTracker.copyTrackedTimeByCrumbleReference({
+                entity: entity,
+                date: new Date(Date.UTC(data.year, data.month, data.day)),
+                activity: data.customer,
+                activityDetails: customer,
+                reference: data.reference
+            }).then(deferred.resolve).fail(deferred.reject);
+        });
+    }).fail(deferred.reject);
+
+    return deferred.promise;
+};
+
+exports.deleteReferencedTrackedTime = function (data) {
+    var deferred = Q.defer();
+    AuthStore.verifyToken(data.token).then(function (entity) {
+        if (!entity) {
+            deferred.reject();
+            return;
+        }        
+        TimeTracker.deleteTrackedTimeByCrumbleReference({
             entity: entity,
-            date: new Date(Date.UTC(data.year, data.month, data.day)),
-            activity: data.customer,
-            object: data.device
+            reference: data.reference
         }).then(deferred.resolve).fail(deferred.reject);
     }).fail(deferred.reject);
 

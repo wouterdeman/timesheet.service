@@ -91,4 +91,46 @@ module.exports = function (app) {
 			return res.send('Error 401: Invalid token.');
 		});
 	});
+
+	app.post('/customers/copyReferencedTrackedTime', function (req, res) {
+		if (!req.body.hasOwnProperty('token')) {
+			res.statusCode = 400;
+			return res.send('Error 400: Post syntax incorrect.');
+		}
+
+		res.setHeader('Access-Control-Allow-Origin', '*');
+
+		TimesheetService.copyReferencedTrackedTime({
+			token: req.body.token,
+			day: req.body.day,
+			month: req.body.month,
+			year: req.body.year,
+			customer: req.body.customer,
+			reference: req.body.reference
+		}).then(function () {
+			res.json(true);
+		}).fail(function () {
+			res.statusCode = 401;
+			return res.send('Error 401: Invalid token.');
+		});
+	});
+
+	app.post('/customers/deleteReferencedTrackedTime', function (req, res) {
+		if (!req.body.hasOwnProperty('token')) {
+			res.statusCode = 400;
+			return res.send('Error 400: Post syntax incorrect.');
+		}
+
+		res.setHeader('Access-Control-Allow-Origin', '*');
+
+		TimesheetService.deleteReferencedTrackedTime({
+			token: req.body.token,
+			reference: req.body.reference
+		}).then(function () {
+			res.json(true);
+		}).fail(function () {
+			res.statusCode = 401;
+			return res.send('Error 401: Invalid token.');
+		});
+	});
 };

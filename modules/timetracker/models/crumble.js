@@ -24,7 +24,8 @@ var crumbleSchema = new Schema({
 		zone: ObjectId,
 		zoneDetails: Schema.Types.Mixed,
 		activity: ObjectId,
-		activityDetails: Schema.Types.Mixed
+		activityDetails: Schema.Types.Mixed,
+		deleted: Boolean
 	}]
 });
 
@@ -193,7 +194,8 @@ exports.getTrackedTimeAndActivity = function (data, callback) {
 				_id: {
 					date: '$date',
 					object: '$crumbles.object',
-					activity: '$crumbles.activity'
+					activity: '$crumbles.activity',
+					deleted: '$crumbles.deleted'
 				},
 				date: {
 					$first: '$date'
@@ -212,6 +214,12 @@ exports.getTrackedTimeAndActivity = function (data, callback) {
 				},
 				loc: {
 					$first: '$crumbles.loc'
+				},
+				reference: {
+					$first: '$crumbles._id'
+				},
+				deleted: {
+					$first: '$crumbles.deleted'
 				}
 			}
 		}, {
@@ -226,12 +234,14 @@ exports.getTrackedTimeAndActivity = function (data, callback) {
 				object: 1,
 				objectdetails: 1,
 				activity: 1,
-				loc: 1
+				loc: 1,
+				reference: 1,
+				deleted: 1
 			}
 		}]).exec(callback);
 };
 
-exports.updateCustomerForTrackedTime = function (data, callback) {
+exports.updateActivityForTrackedTime = function (data, callback) {
 	Crumble.findOne({
 		'entity': mongoose.Types.ObjectId('' + data.entity),
 		'date': data.date
@@ -243,7 +253,41 @@ exports.updateCustomerForTrackedTime = function (data, callback) {
 						'crumbles._id': mongoose.Types.ObjectId('' + crumble._id),
 					}, {
 						$set: {
-							'crumbles.$.activity': mongoose.Types.ObjectId('' + data.activity)
+							'crumbles.$.activity': mongoose.Types.ObjectId('' + data.activity),
+							'crumbles.$.activityDetails': data.activityDetails
+						}
+					}, function (err) {
+						if (err) {
+							callback(err);
+						}
+					});
+				}
+			});
+			callback();
+		}
+	});
+};
+
+exports.getCrumbleById = function (id, callback) {
+	Crumble.findOne({
+		'crumbles._id': mongoose.Types.ObjectId('' + id)
+	}, callback);
+};
+
+exports.softDeleteCrumble = function (data, callback) {
+	Crumble.findOne({
+		'entity': mongoose.Types.ObjectId('' + data.entity),
+		'date': data.date
+	}, function (err, item) {
+		if (item) {			
+			_.forEach(item.crumbles, function (crumble) {
+				if (crumble.object === data.object && (data.activity + '') === (crumble.activity + '')) {
+
+					Crumble.update({
+						'crumbles._id': mongoose.Types.ObjectId('' + crumble._id),
+					}, {
+						$set: {
+							'crumbles.$.deleted': true,
 						}
 					}, function (err) {
 						if (err) {
