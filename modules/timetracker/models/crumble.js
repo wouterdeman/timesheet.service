@@ -160,6 +160,9 @@ exports.getTrackedTimeForActivity = function (data, callback) {
 				date: {
 					$first: '$date'
 				},
+				deleted: {
+					$first: '$crumbles.deleted'
+				},
 				duration: {
 					$sum: '$crumbles.duration'
 				}
@@ -172,7 +175,8 @@ exports.getTrackedTimeForActivity = function (data, callback) {
 			$project: {
 				_id: 0,
 				date: 1,
-				duration: 1
+				duration: 1,
+				deleted: 1
 			}
 		}]).exec(callback);
 };
@@ -279,7 +283,7 @@ exports.softDeleteCrumble = function (data, callback) {
 		'entity': mongoose.Types.ObjectId('' + data.entity),
 		'date': data.date
 	}, function (err, item) {
-		if (item) {			
+		if (item) {
 			_.forEach(item.crumbles, function (crumble) {
 				if (crumble.object === data.object && (data.activity + '') === (crumble.activity + '')) {
 

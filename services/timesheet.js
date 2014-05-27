@@ -411,7 +411,7 @@ exports.deleteReferencedTrackedTime = function (data) {
         if (!entity) {
             deferred.reject();
             return;
-        }        
+        }
         TimeTracker.deleteTrackedTimeByCrumbleReference({
             entity: entity,
             reference: data.reference

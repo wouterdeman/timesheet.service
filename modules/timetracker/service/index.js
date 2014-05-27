@@ -560,6 +560,9 @@ exports.getTrackedTimeForActivity = function (data) {
 		if (err || !result) {
 			deferred.reject(err);
 		} else {
+			result = _.filter(result, function (item) {
+				return !item.deleted;
+			});
 			deferred.resolve(result);
 		}
 	});
@@ -654,7 +657,7 @@ exports.deleteTrackedTimeByCrumbleReference = function (data) {
 				return (item._id + '') === (data.reference + '');
 			});
 
-			if (referencedCrumble) {				
+			if (referencedCrumble) {
 				crumbleModel.softDeleteCrumble({
 					entity: data.entity,
 					date: crumble.date,
