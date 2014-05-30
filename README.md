@@ -11,6 +11,17 @@ Required:
 1. Install node package => npm install
 2. Run dev server => grunt debug
 
+Debugging:
+
+First install node-inspector (web debugger): npm install node-inspector -g
+
+We have a number of npm scripts that you can use:
+1. npm run-script test (runs grunt test task in debug)
+2. npm run-script testspecific (runs grunt testspecific task in debug)
+3. npm run-script web (runs express server (port 3000) in debug)
+
+The web node-inspector should start in your default browser.
+
 ## Deployment guidelines
 
 Required:
