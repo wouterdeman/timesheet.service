@@ -10,7 +10,7 @@ module.exports = function (grunt) {
         mochaTest: {
             specific: {
                 options: {
-                    reporter: 'spec',
+                    reporter: 'landing',
                     ui: 'bdd'
                 },
                 src: ['test/timesheetservice_deletetrackedtime_test.js']
@@ -18,7 +18,7 @@ module.exports = function (grunt) {
             test: {
                 options: {
                     reporter: 'spec',
-                    ui: 'bdd'
+                    ui: 'bdd',
                 },
                 src: ['<%= allTests %>']
             },
@@ -82,7 +82,8 @@ module.exports = function (grunt) {
                 ],
                 tasks: ['express:dev'],
                 options: {
-                    nospawn: true // Without this option specified express won't be reloaded
+                    nospawn: true, // Without this option specified express won't be reloaded
+                    debug: true
                 }
             },
             test: {

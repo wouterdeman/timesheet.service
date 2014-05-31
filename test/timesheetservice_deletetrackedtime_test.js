@@ -22,6 +22,7 @@ var after = mocha.after;
 var it = mocha.it;
 var describe = mocha.describe;
 var sandbox;
+var expect = require('chai').expect;
 
 var clearDB = function () {
     before(function (done) {
@@ -149,16 +150,22 @@ describe('Timesheet service', function () {
                 month: new Date().getMonth(),
                 year: new Date().getFullYear()
             };
+            console.log(getTrackedTimeAndCustomerData);
             timesheetService.getTrackedTimeAndCustomer(getTrackedTimeAndCustomerData).then(function (trackedTime) {
-                assert.equal(trackedTime.length, 1);
-                assert.ok(trackedTime[0].date);
-                assert.ok(trackedTime[0].duration);
-                assert.ok(trackedTime[0].device);
-                assert.ok(trackedTime[0].devicedetails);
-                assert.ok(trackedTime[0].reference);
-                reference = trackedTime[0].reference;
-                assert.ok(!trackedTime[0].customer);
-                done();
+                try {
+                    expect(trackedTime).to.have.length(1);
+                    assert.equal(trackedTime.length, 1);
+                    assert.ok(trackedTime[0].date);
+                    assert.ok(trackedTime[0].duration);
+                    assert.ok(trackedTime[0].device);
+                    assert.ok(trackedTime[0].devicedetails);
+                    assert.ok(trackedTime[0].reference);
+                    reference = trackedTime[0].reference;
+                    assert.ok(!trackedTime[0].customer);
+                    done();
+                } catch (x) {
+                    done(x);
+                }
             });
         });
         it('should be able to delete a crumble using a reference crumble', function (done) {
