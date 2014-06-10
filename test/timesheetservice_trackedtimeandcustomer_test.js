@@ -138,8 +138,8 @@ describe('Timesheet service', function () {
         it('should return the total tracked time per day for a given month', function (done) {
             var getTrackedTimeAndCustomerData = {
                 token: 'bla',
-                month: 4,
-                year: 2014
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
             };
             timesheetService.getTrackedTimeAndCustomer(getTrackedTimeAndCustomerData).then(function (trackedTime) {
                 assert.equal(trackedTime.length, 1);

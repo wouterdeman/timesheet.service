@@ -131,8 +131,8 @@ describe('Timesheet service', function () {
         it('should return the total tracked time per day for a given month and email', function (done) {
             var getTrackedTimeForCustomerData = {
                 email: 'joske.vermeulen@gmail.com',
-                month: 4,
-                year: 2014,
+                month: new Date().getMonth(),
+                year: new Date().getFullYear(),
                 customer: '52fd4c431a142e5826f0b1e2'
             };
             timesheetService.getTrackedTimeForCustomer(getTrackedTimeForCustomerData).then(function (trackedTime) {
