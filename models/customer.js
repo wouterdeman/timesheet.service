@@ -15,15 +15,14 @@ var customerSchema = new Schema({
 
 var Customer = mongoose.model('customer', customerSchema);
 
-exports.save = function (customer, callback) {
-	var newCustomer = new Customer(customer);
-	newCustomer.save(callback);
+exports.save = function (customer) {
+	return Customer.create(customer);
 };
 
-exports.getAll = function (callback) {
-	Customer.find().lean().exec(callback);
+exports.getAll = function () {
+	return Customer.find().lean().exec();
 };
 
-exports.getById = function (id, callback) {
-	Customer.findById(id).lean().exec(callback);
+exports.getById = function (id) {
+	return Customer.findById(id).lean().exec();
 };

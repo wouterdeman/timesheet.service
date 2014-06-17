@@ -142,11 +142,7 @@ exports.registerNewZone = function (token, data) {
             return;
         }
 
-        Customer.getById(data.customer, function (err, customer) {
-            if (err) {
-                deferred.reject(err);
-            }
-
+        Customer.getById(data.customer).then(function (customer) {
             TimeTracker.saveZone({
                 entity: entity,
                 loc: data.loc,
@@ -157,7 +153,7 @@ exports.registerNewZone = function (token, data) {
                 activity: customer._id,
                 activityDetails: customer
             }).then(deferred.resolve).fail(deferred.reject);
-        });
+        }, deferred.reject);
 
 
     }).fail(deferred.reject);
@@ -172,20 +168,14 @@ exports.changeCustomer = function (token, data) {
             return;
         }
 
-        Customer.getById(data.customer, function (err, customer) {
-            if (err) {
-                deferred.reject(err);
-            }
-
+        Customer.getById(data.customer).then(function (customer) {
             TimeTracker.addActivityToZone({
                 entity: entity,
                 loc: data.loc,
                 activity: customer._id,
                 activityDetails: customer
             }).then(deferred.resolve).fail(deferred.reject);
-        });
-
-
+        }, deferred.reject);
     }).fail(deferred.reject);
     return deferred.promise;
 };
@@ -198,11 +188,7 @@ exports.updateZone = function (token, data) {
             return;
         }
 
-        Customer.getById(data.customer, function (err, customer) {
-            if (err) {
-                deferred.reject(err);
-            }
-
+        Customer.getById(data.customer).then(function (customer) {
             TimeTracker.updateZone({
                 entity: entity,
                 loc: data.loc,
@@ -214,7 +200,7 @@ exports.updateZone = function (token, data) {
                 activity: customer._id,
                 activityDetails: customer
             }).then(deferred.resolve).fail(deferred.reject);
-        });
+        }, deferred.reject);
     }).fail(deferred.reject);
     return deferred.promise;
 };
@@ -226,19 +212,13 @@ exports.saveCustomer = function (token, customer) {
             deferred.reject();
             return;
         }
-        User.findById(entity, function (err, user) {
-            if (err && !user) {
-                deferred.reject(err);
+        User.findById(entity).then(function (user) {
+            if (!user) {
+                deferred.reject();
                 return;
             }
-
-            Customer.save(customer, function (err) {
-                if (err) {
-                    deferred.reject(err);
-                }
-                deferred.resolve();
-            });
-        });
+            Customer.save(customer).then(deferred.resolve, deferred.reject);
+        }, deferred.reject);
     }).fail(deferred.reject);
 
     return deferred.promise;
@@ -257,12 +237,7 @@ exports.getCustomers = function () {
                 return;
             }*/
 
-    Customer.getAll(function (err, customers) {
-        if (err) {
-            deferred.reject(err);
-        }
-        deferred.resolve(customers);
-    });
+    Customer.getAll().then(deferred.resolve, deferred.reject);
     //});
     //}).fail(deferred.reject);
 
@@ -285,9 +260,9 @@ exports.getTrackedTimeForCustomer = function (data) {
             deferred.reject();
             return;
         }*/
-    User.findByEmail(data.email, function (err, user) {
-        if (err && !user) {
-            deferred.reject(err);
+    User.findByEmail(data.email).then(function (user) {
+        if (!user) {
+            deferred.reject();
             return;
         }
         var entity = user.length ? user[0] : user;
@@ -299,7 +274,7 @@ exports.getTrackedTimeForCustomer = function (data) {
         }).then(function (trackedTimeForActivity) {
             deferred.resolve(trackedTimeForActivity);
         }).fail(deferred.reject);
-    });
+    }, deferred.reject);
     //}).fail(deferred.reject);
 
     return deferred.promise;
@@ -362,10 +337,7 @@ exports.updateCustomerForTrackedTime = function (data) {
             return;
         }
 
-        Customer.getById(data.customer, function (err, customer) {
-            if (err) {
-                deferred.reject(err);
-            }
+        Customer.getById(data.customer).then(function (customer) {
             TimeTracker.updateActivityForTrackedTime({
                 entity: entity,
                 date: new Date(Date.UTC(data.year, data.month, data.day)),
@@ -373,7 +345,7 @@ exports.updateCustomerForTrackedTime = function (data) {
                 activityDetails: customer,
                 object: data.device
             }).then(deferred.resolve).fail(deferred.reject);
-        });
+        }, deferred.reject);
     }).fail(deferred.reject);
 
     return deferred.promise;
@@ -387,11 +359,7 @@ exports.copyReferencedTrackedTime = function (data) {
             return;
         }
 
-        Customer.getById(data.customer, function (err, customer) {
-            if (err) {
-                deferred.reject(err);
-            }
-
+        Customer.getById(data.customer).then(function (customer) {
             TimeTracker.copyTrackedTimeByCrumbleReference({
                 entity: entity,
                 date: new Date(Date.UTC(data.year, data.month, data.day)),
@@ -399,7 +367,7 @@ exports.copyReferencedTrackedTime = function (data) {
                 activityDetails: customer,
                 reference: data.reference
             }).then(deferred.resolve).fail(deferred.reject);
-        });
+        }, deferred.reject);
     }).fail(deferred.reject);
 
     return deferred.promise;

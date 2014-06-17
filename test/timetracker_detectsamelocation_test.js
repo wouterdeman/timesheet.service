@@ -76,7 +76,9 @@ describe('Timetracker detect same location', function () {
 
             async.each(data, function (crumble, iterateCallback) {
                 setTimeout(function () {
-                    timetracker.saveCrumble(crumble).then(iterateCallback);
+                    timetracker.saveCrumble(crumble).then(function () {
+                        iterateCallback();
+                    });
                 }, crumble.timeout);
             }, function (err) {
                 if (!err) {
@@ -146,7 +148,9 @@ describe('Timetracker detect same location', function () {
 
             async.each(data, function (crumble, iterateCallback) {
                 setTimeout(function () {
-                    timetracker.saveCrumble(crumble).then(iterateCallback);
+                    timetracker.saveCrumble(crumble).then(function () {
+                        iterateCallback();
+                    });
                 }, crumble.timeout);
             }, function (err) {
                 if (!err) {

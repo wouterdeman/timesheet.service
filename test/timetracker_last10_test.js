@@ -38,7 +38,9 @@ describe('Timetracker last10', function () {
             }
 
             async.each(data, function (crumble, iterateCallback) {
-                timetracker.saveCrumble(crumble).then(iterateCallback);
+                timetracker.saveCrumble(crumble).then(function () {
+                    iterateCallback();
+                });
             }, function (err) {
                 if (!err) {
                     done();

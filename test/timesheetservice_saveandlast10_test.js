@@ -87,7 +87,9 @@ describe('Timesheet service', function () {
             }
 
             async.each(data, function (crumble, iterateCallback) {
-                timesheetService.saveCrumble(crumble.token, crumble.loc).then(iterateCallback);
+                timesheetService.saveCrumble(crumble.token, crumble.loc).then(function () {
+                    iterateCallback();
+                });
             }, function (err) {
                 if (!err) {
                     done();

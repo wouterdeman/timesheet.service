@@ -50,12 +50,7 @@ exports.copyTrackedTimeByCrumbleReference = function (data) {
                     date: data.date
                 };
 
-                crumbleModel.save(copy, function (err) {
-                    if (err) {
-                        deferred.reject(err);
-                    }
-                    deferred.resolve();
-                });
+                crumbleModel.save(copy).then(deferred.resolve, deferred.reject);
             } else {
                 deferred.resolve();
             }

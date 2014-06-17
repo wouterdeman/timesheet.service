@@ -31,8 +31,8 @@ var crumbleSchema = new Schema({
 
 var Crumble = mongoose.model('crumble', crumbleSchema);
 
-exports.save = function (crumbleData, callback) {
-	Crumble.update({
+exports.save = function (crumbleData) {
+	return Crumble.update({
 		entity: crumbleData.entity,
 		date: crumbleData.date
 	}, {
@@ -56,9 +56,7 @@ exports.save = function (crumbleData, callback) {
 		}
 	}, {
 		upsert: true
-	}, function (err) {
-		callback(err);
-	});
+	}).exec();
 };
 
 exports.create = function (data) {
@@ -76,14 +74,16 @@ exports.create = function (data) {
 	};
 };
 
-exports.find = function (query, callback) {
-	Crumble.find(query, function (err, crumbles) {
-		callback(err, crumbles);
-	});
+exports.find = function (query) {
+	return Crumble.find(query).exec();
 };
 
-exports.aggregate = function (aggregate, callback) {
-	Crumble.aggregate(aggregate).exec(callback);
+exports.findOne = function (query) {
+	return Crumble.findOne(query).exec();
+};
+
+exports.aggregate = function (aggregate) {
+	return Crumble.aggregate(aggregate).exec();
 };
 
 exports.lastCrumbles = function (entity, time, callback, failedCallback) {
@@ -120,8 +120,8 @@ exports.lastCrumbles = function (entity, time, callback, failedCallback) {
 		});
 };
 
-exports.updateEndtime = function (crumbleData, callback) {
-	Crumble.update({
+exports.updateEndtime = function (crumbleData) {
+	return Crumble.update({
 		'crumbles._id': mongoose.Types.ObjectId('' + crumbleData.crumbleId)
 	}, {
 		$set: {
@@ -134,9 +134,7 @@ exports.updateEndtime = function (crumbleData, callback) {
 		$inc: {
 			'crumbles.$.counter': 1
 		}
-	}, function (err) {
-		callback(err);
-	});
+	}).exec();
 };
 
 exports.getTrackedTimeForActivity = function (data, callback) {

@@ -59,8 +59,8 @@ var mockUserFindById = function () {
 
 var mockUserFindByEmail = function () {
     before(function (done) {
-        sandbox.stub(User, 'findByEmail', function (condition, callback) {
-            callback(null, {
+        sandbox.stub(User, 'findByEmail', function () {
+            return new Q({
                 _id: dummyEntityId,
                 firstname: 'Joske',
                 lastname: 'Vermeulen',
@@ -121,7 +121,9 @@ describe('Timesheet service', function () {
             });
 
             async.each(data, function (crumble, iterateCallback) {
-                timesheetService.saveCrumble(crumble.token, crumble.loc).then(iterateCallback);
+                timesheetService.saveCrumble(crumble.token, crumble.loc).then(function () {
+                    iterateCallback();
+                });
             }, function (err) {
                 if (!err) {
                     done();

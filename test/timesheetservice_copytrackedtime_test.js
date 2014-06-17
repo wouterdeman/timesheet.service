@@ -75,11 +75,10 @@ var mockUserFindByEmail = function () {
 
 var mockGetCustomerById = function () {
     before(function (done) {
-        sandbox.stub(Customer, 'getById', function (condition, callback) {
-            callback(null, {
+        sandbox.stub(Customer, 'getById', function (condition) {
+            return new Q({
                 _id: condition,
                 name: 'Working for bITe'
-
             });
         });
         done();
@@ -136,7 +135,9 @@ describe('Timesheet service', function () {
             });
 
             async.each(data, function (crumble, iterateCallback) {
-                timesheetService.saveCrumble(crumble.token, crumble.loc, crumble.object, crumble.objectdetails).then(iterateCallback);
+                timesheetService.saveCrumble(crumble.token, crumble.loc, crumble.object, crumble.objectdetails).then(function () {
+                    iterateCallback();
+                });
             }, function (err) {
                 if (!err) {
                     done();

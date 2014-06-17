@@ -59,7 +59,9 @@ describe('Timetracker last locations', function () {
 
             async.each(data, function (crumble, iterateCallback) {
                 setTimeout(function () {
-                    timetracker.saveCrumble(crumble).then(iterateCallback);
+                    timetracker.saveCrumble(crumble).then(function () {
+                        iterateCallback();
+                    });
                 }, crumble.timeout);
             }, function (err) {
                 if (!err) {

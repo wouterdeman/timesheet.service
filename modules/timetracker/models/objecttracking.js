@@ -14,8 +14,8 @@ var objectTrackingSchema = new Schema({
 
 var ObjectTracking = mongoose.model('objecttracking', objectTrackingSchema);
 
-exports.save = function (objectTrackingData, callback) {
-    ObjectTracking.update({
+exports.save = function (objectTrackingData) {
+    return ObjectTracking.update({
         entity: objectTrackingData.entity,
         object: objectTrackingData.object
     }, {
@@ -25,9 +25,7 @@ exports.save = function (objectTrackingData, callback) {
         }
     }, {
         upsert: true
-    }, function (err) {
-        callback(err);
-    });
+    }).exec();
 };
 
 exports.create = function (data) {

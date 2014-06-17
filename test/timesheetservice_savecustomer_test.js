@@ -43,8 +43,8 @@ var mockVerifyToken = function () {
 
 var mockUserFindById = function () {
     before(function (done) {
-        sandbox.stub(User, 'findById', function (condition, callback) {
-            callback(null, {
+        sandbox.stub(User, 'findById', function () {
+            return new Q({
                 _id: dummyEntityId,
                 firstname: 'Joske',
                 lastname: 'Vermeulen',
@@ -89,7 +89,9 @@ describe('Timesheet service', function () {
             });
 
             async.each(data, function (customer, iterateCallback) {
-                timesheetService.saveCustomer(null, customer).then(iterateCallback);
+                timesheetService.saveCustomer(null, customer).then(function () {
+                    iterateCallback();
+                });
             }, function (err) {
                 if (!err) {
                     done();

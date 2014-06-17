@@ -14,21 +14,10 @@ exports.getTodaysCrumbles = function (data) {
         return deferred.promise;
     }
 
-    var today = Date.UTCtoday();
-
-    crumbleModel.find({
+    crumbleModel.findOne({
         entity: data.entity,
-        date: today
-    }, function (err, result) {
-        if (err) {
-            deferred.reject(err);
-        }
-        if (result[0]) {
-            deferred.resolve(result[0]);
-        } else {
-            deferred.resolve(null);
-        }
-    });
+        date: Date.UTCtoday()
+    }).then(deferred.resolve, deferred.reject);
 
     return deferred.promise;
 };
@@ -53,13 +42,7 @@ exports.getLast10Crumbles = function () {
             }
         }, {
             $limit: 10
-        }], function (err, result) {
-            if (err) {
-                deferred.reject(err);
-            } else {
-                deferred.resolve(result);
-            }
-        });
+        }]).then(deferred.resolve, deferred.reject);
 
     return deferred.promise;
 };
@@ -82,14 +65,9 @@ exports.getTotalCountOfCrumbles = function () {
                 _id: 0,
                 count: 1
             }
-        }],
-        function (err, result) {
-            if (err || !result) {
-                deferred.reject(err);
-            } else {
-                deferred.resolve(result[0].count);
-            }
-        });
+        }]).then(function (result) {
+            deferred.resolve(result[0].count);
+        }, deferred.reject);
 
     return deferred.promise;
 };
@@ -112,14 +90,9 @@ exports.getTotalTrackedTime = function () {
                 _id: 0,
                 duration: 1
             }
-        }],
-        function (err, result) {
-            if (err || !result) {
-                deferred.reject(err);
-            } else {
-                deferred.resolve(result[0].duration);
-            }
-        });
+        }]).then(function (result) {
+            deferred.resolve(result[0].duration);
+        }, deferred.reject);
 
     return deferred.promise;
 };
@@ -159,13 +132,7 @@ exports.getLastLocations = function () {
                 loc: 1,
                 details: 1
             }
-        }],
-        function (err, result) {
-            if (err || !result) {
-                deferred.reject(err);
-            } else {
-                deferred.resolve(result);
-            }
-        });
+        }]).then(deferred.resolve, deferred.reject);
+
     return deferred.promise;
 };

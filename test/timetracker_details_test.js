@@ -34,7 +34,9 @@ describe('Timetracker entity details', function () {
                 loc: [51.226956, 4.401744]
             };
 
-            timetracker.saveCrumble(data).then(done);
+            timetracker.saveCrumble(data).then(function () {
+                done();
+            });
         });
         var todayscrumbleResult;
         it('and we retrieve todays crumbles', function (done) {

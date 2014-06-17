@@ -58,7 +58,9 @@ describe('Timetracker detect zone and active activity', function () {
 
             async.each(data, function (crumble, iterateCallback) {
                 setTimeout(function () {
-                    timetracker.saveCrumble(crumble).then(iterateCallback);
+                    timetracker.saveCrumble(crumble).then(function () {
+                        iterateCallback();
+                    });
                 }, crumble.timeout);
             }, function (err) {
                 if (!err) {
@@ -103,7 +105,9 @@ describe('Timetracker detect zone and active activity', function () {
 
             async.each(data, function (crumble, iterateCallback) {
                 setTimeout(function () {
-                    timetracker.saveCrumble(crumble).then(iterateCallback);
+                    timetracker.saveCrumble(crumble).then(function () {
+                        iterateCallback();
+                    });
                 }, crumble.timeout);
             }, function (err) {
                 if (!err) {

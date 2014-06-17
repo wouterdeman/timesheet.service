@@ -2,8 +2,8 @@
 
 var models = require('../models');
 var crumbleModel = models.crumbleModel;
-var Q = require('q');
 require('date-utils');
+var Q = require('q');
 
 exports.getMapsShowCase = function () {
     var deferred = Q.defer();
@@ -35,13 +35,7 @@ exports.getMapsShowCase = function () {
                 duration: '$crumbles.duration',
                 counter: '$crumbles.counter'
             }
-        }],
-        function (err, result) {
-            if (err || !result) {
-                deferred.reject(err);
-            } else {
-                deferred.resolve(result);
-            }
-        });
+        }]).then(deferred.resolve, deferred.reject);
+
     return deferred.promise;
 };

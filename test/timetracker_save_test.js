@@ -29,7 +29,9 @@ describe('Timetracker crumbles', function () {
 				loc: [51.226956, 4.401744]
 			};
 
-			timetracker.saveCrumble(data).then(done);
+			timetracker.saveCrumble(data).then(function () {
+				done();
+			});
 		});
 		var todayscrumblesResult;
 		it('and we retrieve todays crumbles', function (done) {
@@ -76,10 +78,14 @@ describe('Timetracker crumbles', function () {
 			loc: [51.226956, 4.401744]
 		};
 		it('should save without errors', function (done) {
-			timetracker.saveCrumble(data).then(done);
+			timetracker.saveCrumble(data).then(function () {
+				done();
+			});
 		});
 		it('should again save without errors', function (done) {
-			timetracker.saveCrumble(data).then(done);
+			timetracker.saveCrumble(data).then(function () {
+				done();
+			});
 		});
 		var todayscrumblesResult;
 		it('and we retrieve todays crumbles', function (done) {
