@@ -83,7 +83,7 @@ module.exports = function (grunt) {
                 tasks: ['express:dev'],
                 options: {
                     nospawn: true, // Without this option specified express won't be reloaded                    
-                    debug: true
+                    debug: false
                 }
             },
             test: {

@@ -154,7 +154,7 @@ a:hover {
 /*------------------------------------*\
     $OTHER
 \*------------------------------------*/
-/* line 101, sass/ui/_typography.scss */
+/* line 102, sass/ui/_typography.scss */
 strong,
 .bold {
   font-weight: bold;
@@ -239,65 +239,65 @@ body {
   color: black;
 }
 
-/* line 32, sass/ui/_color.scss */
+/* line 33, sass/ui/_color.scss */
 .color-twitter,
 .hover-color-twitter:hover {
   color: #63cdf7;
 }
 
-/* line 35, sass/ui/_color.scss */
+/* line 36, sass/ui/_color.scss */
 .color-linkedin,
 .hover-color-linkedin:hover {
   color: #00659b;
 }
 
-/* line 38, sass/ui/_color.scss */
+/* line 39, sass/ui/_color.scss */
 .color-facebook,
 .hover-color-facebook:hover {
   color: #3b5895;
 }
 
-/* line 41, sass/ui/_color.scss */
+/* line 42, sass/ui/_color.scss */
 .color-google,
 .hover-color-google:hover {
   color: #ff0017;
 }
 
-/* line 44, sass/ui/_color.scss */
+/* line 45, sass/ui/_color.scss */
 .color-mail,
 .hover-color-mail:hover {
   color: #6cba16;
 }
 
-/* line 48, sass/ui/_color.scss */
+/* line 50, sass/ui/_color.scss */
 .color1,
 .hover-color1:hover,
 .hover-color1.active {
   color: #d70014 !important;
 }
 
-/* line 52, sass/ui/_color.scss */
+/* line 54, sass/ui/_color.scss */
 .color2,
 .hover-color2:hover,
 .hover-color2.active {
   color: #2f7dc4 !important;
 }
 
-/* line 56, sass/ui/_color.scss */
+/* line 58, sass/ui/_color.scss */
 .color3,
 .hover-color3:hover,
 .hover-color3.active {
   color: #6cba16 !important;
 }
 
-/* line 60, sass/ui/_color.scss */
+/* line 62, sass/ui/_color.scss */
 .color4,
 .hover-color4:hover,
 .hover-color4.active {
   color: #ffa501 !important;
 }
 
-/* line 64, sass/ui/_color.scss */
+/* line 66, sass/ui/_color.scss */
 .color5,
 .hover-color5:hover,
 .hover-color5.active {
@@ -372,7 +372,7 @@ body {
   background-color: #8a2ca1;
 }
 
-/* line 92, sass/ui/_color.scss */
+/* line 100, sass/ui/_color.scss */
 .bg-gray4,
 .bg-gray5,
 .bg-gray6,
@@ -448,7 +448,7 @@ body {
 /*------------------------------------*\
     $OVERRIDES
 \*------------------------------------*/
-/* line 20, sass/ui/_forms.scss */
+/* line 23, sass/ui/_forms.scss */
 input[type=text]:active,
 input[type=text]:focus,
 input[type=password]:active,
@@ -471,12 +471,12 @@ input[type=password]:focus {
   position: relative;
   display: inline-block;
 }
-/* line 69, sass/ui/_forms.scss */
+/* line 70, sass/ui/_forms.scss */
 .field-with-errors label,
 .field-with-errors .label {
   color: #ffa501;
 }
-/* line 74, sass/ui/_forms.scss */
+/* line 77, sass/ui/_forms.scss */
 .field-with-errors input,
 .field-with-errors .select2-container .select2-choice,
 .field-with-errors .select2-container-multi .select2-choices {
