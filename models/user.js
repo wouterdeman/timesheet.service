@@ -26,7 +26,7 @@ exports.find = function (conditions) {
 exports.findById = function (id) {
     return User.findOne({
         '_id': mongoose.Types.ObjectId(id)
-    });
+    }).exec();
 };
 
 exports.findByEmail = function (email) {

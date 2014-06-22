@@ -4,9 +4,9 @@ module.exports = function (app) {
 	var services = require('../../services');
 	var TimesheetService = services.timesheetService;
 
-	app.post('/zones/current', function (req, res) {		
+	app.post('/zones/current', function (req, res) {
 		if (!req.body.hasOwnProperty('token') || !req.body.hasOwnProperty('loc')) {
-			res.statusCode = 400;			
+			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
 		}
 
@@ -15,7 +15,7 @@ module.exports = function (app) {
 		var token = req.body.token;
 		var loc = req.body.loc;
 
-		TimesheetService.getZone(token, loc).then(function (zone) {			
+		TimesheetService.getZone(token, loc).then(function (zone) {
 			res.json(zone || 0);
 		}).fail(function () {
 			res.statusCode = 401;

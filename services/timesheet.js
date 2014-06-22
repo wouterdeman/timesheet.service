@@ -16,8 +16,8 @@ exports.saveCrumble = function (token, loc, objectid, objectdetails) {
             deferred.reject();
             return;
         }
-        User.findById(entity, function (err, user) {
-            if (err && !user) {
+        User.findById(entity).then(function (user) {            
+            if (!user) {
                 deferred.reject(err);
                 return;
             }
@@ -32,10 +32,10 @@ exports.saveCrumble = function (token, loc, objectid, objectdetails) {
                 loc: loc,
                 object: objectid,
                 objectdetails: objectdetails
-            };
+            };            
 
             TimeTracker.saveCrumble(data).then(deferred.resolve).fail(deferred.reject);
-        });
+        }, deferred.reject);
     }).fail(deferred.reject);
 
     return deferred.promise;
