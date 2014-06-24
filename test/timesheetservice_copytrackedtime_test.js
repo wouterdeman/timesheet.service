@@ -47,9 +47,9 @@ var mockVerifyToken = function () {
 
 var mockUserFindById = function () {
     before(function (done) {
-        sandbox.stub(User, 'findById', function (condition, callback) {
-            callback(null, {
-                _id: dummyEntityId,
+        sandbox.stub(User, 'findById', function (condition) {
+            return new Q({
+                _id: condition,
                 firstname: 'Joske',
                 lastname: 'Vermeulen',
                 emails: ['joske.vermeulen@gmail.com']

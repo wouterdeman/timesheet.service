@@ -8,7 +8,7 @@ module.exports = function (app) {
 		if (!req.body.hasOwnProperty('token') || !req.body.hasOwnProperty('loc')) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
-		}		
+		}
 
 		res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -17,9 +17,9 @@ module.exports = function (app) {
 		var objectid = req.body.objectid;
 		var objectdetails = req.body.objectdetails;
 
-		TimesheetService.saveCrumble(token, loc, objectid, objectdetails).then(function () {			
+		TimesheetService.saveCrumble(token, loc, objectid, objectdetails).then(function () {
 			res.json(true);
-		}).fail(function () {			
+		}).fail(function () {
 			res.statusCode = 401;
 			return res.send('Error 401: Invalid token.');
 		});

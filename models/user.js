@@ -16,11 +16,11 @@ var UserSchema = new Schema({
 var User = mongoose.model('User', UserSchema);
 
 exports.findOne = function (conditions) {
-    return User.findOne(conditions);
+    return User.findOne(conditions).exec();
 };
 
 exports.find = function (conditions) {
-    return User.find(conditions);
+    return User.find(conditions).exec();
 };
 
 exports.findById = function (id) {

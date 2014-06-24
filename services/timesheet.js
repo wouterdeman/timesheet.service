@@ -16,9 +16,10 @@ exports.saveCrumble = function (token, loc, objectid, objectdetails) {
             deferred.reject();
             return;
         }
-        User.findById(entity).then(function (user) {            
+
+        User.findById(entity).then(function (user) {
             if (!user) {
-                deferred.reject(err);
+                deferred.reject();
                 return;
             }
 
@@ -32,7 +33,7 @@ exports.saveCrumble = function (token, loc, objectid, objectdetails) {
                 loc: loc,
                 object: objectid,
                 objectdetails: objectdetails
-            };            
+            };
 
             TimeTracker.saveCrumble(data).then(deferred.resolve).fail(deferred.reject);
         }, deferred.reject);
@@ -47,13 +48,13 @@ exports.registerGoogleAuth = function (refreshtoken) {
     AuthStore.registerGoogleAuth(refreshtoken, function (email, done) {
         User.findOne({
             emails: email
-        }, function (err, user) {
-            if (!err && user) {
+        }).then(function (user) {
+            if (user) {
                 done(user._id);
             } else {
-                deferred.reject(err);
+                deferred.reject();
             }
-        });
+        }, deferred.reject);
     }).then(function (token) {
         deferred.resolve(token);
     });
