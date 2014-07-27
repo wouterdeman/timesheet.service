@@ -11,7 +11,7 @@ module.exports = function (app) {
 		console.log('objectid: ' + req.body.objectid);
 		console.log('objectdetails: ' + req.body.objectdetails);
 		console.log('location?: ' + req.body.location);
-		if (!req.body.hasOwnProperty('token') || !(req.body.hasOwnProperty('loc') || req.body.hasOwnProperty('location')) {
+		if (!req.body.hasOwnProperty('token') || !(req.body.hasOwnProperty('loc') || req.body.hasOwnProperty('location'))) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
 		}
@@ -20,7 +20,7 @@ module.exports = function (app) {
 
 		var token = req.body.token;
 		var loc = req.body.loc;
-		if(req.body.location) {
+		if (req.body.location) {
 			loc = [req.body.location.latitude, req.body.location.longitude];
 		}
 		var objectid = req.body.objectid;
