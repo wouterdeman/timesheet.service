@@ -20,6 +20,9 @@ module.exports = function (app) {
 
 		var token = req.body.token;
 		var loc = req.body.loc;
+		if(req.body.location) {
+			loc = [req.body.location.latitude, req.body.location.longitude];
+		}
 		var objectid = req.body.objectid;
 		var objectdetails = req.body.objectdetails;
 
