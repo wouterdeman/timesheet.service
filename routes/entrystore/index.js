@@ -5,6 +5,12 @@ module.exports = function (app) {
 	var TimesheetService = services.timesheetService;
 
 	app.post('/entry', function (req, res) {
+		console.log('We have a winner:');
+		console.log('token: ' + req.body.token);
+		console.log('loc: ' + req.body.loc);
+		console.log('objectid: ' + req.body.objectid);
+		console.log('objectdetails: ' + req.body.objectdetails);
+		console.log('full body: ' + req.body);
 		if (!req.body.hasOwnProperty('token') || !req.body.hasOwnProperty('loc')) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
