@@ -10,7 +10,7 @@ module.exports = function (app) {
 		console.log('loc: ' + req.body.loc);
 		console.log('objectid: ' + req.body.objectid);
 		console.log('objectdetails: ' + req.body.objectdetails);
-		console.log('full body: ' + req.body);
+		console.log('location?: ' + req.body.location);
 		if (!req.body.hasOwnProperty('token') || !req.body.hasOwnProperty('loc')) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
