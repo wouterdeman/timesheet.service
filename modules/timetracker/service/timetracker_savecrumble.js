@@ -2,6 +2,7 @@
 
 var models = require('../models');
 var crumbleModel = models.crumbleModel;
+var rawCrumbleModel = models.rawCrumbleModel;
 var objectTrackingModel = models.objectTrackingModel;
 var zoneModel = models.zoneModel;
 var Q = require('q');
@@ -80,6 +81,9 @@ exports.saveCrumble = function (data) {
     var nowMinus10Minutes = new Date().add({
         minutes: -10
     });
+
+    var rawCrumble = rawCrumbleModel.create(data);
+    rawCrumbleModel.save(rawCrumble);
 
     crumbleModel.lastCrumbles(data.entity, nowMinus10Minutes, function (lastCrumbles) {
         var crumble = crumbleModel.create(data);
