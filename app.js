@@ -7,7 +7,7 @@ var port = 3000;
 
 require('./libs/express')(app, express, __dirname);
 require('./routes')(app);
-require('./modules/timeandwork/routes')(app);
+//require('./modules/timeandwork/routes')(app);
 
 /*
  * Start it up
