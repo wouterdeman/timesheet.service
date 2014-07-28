@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function (app) {
-    var services = require('../services');
+    var services = require('../service');
     var CustomerService = services.CustomerService;
 
     app.post('/customers/all', function (req, res) {
