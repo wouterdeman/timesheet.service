@@ -78,16 +78,13 @@ exports.saveCrumble = function (data) {
         return deferred.promise;
     }
 
-    var nowMinus10Minutes = new Date().add({
-        minutes: -10
-    });
-
+    var crumble = crumbleModel.create(data);
+    var objectTracking = objectTrackingModel.create(data);
     var rawCrumble = rawCrumbleModel.create(data);
     rawCrumbleModel.save(rawCrumble);
 
-    crumbleModel.lastCrumbles(data.entity, nowMinus10Minutes, function (lastCrumbles) {
-        var crumble = crumbleModel.create(data);
-        var objectTracking = objectTrackingModel.create(data);
+    crumbleModel.lastCrumbles(data.entity, objectTracking.object, function (lastCrumbles) {
+
         var timeCopy = new Date(crumble.starttime.getTime());
         zoneModel.findZoneWithin30Meters(data, function (err, result) {
             if (err) {

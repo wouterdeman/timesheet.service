@@ -1,13 +1,13 @@
 'use strict';
 
-require('./mongoose');
+require('./libs/mongoose');
 var express = require('express');
 var app = express();
 var port = 3000;
 
-require('./express')(app, express, __dirname);
-require('./passport')(app);
+require('./libs/express')(app, express, __dirname);
 require('./routes')(app);
+require('./modules/timeandwork/routes')(app);
 
 /*
  * Start it up
