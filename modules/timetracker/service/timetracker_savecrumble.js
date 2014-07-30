@@ -23,7 +23,7 @@ var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCru
                 coordinates: crumble.loc
             });
 
-            return distance < 30;
+            return distance < 100;
         });
 
         if (lastCrumbleInRange) {
@@ -84,7 +84,6 @@ exports.saveCrumble = function (data) {
     rawCrumbleModel.save(rawCrumble);
 
     crumbleModel.lastCrumbles(data.entity, objectTracking.object, function (lastCrumbles) {
-
         var timeCopy = new Date(crumble.starttime.getTime());
         zoneModel.findZoneWithin30Meters(data, function (err, result) {
             if (err) {
