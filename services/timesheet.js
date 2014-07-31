@@ -271,7 +271,7 @@ exports.getTrackedTimeForCustomer = function (data) {
             entity: entity._id,
             activity: data.customer,
             from: new Date(data.year, data.month, 1),
-            to: new Date(data.year, data.month + 1, 0)
+            to: new Date(data.year, data.month + 1, 1)
         }).then(function (trackedTimeForActivity) {
             deferred.resolve(trackedTimeForActivity);
         }).fail(deferred.reject);
@@ -292,7 +292,7 @@ exports.getTrackedTimeAndCustomer = function (data) {
         TimeTracker.getTrackedTimeAndActivity({
             entity: entity,
             from: new Date(data.year, data.month, 1),
-            to: new Date(data.year, data.month + 1, 0)
+            to: new Date(data.year, data.month + 1, 1)
         }).then(function (trackedTimeAndActivity) {
             async.forEach(trackedTimeAndActivity, function (item, callback) {
                 if (!item.activity) {

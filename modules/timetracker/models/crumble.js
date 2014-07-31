@@ -95,7 +95,7 @@ exports.lastCrumbles = function (entity, object, callback, failedCallback) {
 				'crumbles.endtime': -1
 			}
 		}, {
-			$limit: 10
+			$limit: 5
 		}, {
 			$match: {
 				'entity': mongoose.Types.ObjectId('' + entity),
@@ -108,7 +108,8 @@ exports.lastCrumbles = function (entity, object, callback, failedCallback) {
 				starttime: '$crumbles.starttime',
 				endtime: '$crumbles.endtime',
 				loc: '$crumbles.loc',
-				crumbleId: '$crumbles._id'
+				crumbleId: '$crumbles._id',
+				zone: '$crumbles.zone'
 			}
 		}]).exec(
 		function (err, result) {

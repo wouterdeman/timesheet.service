@@ -14,17 +14,25 @@ var _ = require('lodash-node');
 
 var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCrumbles, timeCopy, objectTracking, zone) {
     if (lastCrumbles && lastCrumbles.length) {
-        var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
-            var distance = gju.pointDistance({
+        var calculcateDistance = function (first, second) {
+            return gju.pointDistance({
                 type: 'Point',
-                coordinates: lastCrumble.loc
+                coordinates: first
             }, {
                 type: 'Point',
-                coordinates: crumble.loc
+                coordinates: second
             });
-
-            return distance < 100;
+        };
+        var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
+            var distance = calculcateDistance(lastCrumble.loc, crumble.loc);
+            return lastCrumble.zone && distance < 100;
         });
+        if (!lastCrumbleInRange) {
+            lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
+                var distance = calculcateDistance(lastCrumble.loc, crumble.loc);
+                return distance < 30;
+            });
+        }
 
         if (lastCrumbleInRange) {
             lastCrumbleInRange.endtime = timeCopy;
