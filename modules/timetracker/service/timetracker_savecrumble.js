@@ -25,7 +25,7 @@ var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCru
         };
         var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
             var distance = calculcateDistance(lastCrumble.loc, crumble.loc);
-            return lastCrumble.zone && distance < 100;
+            return lastCrumble.zone && distance < 150;
         });
         if (!lastCrumbleInRange) {
             lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
