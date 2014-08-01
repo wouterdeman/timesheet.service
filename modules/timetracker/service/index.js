@@ -1,5 +1,9 @@
 'use strict';
 
+// Services
+var ActivityLogService = require('./activitylogservice');
+exports.ActivityLogService = ActivityLogService;
+
 var SaveCrumble = require('./timetracker_savecrumble');
 var CrumbleStats = require('./timetracker_crumblestats');
 var Showcases = require('./timetracker_showcases');
