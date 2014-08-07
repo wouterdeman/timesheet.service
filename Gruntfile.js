@@ -13,7 +13,7 @@ module.exports = function (grunt) {
                     reporter: 'spec',
                     ui: 'bdd'
                 },
-                src: ['test/timetracker/timetracker_activitylogservice_test.js']
+                src: ['test/**/timeandwork_holidaycrud.js']
             },
             test: {
                 options: {

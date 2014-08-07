@@ -11,8 +11,7 @@ var async = require('async');
 var sinon = require('sinon');
 var AuthStore = require('../../modules/authstore/service');
 var Q = require('q');
-var models = require('../../models');
-var User = models.userModel;
+var User = require('../../modules/userstore/models').userModel;
 
 var mocha = require('mocha');
 var assert = require('assert');

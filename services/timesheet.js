@@ -1,7 +1,8 @@
 'use strict';
 
-var models = require('../models');
-var User = models.userModel;
+var models = require('../modules/timeandwork/models');
+var userstoremodels = require('../modules/userstore/models');
+var User = userstoremodels.userModel;
 var Customer = models.customerModel;
 var Q = require('q');
 var TimeTracker = require('../modules/timetracker/service');

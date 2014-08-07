@@ -12,27 +12,41 @@ var crumbleValidator = validators.crumbleValidator;
 var gju = require('geojson-utils');
 var _ = require('lodash-node');
 
+var calculcateDistance = function (first, second) {
+    return gju.pointDistance({
+        type: 'Point',
+        coordinates: first
+    }, {
+        type: 'Point',
+        coordinates: second
+    });
+};
+
+var setZoneDetailsAndActiveActivity = function (lastCrumbleInRange, zone) {
+    lastCrumbleInRange.zone = zone._id;
+    lastCrumbleInRange.zoneDetails = zone.zoneDetails;
+    var activeActivity = _.find(zone.activities, {
+        'active': true
+    });
+    lastCrumbleInRange.activity = activeActivity.activity;
+    lastCrumbleInRange.activityDetails = activeActivity.activityDetails;
+    return lastCrumbleInRange;
+};
+
 var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCrumbles, timeCopy, objectTracking, zone) {
     if (lastCrumbles && lastCrumbles.length) {
-        var calculcateDistance = function (first, second) {
-            return gju.pointDistance({
-                type: 'Point',
-                coordinates: first
-            }, {
-                type: 'Point',
-                coordinates: second
-            });
-        };
+        var latestCrumble = lastCrumbles[0];
+        // We should set the end time when leaving a zone, so if the the latest crumble came from a zone
+        if (latestCrumble.zone && calculcateDistance(latestCrumble.loc, crumble.loc) < 500) {
+            latestCrumble.endtime = timeCopy;
+            latestCrumble.duration = latestCrumble.endtime.getTime() - latestCrumble.starttime.getTime();
+            crumbleModel.updateEndtime(latestCrumble);
+        }
+
         var lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
             var distance = calculcateDistance(lastCrumble.loc, crumble.loc);
-            return lastCrumble.zone && distance < 150;
+            return distance < 30;
         });
-        if (!lastCrumbleInRange) {
-            lastCrumbleInRange = _.find(lastCrumbles, function (lastCrumble) {
-                var distance = calculcateDistance(lastCrumble.loc, crumble.loc);
-                return distance < 30;
-            });
-        }
 
         if (lastCrumbleInRange) {
             lastCrumbleInRange.endtime = timeCopy;
@@ -43,13 +57,7 @@ var checkIfWeHaveCrumblesInRangeAndUpdate = function (deferred, crumble, lastCru
             //TODO: check if we are updating for the same zone/activity/object
 
             if (zone) {
-                lastCrumbleInRange.zone = zone._id;
-                lastCrumbleInRange.zoneDetails = zone.zoneDetails;
-                var activeActivity = _.find(zone.activities, {
-                    'active': true
-                });
-                lastCrumbleInRange.activity = activeActivity.activity;
-                lastCrumbleInRange.activityDetails = activeActivity.activityDetails;
+                lastCrumbleInRange = setZoneDetailsAndActiveActivity(lastCrumbleInRange, zone);
             }
             crumbleModel.updateEndtime(lastCrumbleInRange).then(deferred.resolve, deferred.reject);
             return true;

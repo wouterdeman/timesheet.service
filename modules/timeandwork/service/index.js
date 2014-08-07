@@ -1,6 +1,7 @@
 'use strict';
 
 var CustomerService = require('./customerservice');
+var HolidayService = require('./holidayservice');
 
-// Crumbles
 exports.CustomerService = CustomerService;
+exports.HolidayService = HolidayService;

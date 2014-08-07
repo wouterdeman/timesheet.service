@@ -4,8 +4,6 @@
 
 // models
 var Customer = require('./customer');
-var User = require('./user');
 
 // exports
 exports.customerModel = Customer;
-exports.userModel = User;

@@ -95,7 +95,7 @@ exports.lastCrumbles = function (entity, object, callback, failedCallback) {
 				'crumbles.endtime': -1
 			}
 		}, {
-			$limit: 1
+			$limit: 5
 		}, {
 			$match: {
 				'entity': mongoose.Types.ObjectId('' + entity),

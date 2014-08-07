@@ -1,7 +1,7 @@
 'use strict';
 
 // set up mongoose
-var mongoose = require('mongoose');
+/*var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var customerSchema = new Schema({
@@ -25,4 +25,4 @@ exports.getAll = function () {
 
 exports.getById = function (id) {
 	return Customer.findById(id).lean().exec();
-};
+};*/

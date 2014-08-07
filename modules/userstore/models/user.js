@@ -34,3 +34,24 @@ exports.findByEmail = function (email) {
         emails: email
     }).lean().exec();
 };
+
+exports.save = function (user) {
+    return User.create(user);
+};
+
+exports.update = function (id, user) {
+    return User.update({
+        '_id': mongoose.Types.ObjectId('' + id)
+    }, {
+        $set: {
+            emails: user.emails,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            updated: new Date()
+        }
+    }).exec();
+};
+
+exports.remove = function (id) {
+    return User.findByIdAndRemove(id).exec();
+};
