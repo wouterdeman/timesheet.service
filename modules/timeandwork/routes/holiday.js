@@ -71,5 +71,6 @@ module.exports = function (app) {
             res.statusCode = 401;
             return res.send('Error 401: Invalid token.');
         });
+        return res.json();
     });
 };
