@@ -15,7 +15,7 @@ exports.findOne = function (conditions) {
 };
 
 exports.find = function (conditions) {
-    return Holiday.find(conditions).exec();
+    return Holiday.find(conditions).sort({date: -1}).exec();
 };
 
 exports.findById = function (id) {

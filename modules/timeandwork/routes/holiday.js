@@ -23,7 +23,7 @@ module.exports = function (app) {
         console.log(req.body);
         holiday = {
             name: req.body.name,
-            date: new Date(req.body.year, req.body.month -1, req.body.day)
+            date: new Date(req.body.year, req.body.month - 1, req.body.day)
         };
 
         HolidayService.save(holiday).then(function () {
@@ -51,7 +51,7 @@ module.exports = function (app) {
         console.log(req.body);
         holiday = {
             name: req.body.name,
-            date: new Date(req.body.year, req.body.month -1, req.body.day)
+            date: new Date(req.body.year, req.body.month - 1, req.body.day)
         };
 
         HolidayService.update(req.params.id, holiday).then(function () {
