@@ -14,12 +14,14 @@ exports.saveCrumble = function (token, loc, objectid, objectdetails) {
     var deferred = Q.defer();
     AuthStore.verifyToken(token).then(function (entity) {
         if (!entity) {
+            console.log('Save crumble no valid entity');
             deferred.reject();
             return;
         }
 
         User.findById(entity).then(function (user) {
             if (!user) {
+                console.log('Save crumble no valid user');
                 deferred.reject();
                 return;
             }
