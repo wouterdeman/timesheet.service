@@ -5,4 +5,5 @@ module.exports = function (app) {
     require('./customer')(app);
     require('./holiday')(app);
     require('./absenceright')(app);
+    require('./absence')(app);
 };

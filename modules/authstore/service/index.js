@@ -88,8 +88,9 @@ exports.verifyToken = function (token) {
     var deferred = Q.defer();
 
     Auth.findByToken(token, function (err, result) {
-        if (err || !result) {
+        if (err || !result || !result.entity) {
             deferred.reject(err);
+            return;
         }
         deferred.resolve(result.entity);
     });

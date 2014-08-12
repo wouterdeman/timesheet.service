@@ -10,6 +10,7 @@ require('./routes')(app);
 require('./modules/timeandwork/routes')(app);
 require('./modules/timetracker/routes')(app);
 require('./modules/userstore/routes')(app);
+require('./modules/authstore/routes')(app);
 
 /*
  * Start it up

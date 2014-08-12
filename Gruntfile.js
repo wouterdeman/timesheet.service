@@ -13,7 +13,7 @@ module.exports = function (grunt) {
                     reporter: 'spec',
                     ui: 'bdd'
                 },
-                src: ['test/**/timeandwork_absencerightcrud.js']
+                src: ['test/**/timeandwork_absencecrud.js']
             },
             test: {
                 options: {
