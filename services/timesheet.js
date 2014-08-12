@@ -21,7 +21,7 @@ exports.saveCrumble = function (token, loc, objectid, objectdetails) {
 
         User.findById(entity).then(function (user) {
             if (!user) {
-                console.log('Save crumble no valid user');
+                console.log('Save crumble no valid user ' + entity);
                 deferred.reject();
                 return;
             }
