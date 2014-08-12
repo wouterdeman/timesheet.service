@@ -23,10 +23,11 @@ module.exports = function (app) {
 		}
 		var objectid = req.body.objectid;
 		var objectdetails = req.body.objectdetails;
-		
+
 		TimesheetService.saveCrumble(token, loc, objectid, objectdetails).then(function () {
 			res.json(true);
-		}).fail(function () {
+		}).fail(function (err) {
+			console.log('err: ' + err);
 			res.statusCode = 401;
 			return res.send('Error 401: Invalid token.');
 		});
