@@ -5,7 +5,7 @@ module.exports = function (app) {
 	var TimesheetService = services.timesheetService;
 
 	app.post('/entry', function (req, res) {
-		console.log('POST: ');
+		console.log('POST -> SAVE CRUMBLE: ');
         console.log('token: ' + req.body.token);
         console.log('loc: ' + req.body.loc);
         console.log('location: ' + req.body.location);
@@ -13,8 +13,6 @@ module.exports = function (app) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
 		}
-
-		res.setHeader('Access-Control-Allow-Origin', '*');
 
 		var token = req.body.token;
 		var loc = req.body.loc;

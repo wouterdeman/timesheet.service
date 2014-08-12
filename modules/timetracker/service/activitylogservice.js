@@ -30,9 +30,9 @@ exports.getLast20 = function (object) {
                 loc: '$crumbles.loc',
                 crumbleId: '$crumbles._id',
                 zone: '$crumbles.zone',
-                zonedetails: '$crumbles.zonedetails',
+                zonedetails: '$crumbles.zoneDetails',
                 activity: '$crumbles.activity',
-                activitydetails: '$crumbles.activitydetails'
+                activitydetails: '$crumbles.activityDetails'
             }
         }]).then(deferred.resolve, deferred.reject);
 

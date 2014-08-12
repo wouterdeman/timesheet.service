@@ -14,7 +14,7 @@ exports.saveCrumble = function (token, loc, objectid, objectdetails) {
     var deferred = Q.defer();
     AuthStore.verifyToken(token).then(function (entity) {
         if (!entity) {
-            console.log('Save crumble no valid entity');
+            console.log('Save crumble no valid entity for token ' + token);
             deferred.reject();
             return;
         }
