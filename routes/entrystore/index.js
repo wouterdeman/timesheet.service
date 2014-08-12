@@ -6,7 +6,9 @@ module.exports = function (app) {
 
 	app.post('/entry', function (req, res) {
 		console.log('POST: ');
-        console.log(req.body);
+        console.log('token: ' + req.body.token);
+        console.log('loc: ' + req.body.loc);
+        console.log('location: ' + req.body.location);
 		if (!req.body.hasOwnProperty('token') || !(req.body.hasOwnProperty('loc') || req.body.hasOwnProperty('location'))) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
@@ -21,7 +23,7 @@ module.exports = function (app) {
 		}
 		var objectid = req.body.objectid;
 		var objectdetails = req.body.objectdetails;
-
+		
 		TimesheetService.saveCrumble(token, loc, objectid, objectdetails).then(function () {
 			res.json(true);
 		}).fail(function () {
