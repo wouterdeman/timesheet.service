@@ -4,11 +4,6 @@ module.exports = function (app) {
     var AbsenceRightService = require('../service').AbsenceRightService;
 
     app.get('/timeandwork/absencerights', function (req, res) {
-        /*if (!req.body.hasOwnProperty('token')) {
-            res.statusCode = 400;
-            return res.send('Error 400: Post syntax incorrect.');
-        }*/
-
         AbsenceRightService.list().then(function (absencerights) {
             res.json(absencerights);
         }).fail(function () {
@@ -25,7 +20,9 @@ module.exports = function (app) {
             name: req.body.name,
             year: req.body.year,
             amount: req.body.amount,
-            entity: req.body.entity
+            entity: req.body.entity,
+            seqnr: req.body.seqnr,
+            monthly: req.body.monthly
         };
 
         AbsenceRightService.save(absenceright).then(function () {
@@ -55,7 +52,9 @@ module.exports = function (app) {
             name: req.body.name,
             year: req.body.year,
             amount: req.body.amount,
-            entity: req.body.entity
+            entity: req.body.entity,
+            seqnr: req.body.seqnr,
+            monthly: req.body.monthly
         };
 
         AbsenceRightService.update(req.params.id, absenceright).then(function () {

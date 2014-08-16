@@ -9,6 +9,8 @@ var AbsenceRightSchema = new Schema({
     amount: Number,
     year: Number,
     entity: ObjectId,
+    seqnr: Number,
+    monthly: Boolean
 });
 
 var AbsenceRight = mongoose.model('absenceright', AbsenceRightSchema);
@@ -41,7 +43,9 @@ exports.update = function (id, absenceright) {
             name: absenceright.name,
             amount: absenceright.amount,
             year: absenceright.year,
-            entity: absenceright.entity
+            entity: absenceright.entity,
+            seqnr: absenceright.seqnr,
+            monthly: absenceright.monthly
         }
     }).exec();
 };

@@ -20,7 +20,9 @@ describe('Time and work absence rights', function () {
                 name: 'Wettelijk verlof',
                 amount: 20,
                 year: 2014,
-                entity: test.dummyEntityId
+                entity: test.dummyEntityId,
+                monthly: false,
+                seqnr: 1
             });
 
             async.each(data, function (absenceRight, iterateCallback) {

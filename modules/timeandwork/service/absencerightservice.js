@@ -10,9 +10,9 @@ exports.save = function (absenceright) {
     return deferred.promise;
 };
 
-exports.list = function () {
+exports.list = function (conditions) {
     var deferred = Q.defer();
-    AbsenceRightModel.find().then(deferred.resolve, deferred.reject);
+    AbsenceRightModel.find(conditions).then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
