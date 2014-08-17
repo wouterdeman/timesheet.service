@@ -2,7 +2,6 @@
 
 module.exports = function (app) {
     var AbsenceService = require('../service').AbsenceService;
-    var AbsenceRightService = require('../service').AbsenceRightService;
     var Authstore = require('../../authstore/service');
 
     app.get('/timeandwork/absences', function (req, res) {
@@ -42,22 +41,16 @@ module.exports = function (app) {
                 entity: entity
             };
 
-            AbsenceRightService.list({
-                entity: entity,
-                year: req.body.year
-            }).then(function (absencerights) {
-                console.log(absencerights);
-                AbsenceService.save(absence, absencerights).then(function () {
-                    console.log('absence created');
-                    return res.json({
-                        success: true,
-                        absence: absence
-                    });
-                }).fail(function (err) {
-                    return res.json({
-                        success: false,
-                        message: err
-                    });
+            AbsenceService.save(absence).then(function () {
+                console.log('absence created');
+                return res.json({
+                    success: true,
+                    absence: absence
+                });
+            }).fail(function (err) {
+                return res.json({
+                    success: false,
+                    message: err
                 });
             });
         });

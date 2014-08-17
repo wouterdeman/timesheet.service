@@ -2,21 +2,27 @@
 
 var models = require('../models');
 var AbsenceModel = models.absenceModel;
+var AbsenceRightModel = models.absenceRightModel;
 var Q = require('q');
 
-exports.save = function (absence, absencerights) {
+exports.save = function (absence) {
     var deferred = Q.defer();
 
-    // todo: check saldo & use absence right using the correct absence right settings
-    if (!absence.absenceright && !absencerights.length) {
-        deferred.reject('No available absence rights found');
-        return deferred.promise;
-    }
+    AbsenceRightModel.find({
+        entity: absence.entity,
+        year: absence.date.getFullYear()
+    }).then(function (absencerights) {
+        // todo: check saldo & use absence right using the correct absence right settings
+        if (!absence.absenceright && !(absencerights && absencerights.length)) {
+            deferred.reject('No available absence rights found');
+            return deferred.promise;
+        }
 
-    if (!absence.absenceright) {
-        absence.absenceright = absencerights[0]._id;
-    }
-    AbsenceModel.save(absence).then(deferred.resolve, deferred.reject);
+        if (!absence.absenceright) {
+            absence.absenceright = absencerights[0]._id;
+        }
+        AbsenceModel.save(absence).then(deferred.resolve, deferred.reject);
+    });
     return deferred.promise;
 };
 
