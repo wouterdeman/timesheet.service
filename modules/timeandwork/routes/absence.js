@@ -20,7 +20,6 @@ module.exports = function (app) {
                 return res.send('Error 401: Invalid token.');
             });
         });
-        res.json([]);
     });
 
     app.post('/timeandwork/absences', function (req, res) {
