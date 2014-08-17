@@ -16,6 +16,8 @@ exports.list = function (conditions) {
                     return sum + (item.absenceright === absenceright._id ? item.amount : 0);
                 }, 0);
                 console.log('absenceright used: ' + absenceright.used);
+                absenceright.joske = 'bla';
+                console.log(absenceright);
                 return absenceright;
             });
             console.log('absence rights: ' + absencerights);
