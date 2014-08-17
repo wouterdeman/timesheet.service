@@ -11,16 +11,11 @@ exports.list = function (conditions) {
 
     AbsenceModel.find(conditions).then(function (absences) {
         AbsenceRightModel.find(conditions).then(function (absencerights) {
-            absencerights = _.map(absencerights, function (absenceright) {
+            _.forEach(absencerights, function (absenceright) {
                 absenceright.used = _.reduce(absences, function (sum, item) {
-                    return sum + (item.absenceright === absenceright._id ? item.amount : 0);
+                    return sum + (item.absenceright + '' === absenceright._id + '' ? item.amount : 0);
                 }, 0);
-                console.log('absenceright used: ' + absenceright.used);
-                absenceright.joske = 'bla';
-                console.log(absenceright);
-                return absenceright;
             });
-            console.log('absence rights: ' + absencerights);
             deferred.resolve(absencerights);
         }, deferred.reject);
     }, deferred.reject);

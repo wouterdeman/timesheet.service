@@ -22,7 +22,7 @@ exports.findOne = function (conditions) {
 exports.find = function (conditions) {
     return AbsenceRight.find(conditions).sort({
         year: -1
-    }).exec();
+    }).lean().exec();
 };
 
 exports.findById = function (id) {

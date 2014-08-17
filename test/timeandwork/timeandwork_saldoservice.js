@@ -59,7 +59,7 @@ describe('Time and work absence rights', function () {
         it('should return the correct saldo indicating one day is used', function (done) {
             SaldoService.list().then(function (saldos) {
                 assert.equal(saldos.length, 1);
-                assert.equal(saldos[0].used, 0);
+                assert.equal(saldos[0].used, 1);
                 done();
             });
         });
