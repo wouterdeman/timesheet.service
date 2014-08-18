@@ -13,6 +13,7 @@ exports.save = function (absence) {
         year: absence.date.getFullYear()
     }).then(function (absencerights) {
         // todo: check saldo & use absence right using the correct absence right settings
+        // todo: dont add absences on holidays
         if (!absence.absenceright && !(absencerights && absencerights.length)) {
             deferred.reject('No available absence rights found');
             return deferred.promise;
