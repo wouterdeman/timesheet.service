@@ -7,4 +7,5 @@ module.exports = function (app) {
     require('./absenceright')(app);
     require('./absence')(app);
     require('./saldo')(app);
+    require('./timesheet')(app);
 };
