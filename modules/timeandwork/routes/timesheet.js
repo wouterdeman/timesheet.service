@@ -46,18 +46,19 @@ module.exports = function (app) {
         */
         console.log(req.body);
 
-        if (!fs.existsSync(path.join(__dirname, 'tmp'))) {
-            fs.mkdirSync(path.join(__dirname, 'tmp'), '0766', function (err) {
+        // Create folder if not exists
+        if (!fs.existsSync('tmp')) {
+            fs.mkdirSync('tmp', '0766', function (err) {
                 if (err) {
                     console.log(err);
-                    response.send("ERROR! Can't make the directory! \n"); // echo the result back
+                    res.send('ERROR! Can\'t make the directory! \n'); // echo the result back
                 }
             });
         }
 
         var timestamp = new Date().getTime();
-        var renderedTemplate = path.join(__dirname, 'tmp/' + timestamp + '.html');
-        var pdf = path.join(__dirname, 'tmp/' + timestamp + '.pdf');
+        var renderedTemplate = 'tmp/' + timestamp + '.html';
+        var pdf = 'tmp/' + timestamp + '.pdf';
 
         fs.readFile(path.join(__dirname, 'template.html'), 'utf8', function (err, data) {
             if (err) {
@@ -67,36 +68,12 @@ module.exports = function (app) {
                 firstname: 'Wouter'
             }));
 
-            console.log(result);
-
             fs.writeFile(renderedTemplate, result, 'utf8', function (err) {
-                console.log('rendered template written');
                 if (err) {
                     return console.log(err);
                 }
             });
         });
-
-        var getFiles = function getFiles(dir, files_) {
-            files_ = files_ || [];
-            if (typeof files_ === 'undefined') {
-                files_ = [];
-            }
-            var files = fs.readdirSync(dir);
-            for (var i in files) {
-                if (!files.hasOwnProperty(i)) {
-                    continue;
-                }
-                var name = dir + '/' + files[i];
-                if (fs.statSync(name).isDirectory()) {
-                    getFiles(name, files_);
-                } else {
-                    files_.push(name);
-                }
-            }
-            return files_;
-        };
-        console.log(getFiles(path.join(__dirname, 'tmp')));
 
         var childArgs = [
             path.join(__dirname, 'rasterize.js'),
@@ -110,8 +87,8 @@ module.exports = function (app) {
             console.log(stdout);
             console.log(stderr);
             res.download(pdf, 'haha.pdf', function () {
-                //fs.unlink(renderedTemplate);
-                //fs.unlink(pdf);
+                fs.unlink(renderedTemplate);
+                fs.unlink(pdf);
             });
         });
     });
