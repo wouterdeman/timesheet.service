@@ -9,7 +9,7 @@ var Authstore = require('../../authstore/service');
 var TimesheetService = require('../service').TimesheetService;
 
 module.exports = function (app) {
-    app.get('/timeandwork/timesheet', function (req, res) {
+    app.post('/timeandwork/timesheet', function (req, res) {
         Authstore.verifyToken(req.header('token')).then(function (entity) {
             var input = {
                 year: req.body.year,
