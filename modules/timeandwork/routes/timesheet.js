@@ -30,8 +30,8 @@ module.exports = function (app) {
         console.log(req.body);
 
         var timestamp = new Date().getTime();
-        var renderedTemplate = 'tmp/' + timestamp + '.html';
-        var pdf = 'tmp/' + timestamp + '.pdf';
+        var renderedTemplate = path.join(__dirname, 'tmp/' + timestamp + '.html');
+        var pdf = path.join(__dirname, 'tmp/' + timestamp + '.pdf');
 
         fs.readFile(path.join(__dirname, 'template.html'), 'utf8', function (err, data) {
             if (err) {
@@ -44,6 +44,7 @@ module.exports = function (app) {
             console.log(result);
 
             fs.writeFile(renderedTemplate, result, 'utf8', function (err) {
+                console.log('rendered template written');
                 if (err) {
                     return console.log(err);
                 }
@@ -62,8 +63,8 @@ module.exports = function (app) {
             console.log(stdout);
             console.log(stderr);
             res.download(pdf, 'haha.pdf', function () {
-                fs.unlink(renderedTemplate);
-                fs.unlink(pdf);
+                //fs.unlink(renderedTemplate);
+                //fs.unlink(pdf);
             });
         });
     });
