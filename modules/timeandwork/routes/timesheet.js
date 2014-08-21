@@ -31,7 +31,7 @@ module.exports = function (app) {
 
         var timestamp = new Date().getTime();
         var renderedTemplate = 'tmp/' + timestamp + '.html';
-        var pdf = 'tmp/' + timestamp + '.pdf';
+        var pdf = '/tmp/' + timestamp + '.pdf';
 
         fs.readFile(path.join(__dirname, 'template.html'), 'utf8', function (err, data) {
             if (err) {
