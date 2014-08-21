@@ -48,8 +48,7 @@
     "time-grunt": "~0.4.0"
   },
   "engines": {
-    "node": "0.10.x",
-    "npm": "1.4.x"
+    "node": "0.10.x"
   },
   "scripts": {
     "testspecific": "node-debug -p 8090 ./node_modules/grunt-cli/bin/grunt testspecific",
