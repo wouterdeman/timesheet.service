@@ -62,7 +62,7 @@ exports.save = function (crumbleData) {
 exports.create = function (data) {
 	var today = Date.UTCtoday();
 	if (data.recordedAt) {
-		ra = data.recordedAt;
+		var ra = data.recordedAt;
 		today = new Date(ra.getFullYear(), ra.getMonth(), ra.getDate());
 	}
 	var now = new Date();

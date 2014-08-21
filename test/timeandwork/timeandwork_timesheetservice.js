@@ -15,6 +15,7 @@ var log = require('loggy').log;
 
 
 describe('Timesheet', function () {
+    log('');
     this.timeout(3600);
     test.createSandbox();
     test.mockVerifyToken();
