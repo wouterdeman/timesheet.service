@@ -1,5 +1,11 @@
 'use strict';
 
+var compression = require('compression');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var errorhandler = require('errorhandler');
+var session = require('express-session');
+
 module.exports = function (app, express, rootDir) {
 	/*
 	 * Use Handlebars for templating
@@ -7,7 +13,7 @@ module.exports = function (app, express, rootDir) {
 	var exphbs = require('express3-handlebars');
 
 	// For gzip compression
-	app.use(express.compress());
+	app.use(compression());
 
 	/*
 	 * Config for Production and Development
@@ -45,20 +51,28 @@ module.exports = function (app, express, rootDir) {
 	app.set('view engine', 'handlebars');
 
 	// Set bodyParser
-	app.use(express.bodyParser());
-	app.use(express.cookieParser());
-	app.use(express.session({
-		secret: 'veryverysecret'
+	app.use(bodyParser.json());
+	app.use(bodyParser.urlencoded({
+		extended: true
 	}));
-	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+	app.use(cookieParser());
+	app.use(session({
+		secret: 'veryverysecret',
+		saveUninitialized: true,
+		resave: true
+	}));
+	app.use(errorhandler({
+		dumpExceptions: true,
+		showStack: true
+	}));
 
 	//CORS middleware
-	var allowCrossDomain = function(req, res, next) {
-	    res.header('Access-Control-Allow-Origin', '*');
-	    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-	    res.header('Access-Control-Allow-Headers', 'Content-Type');
+	var allowCrossDomain = function (req, res, next) {
+		res.header('Access-Control-Allow-Origin', '*');
+		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+		res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-	    next();
+		next();
 	};
 	app.use(allowCrossDomain);
 };

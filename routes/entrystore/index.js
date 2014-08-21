@@ -6,10 +6,15 @@ module.exports = function (app) {
 
 	app.post('/entry', function (req, res) {
 		console.log('POST -> SAVE CRUMBLE: ');
-        console.log('token: ' + req.body.token);
-        console.log('loc: ' + req.body.loc);
-        console.log('location: ' + req.body.location);
-		if (!req.body.hasOwnProperty('token') || !(req.body.hasOwnProperty('loc') || req.body.hasOwnProperty('location'))) {
+		console.log('token: ' + req.body.token);
+		console.log('loc: ' + req.body.loc);
+		console.log('location: ' + req.body.location);
+
+		if (!req.body.hasOwnProperty('token')) {
+			res.json(true);
+		}
+
+		if (!(req.body.hasOwnProperty('loc') || req.body.hasOwnProperty('location'))) {
 			res.statusCode = 400;
 			return res.send('Error 400: Post syntax incorrect.');
 		}
