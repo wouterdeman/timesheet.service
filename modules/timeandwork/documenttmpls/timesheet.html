@@ -1,0 +1,79 @@
+<html ng-app>
+
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script>
+    function TimesheetController($scope, dateFilter) {
+        var data = %%data%%;
+        var items = data.items;
+
+        var month = data.month;
+        var year = year;
+        var months = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+        /*for (var i = 1; i <= 31; i++) {
+            data.push({
+                dayNr: i,
+                isWeekend: i % 6 === 0 || i % 7 === 0,
+                isAbsence: i % 10,
+                isHoliday: i % 12,
+                worked: true,
+                hours: (i % 6 === 0 || i % 7 === 0) ? 0 : 8,
+                isTracked: false,
+                trackedDuration: 0
+            });
+        }*/
+
+        $scope.person = data.person;
+        $scope.month = months[month];
+        $scope.total = 0;
+
+        items = _.map(items, function(item) {
+            item.date = new Date(year, month, item.dayNr);
+            item.formattedDate = dateFilter(item.date, 'dd/MM/yyyy');
+            $scope.total += item.hours;
+            return item;
+        })
+
+        $scope.data = items;
+
+        $scope.getTotalTodos = function() {
+            return $scope.todos.length;
+        };
+    }
+    </script>
+    <style>
+    .logo {
+        float: right;
+        width: 150px;
+        margin-top: -15px;
+        margin-bottom: 10px;
+    }
+    td {
+        padding-top: 3px !important;
+        padding-bottom: 3px !important;
+    }
+    </style>
+</head>
+<body>
+    <div id="timesheetContainer" class="container-fluid" ng-controller="TimesheetController">
+        <h1>{{person}} - {{month}}
+            <img class="logo" src="http://www.bite.be/wp-content/uploads/2011/12/bitelogo.png" />
+        </h1>
+        <table class="table table-bordered">
+            <tbody>
+                <tr ng-repeat="item in data">
+                    <td>{{item.formattedDate}}</td>
+                    <td>{{item.hours ? item.hours : ''}}</td>
+                </tr>
+                <tr style="font-weight: bold">
+                    <td>Totaal</td>
+                    <td>{{total}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="font-weight: bold">Handtekening</div>
+    </div>
+</body>
+</html>
