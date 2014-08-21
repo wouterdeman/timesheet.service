@@ -5,12 +5,20 @@ var childProcess = require('child_process');
 var phantomjs = require('phantomjs');
 var binPath = phantomjs.path;
 var fs = require('fs');
+var TimesheetService = require('../service').TimesheetService;
 
 module.exports = function (app) {
-    //var SaldoService = require('../service').SaldoService;
-    //var Authstore = require('../../authstore/service');
-
     app.get('/timeandwork/timesheet', function (req, res) {
+        TimesheetService.list().then(function (data) {
+            res.json(data);
+        }).fail(function (e) {
+            res.statusCode = 401;
+            return res.send('Error 401: Invalid token.' + e);
+        });
+    });
+
+
+    app.get('/timeandwork/timesheet/download', function (req, res) {
         /*if (!req.header('token')) {
             res.statusCode = 400;
             return res.send('Error 400: Missing security token.');

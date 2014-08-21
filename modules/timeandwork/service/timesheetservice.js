@@ -101,7 +101,6 @@ var makeSummary = function (timesheetDays) {
     var workedDays = _.filter(timesheetDays, daysWorkedCondition);
     var hoursWorked = _.chain(workedDays).pluck('hours').reduce(reduceToSum).value();
     var daysWorked = _.reduce(workedDays, function (sum, day) {
-        console.log(sum, day);
         return sum + day.hours / contractHours;
     }, 0);
     var daysAbsence = _.chain(timesheetDays)
@@ -120,6 +119,9 @@ var makeSummary = function (timesheetDays) {
 };
 
 var validateConditons = function (conditions) {
+    if (!conditions) {
+        throw new Error('Need HTTP parameters for timesheet info');
+    }
     if (!conditions.customer) {
         throw new Error('No customer defined');
     }
