@@ -10,6 +10,7 @@ var HolidayModel = models.holidayModel;
 var Q = require('q');
 var _ = require('lodash-node');
 
+var contractHours = 8;
 
 var getAbsences = function (entity) {
     return AbsenceModel.find({
@@ -51,7 +52,6 @@ var reduceToSum = function (sum, num) {
     return sum + num;
 };
 var calculateForDay = function (day, absences, holidays, trackedTime) {
-    var contractHours = 8;
     var hours = contractHours;
     var filterObjectWithDatePropertyForDay = _.partial(absenceFilter, day);
     var absencesForDay = _.filter(absences, filterObjectWithDatePropertyForDay);
@@ -62,6 +62,9 @@ var calculateForDay = function (day, absences, holidays, trackedTime) {
     var isHoliday = !!_.find(holidays, filterObjectWithDatePropertyForDay);
     var isWeekend = day.isWeekend();
     var worked = hours > 0 && !isHoliday && !isWeekend;
+    if (isWeekend) {
+        hours = 0;
+    }
     var trackedTimeForDay = _.filter(trackedTime, filterObjectWithDatePropertyForDay);
     var isTracked = trackedTimeForDay.length > 0;
     var trackedDuration = _.chain(trackedTimeForDay)
@@ -89,14 +92,29 @@ var calculate = function (start, absences, holidays, trackedTime) {
 
 
 var makeSummary = function (timesheetDays) {
+    var daysAbsenceCondition = {
+        isAbsence: true
+    };
     var daysWorkedCondition = {
         worked: true
     };
-    var hoursWorked = _.chain(timesheetDays).pluck('hours').reduce(reduceToSum).value();
-    var daysWorked = _.filter(timesheetDays, daysWorkedCondition).length;
+    var workedDays = _.filter(timesheetDays, daysWorkedCondition);
+    var hoursWorked = _.chain(workedDays).pluck('hours').reduce(reduceToSum).value();
+    var daysWorked = _.reduce(workedDays, function (sum, day) {
+        console.log(sum, day);
+        return sum + day.hours / contractHours;
+    }, 0);
+    var daysAbsence = _.chain(timesheetDays)
+        .filter(daysAbsenceCondition)
+        .reduce(function (sum, day) {
+            return sum + (contractHours - day.hours) / contractHours;
+        }, 0)
+        .value();
+
     var res = {
         hoursWorked: hoursWorked,
-        daysWorked: daysWorked
+        daysWorked: daysWorked,
+        daysAbsence: daysAbsence
     };
     return res;
 };

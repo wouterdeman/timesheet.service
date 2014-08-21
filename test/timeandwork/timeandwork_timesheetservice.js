@@ -28,11 +28,16 @@ describe('Timesheet', function () {
             month: 7, //aug
             customer: test.dummyActivityId
         };
+
+        var nrOfWorkingDays = 21;
+
         var result = [];
+        var summary = {};
 
         var getTimesheetAndDoCheckAndSetInResult = function (done) {
             TimesheetService.list(conditions).done(function (res) {
                 result = res.timesheetDays;
+                summary = res.summary;
                 assert.equal(result.length, 31);
                 done();
             });
@@ -57,6 +62,18 @@ describe('Timesheet', function () {
             it('should indicate if a day is in the weekend', function (done) {
                 assert.equal(result[1].isWeekend, true);
                 assert.equal(result[1].worked, false);
+                done();
+            });
+            it('should have correct worked days in the summary', function (done) {
+                assert.equal(summary.daysWorked, nrOfWorkingDays);
+                done();
+            });
+            it('should have correct worked hours in the summary', function (done) {
+                assert.equal(summary.hoursWorked, nrOfWorkingDays * 8);
+                done();
+            });
+            it('should have correct absence days in the summary', function (done) {
+                assert.equal(summary.daysAbsence, 0);
                 done();
             });
         });
@@ -89,7 +106,6 @@ describe('Timesheet', function () {
                     }
                 });
             });
-            //it('should have absences for the user', function(d);
             it('should return a timesheet', getTimesheetAndDoCheckAndSetInResult);
             it('should indicate the absence on the timesheet', function (done) {
                 var timeSheetDay = result[dayOfAbsence1 - 1];
@@ -107,6 +123,18 @@ describe('Timesheet', function () {
                 var timeSheetDay = result[10];
                 assert.equal(timeSheetDay.worked, true);
                 assert.equal(timeSheetDay.hours, 4);
+                done();
+            });
+            it('should have correct worked days in the summary', function (done) {
+                assert.equal(summary.daysWorked, nrOfWorkingDays - 1.5);
+                done();
+            });
+            it('should have correct worked hours in the summary', function (done) {
+                assert.equal(summary.hoursWorked, nrOfWorkingDays * 8 - 8 - 4);
+                done();
+            });
+            it('should have correct absence days in the summary', function (done) {
+                assert.equal(summary.daysAbsence, 1.5);
                 done();
             });
         });
@@ -129,6 +157,14 @@ describe('Timesheet', function () {
             it('should indicate the holiday on the timesheet', function (done) {
                 var timeSheetDay = result[dayOfHoliday - 1];
                 assert.equal(timeSheetDay.isHoliday, true);
+                done();
+            });
+            it('should have correct worked days in the summary', function (done) {
+                assert.equal(summary.daysWorked, nrOfWorkingDays - 1);
+                done();
+            });
+            it('should have correct worked hours in the summary', function (done) {
+                assert.equal(summary.hoursWorked, nrOfWorkingDays * 8 - 8);
                 done();
             });
         });
