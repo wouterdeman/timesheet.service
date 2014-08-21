@@ -108,11 +108,26 @@ var makeSummary = function (timesheetDays) {
     var daysWorkedCondition = {
         worked: true
     };
+    var trackedConditon = {
+        isTracked: true
+    };
+
     var workedDays = _.filter(timesheetDays, daysWorkedCondition);
     var hoursWorked = _.chain(workedDays).pluck('hours').reduce(reduceToSum).value();
     var daysWorked = _.reduce(workedDays, function (sum, day) {
         return sum + day.hours / contractHours;
     }, 0);
+
+
+    var daysTracked = _.chain(timesheetDays)
+        .filter(trackedConditon)
+        .reduce(function (sum, day) {
+            var durationInHours = day.trackedDuration / (1000 * 60 * 60);
+            console.log('durationInHours', durationInHours, day.trackedDuration);
+            return sum + durationInHours / contractHours;
+        }, 0)
+        .value();
+
     var daysAbsence = _.chain(timesheetDays)
         .filter(daysAbsenceCondition)
         .reduce(function (sum, day) {
@@ -123,7 +138,8 @@ var makeSummary = function (timesheetDays) {
     var res = {
         hoursWorked: hoursWorked,
         daysWorked: daysWorked,
-        daysAbsence: daysAbsence
+        daysAbsence: daysAbsence,
+        daysTracked: daysTracked
     };
     return res;
 };

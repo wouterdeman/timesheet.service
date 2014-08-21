@@ -228,7 +228,7 @@ describe('Timesheet', function () {
                 var timeSheetDay = result[trackedDay - 1];
                 assert.equal(timeSheetDay.isTracked, true);
                 assert.equal(timeSheetDay.trackedDuration, 300000);
-
+                assert.ok(summary.daysTracked > 0, summary.daysTracked);
                 done();
             });
         });
@@ -302,6 +302,7 @@ describe('Timesheet', function () {
                 assert.equal(timeSheetDay.worked, false);
                 assert.equal(summary.daysWorked, nrOfWorkingDays - 1);
                 assert.equal(summary.hoursWorked, nrOfWorkingDays * 8 - 8);
+                assert.equal(summary.daysTracked, 0);
                 done();
             });
         });
