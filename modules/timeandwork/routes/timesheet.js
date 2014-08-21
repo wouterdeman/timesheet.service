@@ -24,8 +24,8 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/timeandwork/timesheet/download/:year/:month/:customer', function (req, res) {
-        Authstore.verifyToken(req.header('token')).then(function (entity) {
+    app.get('/timeandwork/timesheet/download/:year/:month/:customer/:token', function (req, res) {
+        Authstore.verifyToken(req.params.token).then(function (entity) {
             var input = {
                 year: req.params.year,
                 month: req.params.month,
