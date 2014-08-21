@@ -66,7 +66,7 @@ exports.create = function (data) {
 	return {
 		entity: data.entity,
 		details: data.details,
-		date: today,
+		date: data.recordedAt || today,
 		loc: data.loc,
 		starttime: now,
 		counter: 1,
