@@ -11,6 +11,7 @@ var dummyEntityId = mongoose.Types.ObjectId('52fd4c431a142e5826f0b1e1');
 var dummyActivityId = mongoose.Types.ObjectId('52fd4c431a142e5826f0b1e2');
 exports.dummyEntityId = dummyEntityId;
 exports.dummyActivityId = dummyActivityId;
+exports.dummyId3 = mongoose.Types.ObjectId('52fd4c431a142e5826f0b1e3');
 
 var mocha = require('mocha');
 exports.assert = require('assert');

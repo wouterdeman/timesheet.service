@@ -232,6 +232,79 @@ describe('Timesheet', function () {
                 done();
             });
         });
+
+
+        describe('when tracked time for another customer is present', function () {
+            test.clearDB();
+            var trackedDay = 5;
+            var otherCustomerId = test.dummyId3;
+            before(function (done) {
+                //maak zone en dan een zone
+                var data = {
+                    //andere klant ;)
+                    entity: test.dummyEntityId,
+                    loc: [51.226956, 4.401744],
+                    zoneDetails: {
+                        name: 'Business-IT-Engineering bvba',
+                        street: 'Puttestraat',
+                        number: '105',
+                        city: 'Begijnendijk',
+                        postalcode: '3130',
+                        mobilephone: '+32 476 29 87 56'
+                    },
+                    activity: otherCustomerId,
+                    activityDetails: {
+                        name: 'Working for bITe'
+                    }
+                };
+                Timetracker.saveZone(data).then(function () {
+                    var data = [];
+                    data.push({
+                        entity: test.dummyEntityId,
+                        details: {
+                            type: 'BMW 316D',
+                            platenumber: '1-AHQ-481',
+                            area: 'Geel'
+                        },
+                        object: otherCustomerId,
+                        objectdetails: {
+                            devicestate: 'active',
+                            devicetype: 'chrome',
+                            appversion: '2.0.5'
+                        },
+                        loc: [51.226956, 4.401744],
+                        recordedAt: new Date(conditions.year, conditions.month, trackedDay, 11)
+                    });
+
+
+                    async.each(data, function (crumble, iterateCallback) {
+                        Timetracker.saveCrumble(crumble).then(function () {
+                            iterateCallback();
+                        });
+                    }, function (err) {
+                        if (!err) {
+                            done();
+                        }
+                    });
+                });
+            });
+            it('should return a timesheet', getTimesheetAndDoCheckAndSetInResult);
+            it('should NOT indicate the tracked time on the timesheet', function (done) {
+                var timeSheetDay = result[trackedDay - 1];
+                assert.equal(timeSheetDay.isTracked, false);
+                assert.equal(timeSheetDay.trackedDuration, 0);
+
+                done();
+            });
+
+            it('should not shown worked on the day for the other customer', function (done) {
+                var timeSheetDay = result[trackedDay - 1];
+                assert.equal(timeSheetDay.worked, false);
+                assert.equal(summary.daysWorked, nrOfWorkingDays - 1);
+                assert.equal(summary.hoursWorked, nrOfWorkingDays * 8 - 8);
+                done();
+            });
+        });
     });
 
 

@@ -21,7 +21,8 @@ var getHolidays = function () {
     return HolidayModel.find();
 };
 var getTrackedTime = function (data) {
-    return TimeTracker.getTrackedTimeForActivity({
+    //return TimeTracker.getTrackedTimeForActivity({
+    return TimeTracker.getTrackedTimeAndActivity({
         entity: data.entity,
         activity: data.customer,
         from: new Date(data.year, data.month, 1),
@@ -51,7 +52,7 @@ var getTimesheetDates = function (start) {
 var reduceToSum = function (sum, num) {
     return sum + num;
 };
-var calculateForDay = function (day, absences, holidays, trackedTime) {
+var calculateForDay = function (day, absences, holidays, trackedTime, customer) {
     var hours = contractHours;
     var filterObjectWithDatePropertyForDay = _.partial(absenceFilter, day);
     var absencesForDay = _.filter(absences, filterObjectWithDatePropertyForDay);
@@ -61,13 +62,22 @@ var calculateForDay = function (day, absences, holidays, trackedTime) {
     });
     var isHoliday = !!_.find(holidays, filterObjectWithDatePropertyForDay);
     var isWeekend = day.isWeekend();
-    var worked = hours > 0 && !isHoliday && !isWeekend;
-    if (isWeekend) {
+
+
+    //als je dag enkel voor andere klant gewerkt hebt (op basis van tracking)
+    //niet meetellen
+    var trackedTimeForDay = _.filter(trackedTime, filterObjectWithDatePropertyForDay);
+    var trackedTimeForCustomerAndDay = _.filter(trackedTimeForDay, {
+        activity: customer
+    });
+    var hasTrackedTimeForOtherCustomer = trackedTimeForDay.length - trackedTimeForCustomerAndDay.length > 0;
+    var isTracked = trackedTimeForCustomerAndDay.length > 0;
+    var validWorkingDay = !(isHoliday || isWeekend || hasTrackedTimeForOtherCustomer);
+    var worked = hours > 0 && validWorkingDay;
+    if (!validWorkingDay) {
         hours = 0;
     }
-    var trackedTimeForDay = _.filter(trackedTime, filterObjectWithDatePropertyForDay);
-    var isTracked = trackedTimeForDay.length > 0;
-    var trackedDuration = _.chain(trackedTimeForDay)
+    var trackedDuration = _.chain(trackedTimeForCustomerAndDay)
         .pluck('duration')
         .reduce(reduceToSum)
         .value();
@@ -82,9 +92,9 @@ var calculateForDay = function (day, absences, holidays, trackedTime) {
         trackedDuration: trackedDuration || 0
     };
 };
-var calculate = function (start, absences, holidays, trackedTime) {
+var calculate = function (start, absences, holidays, trackedTime, conditions) {
     var res = _.map(getTimesheetDates(start), function (i) {
-        return calculateForDay(i, absences, holidays, trackedTime);
+        return calculateForDay(i, absences, holidays, trackedTime, conditions.customer);
     });
     //log(res);
     return res;
@@ -146,7 +156,7 @@ exports.list = function (conditions) {
             console.log('holidays', holidays);
             console.log('trackedTime', trackedTime);
             var start = new Date(conditions.year, conditions.month, 1);
-            var timesheetDays = calculate(start, absences, holidays, trackedTime);
+            var timesheetDays = calculate(start, absences, holidays, trackedTime, conditions);
             var summary = makeSummary(timesheetDays);
             var res = {
                 timesheetDays: timesheetDays,
