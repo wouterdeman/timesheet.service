@@ -293,7 +293,7 @@ describe('Timesheet', function () {
                 var timeSheetDay = result[trackedDay - 1];
                 assert.equal(timeSheetDay.isTracked, false);
                 assert.equal(timeSheetDay.trackedDuration, 0);
-
+                assert.equal(timeSheetDay.isTrackedForOtherCustomer, true);
                 done();
             });
 

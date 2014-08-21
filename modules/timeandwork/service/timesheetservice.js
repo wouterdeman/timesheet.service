@@ -89,6 +89,7 @@ var calculateForDay = function (day, absences, holidays, trackedTime, customer) 
         worked: worked,
         hours: hours,
         isTracked: isTracked,
+        isTrackedForOtherCustomer: hasTrackedTimeForOtherCustomer,
         trackedDuration: trackedDuration || 0
     };
 };
