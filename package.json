@@ -24,7 +24,8 @@
     "requester": "~0.1.20",
     "sinon": "~1.10.3",
     "validator": "~3.17.0",
-    "request-progress": "~0.3.1"
+    "request-progress": "~0.3.1",
+    "progress": "~1.1.5"
   },
   "devDependencies": {
     "chai": "~1.9.1",
@@ -52,7 +53,7 @@
     "time-grunt": "~0.4.0"
   },
   "engines": {
-    "node": ">=0.10.0",
+    "node": "0.10.x",
     "npm": "1.2.x"
   },
   "scripts": {
