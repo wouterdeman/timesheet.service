@@ -62,8 +62,8 @@ module.exports = function (app) {
             console.log(stdout);
             console.log(stderr);
             res.download(pdf, 'haha.pdf', function () {
-                fs.unlink(renderedTemplate);
-                fs.unlink(pdf);
+                //fs.unlink(renderedTemplate);
+                //fs.unlink(pdf);
             });
         });
     });
