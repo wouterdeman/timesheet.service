@@ -3,6 +3,7 @@
 var Authstore = require('../../authstore/service');
 var TimesheetService = require('../service').TimesheetService;
 var DocumentService = require('../service').DocumentService;
+var UserStore = require('../../userstore/service');
 
 module.exports = function (app) {
     app.post('/timeandwork/timesheet', function (req, res) {
@@ -33,18 +34,17 @@ module.exports = function (app) {
             };
 
             TimesheetService.list(input).then(function (data) {
-                DocumentService.generate('timesheet.html', {
-                    person: 'joske vermeulen',
-                    month: req.params.month,
-                    year: req.params.year,
-                    items: data.timesheetDays
-                }).then(function (pdf, callback) {
-                    res.download(pdf, 'timesheet.pdf', callback);
-                }).fail(function (e) {
-                    console.log(e);
-                    res.statusCode = 401;
-                    return res.send('Error 401: Invalid token.' + e);
+                return UserStore.get(entity).then(function (user) {
+                    return DocumentService.generate('timesheet.html', {
+                        person: user.firstname + ' ' + user.lastname,
+                        month: req.params.month,
+                        year: req.params.year,
+                        items: data.timesheetDays
+                    }).then(function (pdf, callback) {
+                        res.download(pdf, 'timesheet.pdf', callback);
+                    });
                 });
+
             }).fail(function (e) {
                 res.statusCode = 401;
                 return res.send('Error 401: Invalid token.' + e);
