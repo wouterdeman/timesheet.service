@@ -5,6 +5,7 @@ var childProcess = require('child_process');
 var phantomjs = require('phantomjs');
 var binPath = phantomjs.path;
 var fs = require('fs');
+var Authstore = require('../../authstore/service');
 var TimesheetService = require('../service').TimesheetService;
 
 module.exports = function (app) {
