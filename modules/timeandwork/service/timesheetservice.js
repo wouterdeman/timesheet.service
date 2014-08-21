@@ -72,7 +72,7 @@ var calculateForDay = function (day, absences, holidays, trackedTime, customer) 
     });
     var hasTrackedTimeForOtherCustomer = trackedTimeForDay.length - trackedTimeForCustomerAndDay.length > 0;
     var isTracked = trackedTimeForCustomerAndDay.length > 0;
-    var validWorkingDay = !(isHoliday || isWeekend || hasTrackedTimeForOtherCustomer);
+    var validWorkingDay = !(isHoliday || isWeekend || (hasTrackedTimeForOtherCustomer && !isTracked));
     var worked = hours > 0 && validWorkingDay;
     if (!validWorkingDay) {
         hours = 0;
