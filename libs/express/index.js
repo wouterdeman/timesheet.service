@@ -10,7 +10,7 @@ module.exports = function (app, express, rootDir) {
 	/*
 	 * Use Handlebars for templating
 	 */
-	var exphbs = require('express3-handlebars');
+	var exphbs = require('express-handlebars');
 
 	// For gzip compression
 	app.use(compression());

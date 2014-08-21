@@ -63,7 +63,7 @@ module.exports = function (app) {
             console.log(stderr);
             res.download(pdf, 'haha.pdf', function () {
                 fs.unlink(renderedTemplate);
-                fs.unline(pdf);
+                fs.unlink(pdf);
             });
         });
     });
