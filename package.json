@@ -17,7 +17,7 @@
     "mongoose": "~3.8.15",
     "phantomjs": "~1.9.7-15",
     "q": "~1.0.1",
-    "requester": "~0.1.20",
+    "requester": "~0.1.20"
   },
   "devDependencies": {
     "sinon": "~1.10.3",
