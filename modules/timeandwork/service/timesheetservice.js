@@ -67,8 +67,8 @@ var calculateForDay = function (day, absences, holidays, trackedTime, customer) 
     //als je dag enkel voor andere klant gewerkt hebt (op basis van tracking)
     //niet meetellen
     var trackedTimeForDay = _.filter(trackedTime, filterObjectWithDatePropertyForDay);
-    var trackedTimeForCustomerAndDay = _.filter(trackedTimeForDay, {
-        activity: customer
+    var trackedTimeForCustomerAndDay = _.filter(trackedTimeForDay, function (d) {
+        return d.activity + '' === customer + '';
     });
     var hasTrackedTimeForOtherCustomer = trackedTimeForDay.length - trackedTimeForCustomerAndDay.length > 0;
     var isTracked = trackedTimeForCustomerAndDay.length > 0;
