@@ -9,11 +9,20 @@ var TimesheetService = require('../service').TimesheetService;
 
 module.exports = function (app) {
     app.get('/timeandwork/timesheet', function (req, res) {
-        TimesheetService.list().then(function (data) {
-            res.json(data);
-        }).fail(function (e) {
-            res.statusCode = 401;
-            return res.send('Error 401: Invalid token.' + e);
+        Authstore.verifyToken(req.header('token')).then(function (entity) {
+            var input = {
+                year: req.body.year,
+                month: req.body.month,
+                customer: req.body.customer,
+                entity: entity
+            };
+
+            TimesheetService.list(input).then(function (data) {
+                res.json(data);
+            }).fail(function (e) {
+                res.statusCode = 401;
+                return res.send('Error 401: Invalid token.' + e);
+            });
         });
     });
 
