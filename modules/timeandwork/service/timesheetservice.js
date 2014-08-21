@@ -124,7 +124,6 @@ var makeSummary = function (timesheetDays) {
         .filter(trackedConditon)
         .reduce(function (sum, day) {
             var durationInHours = day.trackedDuration / (1000 * 60 * 60);
-            console.log('durationInHours', durationInHours, day.trackedDuration);
             return sum + durationInHours / contractHours;
         }, 0)
         .value();
@@ -140,7 +139,7 @@ var makeSummary = function (timesheetDays) {
         hoursWorked: hoursWorked,
         daysWorked: daysWorked,
         daysAbsence: daysAbsence,
-        daysTracked: daysTracked
+        daysTracked: (daysTracked).toFixed(2)
     };
     return res;
 };
