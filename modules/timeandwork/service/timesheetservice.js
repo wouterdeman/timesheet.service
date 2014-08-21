@@ -1,0 +1,138 @@
+'use strict';
+
+var models = require('../models');
+var log = require('loggy').log;
+
+
+var TimeTracker = require('../../timetracker/service');
+var AbsenceModel = models.absenceModel;
+var HolidayModel = models.holidayModel;
+var Q = require('q');
+var _ = require('lodash-node');
+
+
+var getAbsences = function (entity) {
+    return AbsenceModel.find({
+        entity: entity
+    });
+};
+var getHolidays = function () {
+    return HolidayModel.find();
+};
+var getTrackedTime = function (data) {
+    return TimeTracker.getTrackedTimeForActivity({
+        entity: data.entity,
+        activity: data.customer,
+        from: new Date(data.year, data.month, 1),
+        to: new Date(data.year, data.month + 1, 1)
+    });
+};
+var areDaysEqual = function (day1, day2) {
+    var yearsMatch = day1.getFullYear() === day2.getFullYear();
+    var dateMatch = day1.getDate() === day2.getDate();
+    var monthsMatch = day1.getMonth() === day2.getMonth();
+    return yearsMatch && dateMatch && monthsMatch;
+};
+var absenceFilter = function (dayToTest, abs) {
+    return areDaysEqual(abs.date, dayToTest);
+};
+var getTimesheetDates = function (start) {
+    var end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
+    var step = {
+        'days': 1
+    };
+    var days = [];
+    for (var i = start; i <= end; i = i.add(step)) {
+        days.push(new Date(i.getFullYear(), i.getMonth(), i.getDate()));
+    }
+    return days;
+};
+var reduceToSum = function (sum, num) {
+    return sum + num;
+};
+var calculateForDay = function (day, absences, holidays, trackedTime) {
+    var contractHours = 8;
+    var hours = contractHours;
+    var filterObjectWithDatePropertyForDay = _.partial(absenceFilter, day);
+    var absencesForDay = _.filter(absences, filterObjectWithDatePropertyForDay);
+    var isAbsence = absencesForDay.length > 0;
+    _.forEach(absencesForDay, function (abs) {
+        hours = hours - contractHours * abs.amount;
+    });
+    var isHoliday = !!_.find(holidays, filterObjectWithDatePropertyForDay);
+    var isWeekend = day.isWeekend();
+    var worked = hours > 0 && !isHoliday && !isWeekend;
+    var trackedTimeForDay = _.filter(trackedTime, filterObjectWithDatePropertyForDay);
+    var isTracked = trackedTimeForDay.length > 0;
+    var trackedDuration = _.chain(trackedTimeForDay)
+        .pluck('duration')
+        .reduce(reduceToSum)
+        .value();
+    return {
+        dayNr: day.getDate(),
+        isWeekend: isWeekend,
+        isAbsence: isAbsence,
+        isHoliday: isHoliday,
+        worked: worked,
+        hours: hours,
+        isTracked: isTracked,
+        trackedDuration: trackedDuration || 0
+    };
+};
+var calculate = function (start, absences, holidays, trackedTime) {
+    var res = _.map(getTimesheetDates(start), function (i) {
+        return calculateForDay(i, absences, holidays, trackedTime);
+    });
+    //log(res);
+    return res;
+};
+
+
+var makeSummary = function (timesheetDays) {
+    var daysWorkedCondition = {
+        worked: true
+    };
+    var hoursWorked = _.chain(timesheetDays).pluck('hours').reduce(reduceToSum).value();
+    var daysWorked = _.filter(timesheetDays, daysWorkedCondition).length;
+    var res = {
+        hoursWorked: hoursWorked,
+        daysWorked: daysWorked
+    };
+    return res;
+};
+
+var validateConditons = function (conditions) {
+    if (!conditions.customer) {
+        throw new Error('No customer defined');
+    }
+    if (!conditions.entity) {
+        throw new Error('No entity defined');
+    }
+    if (!conditions.year) {
+        throw new Error('No year defined');
+    }
+    if (!conditions.month) {
+        throw new Error('No month defined');
+    }
+    log(conditions);
+};
+
+exports.list = function (conditions) {
+    validateConditons(conditions);
+    var deferred = Q.defer();
+    Q.all([getAbsences(conditions.entity), getHolidays(), getTrackedTime(conditions)])
+        .spread(function (absences, holidays, trackedTime) {
+            console.log('absences', absences);
+            console.log('holidays', holidays);
+            console.log('trackedTime', trackedTime);
+            var start = new Date(conditions.year, conditions.month, 1);
+            var timesheetDays = calculate(start, absences, holidays, trackedTime);
+            var summary = makeSummary(timesheetDays);
+            var res = {
+                timesheetDays: timesheetDays,
+                summary: summary
+            };
+            deferred.resolve(res);
+        }).done();
+    return deferred.promise;
+};
