@@ -7,13 +7,18 @@
     <script>
     function TimesheetController($scope, dateFilter) {
         var data = %%data%%;
+        /*var data = {
+            month: 8,
+            year: 2014,
+            items: []
+        }*/
         var items = data.items;
 
         var month = data.month;
         var year = data.year;
         var months = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
         /*for (var i = 1; i <= 31; i++) {
-            data.push({
+            items.push({
                 dayNr: i,
                 isWeekend: i % 6 === 0 || i % 7 === 0,
                 isAbsence: i % 10,
@@ -37,10 +42,6 @@
         })
 
         $scope.data = items;
-
-        $scope.getTotalTodos = function() {
-            return $scope.todos.length;
-        };
     }
     </script>
     <style>
@@ -51,19 +52,23 @@
         margin-bottom: 10px;
     }
     td {
-        padding-top: 3px !important;
-        padding-bottom: 3px !important;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 12px;
+    }
+    tr.weekend {
+        background-color: #f2f2f2;
     }
     </style>
 </head>
 <body>
     <div id="timesheetContainer" class="container-fluid" ng-controller="TimesheetController">
-        <h1>{{person}} - {{month}}
+        <h2>{{person}} - {{month}}
             <img class="logo" src="http://www.bite.be/wp-content/uploads/2011/12/bitelogo.png" />
-        </h1>
+        </h2>
         <table class="table table-bordered">
             <tbody>
-                <tr ng-repeat="item in data">
+                <tr ng-repeat="item in data" ng-class="{ weekend: item.isWeekend }">
                     <td>{{item.formattedDate}}</td>
                     <td>{{item.hours ? item.hours : ''}}</td>
                 </tr>

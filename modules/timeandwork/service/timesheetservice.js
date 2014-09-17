@@ -21,7 +21,6 @@ var getHolidays = function () {
     return HolidayModel.find();
 };
 var getTrackedTime = function (data) {
-    //return TimeTracker.getTrackedTimeForActivity({
     return TimeTracker.getTrackedTimeAndActivity({
         entity: data.entity,
         activity: data.customer,
