@@ -24,10 +24,11 @@ module.exports = function (app) {
 		if (req.body.location) {
 			loc = [req.body.location.latitude, req.body.location.longitude];
 		}
+		var recordedAt = req.body.recordedAt;
 		var objectid = req.body.objectid;
 		var objectdetails = req.body.objectdetails;
 
-		TimesheetService.saveCrumble(token, loc, objectid, objectdetails).then(function () {
+		TimesheetService.saveCrumble(token, loc, objectid, objectdetails, recordedAt).then(function () {
 			res.json(true);
 		}).fail(function (err) {
 			console.log('err: ' + err);

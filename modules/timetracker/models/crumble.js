@@ -63,7 +63,7 @@ exports.create = function (data) {
 	var today = Date.UTCtoday();
 	if (data.recordedAt) {
 		var ra = data.recordedAt;
-		today = new Date(ra.getFullYear(), ra.getMonth(), ra.getDate());
+		today = new Date(ra.getFullYear(), ra.getMonth(), ra.getDate(), ra.getHours(), ra.getMinutes(), ra.getSeconds());
 	}
 	var now = new Date();
 
