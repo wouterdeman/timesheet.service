@@ -4,7 +4,7 @@ module.exports = function (app) {
     var SaldoService = require('../service').SaldoService;
     var Authstore = require('../../authstore/service');
 
-    app.get('/timeandwork/saldo', function (req, res) {
+    app.get('/timeandwork/saldo/:year', function (req, res) {
         if (!req.header('token')) {
             res.statusCode = 400;
             return res.send('Error 400: Missing security token.');
@@ -12,7 +12,8 @@ module.exports = function (app) {
 
         Authstore.verifyToken(req.header('token')).then(function (entity) {
             SaldoService.list({
-                entity: entity
+                entity: entity,
+                year: req.params.year
             }).then(function (saldos) {
                 res.json(saldos);
             }).fail(function () {
