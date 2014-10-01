@@ -9,7 +9,8 @@ var AbsenceSchema = new Schema({
     entity: ObjectId,
     absenceright: ObjectId,
     amount: Number,
-    prenoon: Boolean
+    prenoon: Boolean,
+    year: Number
 });
 
 var Absence = mongoose.model('absence', AbsenceSchema);
@@ -43,7 +44,8 @@ exports.update = function (id, absence) {
             entity: absence.entity,
             absenceright: absence.absenceright,
             amount: absence.amount,
-            prenoon: absence.prenoon
+            prenoon: absence.prenoon,
+            year: absence.date.getFullYear()
         }
     }).exec();
 };

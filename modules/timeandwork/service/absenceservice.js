@@ -2,50 +2,128 @@
 
 var models = require('../models');
 var AbsenceModel = models.absenceModel;
-var AbsenceRightModel = models.absenceRightModel;
+var SaldoService = require('./saldoservice');
+var holidayservice = require('./holidayservice');
 var Q = require('q');
+var _ = require('lodash-node');
+var async = require('async');
 
-exports.save = function (absence) {
+var createAbsencesForRange = function(absence, holidays) {
+    // We ignore absence requests on holidays
+    var isHoliday = function(d) {
+        return _.find(holidays, function(holiday) {
+            var holidayDate = holiday.date;
+            return holidayDate.getFullYear() === d.getFullYear() && holidayDate.getMonth() === d.getMonth() && holidayDate.getDate() === d.getDate();
+        });
+    };
+
+    var data = [];
+    for (var d = absence.from; d <= absence.to; d.setDate(d.getDate() + 1)) {
+        var dayOfWeek = d.getDay();
+
+        // We ignore weekend days by default
+        if (dayOfWeek !== 0 && dayOfWeek !== 6 && !isHoliday(d)) {
+            var absenceToSave = {
+                date: new Date(d.getFullYear(), d.getMonth(), d.getDate()),
+                amount: absence.amount,
+                prenoon: absence.prenoon,
+                year: d.getFullYear()
+            };
+            data.push(absenceToSave);
+        }
+    }
+    return data;
+};
+
+exports.save = function(absence) {
     var deferred = Q.defer();
 
-    AbsenceRightModel.find({
-        entity: absence.entity,
-        year: absence.date.getFullYear()
-    }).then(function (absencerights) {
-        // todo: check saldo & use absence right using the correct absence right settings
-        // todo: dont add absences on holidays
-        if (!absence.absenceright && !(absencerights && absencerights.length)) {
-            deferred.reject('No available absence rights found');
+    holidayservice.list({
+        date: {
+            '$gte': absence.from,
+            '$lte': absence.to
+        }
+    }).then(function(holidays) {
+        var data = createAbsencesForRange(absence, holidays);
+
+        if (!data.length) {
+            deferred.reject('The absences you try to register do not fall on working days');
             return deferred.promise;
         }
 
-        if (!absence.absenceright) {
-            absence.absenceright = absencerights[0]._id;
-        }
-        AbsenceModel.save(absence).then(deferred.resolve, deferred.reject);
+        SaldoService.list({
+            entity: absence.entity,
+            year: absence.from.getFullYear()
+        }).then(function(absencerights) {
+            var allValid = true;
+
+            absencerights = _.sortBy(absencerights, function(right) {
+                return right.seqnr;
+            });
+
+            // Validate absence rights    
+            _.forEach(data, function(item) {
+                if (!item.absenceright && !(absencerights && absencerights.length)) {
+                    deferred.reject('No available absence rights found');
+                    return deferred.promise;
+                }
+                if (!item.absenceright) {
+                    var rightFound = false;
+                    _.forEach(absencerights, function(right) {
+                        // Monthly absence rights check                
+                        var monthlyUsageAvailable = !right.monthly || (right.monthly && right.used < item.date.getMonth() + 1);
+                        // Enough right amount check
+                        if (right.amount - right.used >= 1 && !item.absenceright && monthlyUsageAvailable) {
+                            item.absenceright = right._id;
+                            right.used++;
+                            rightFound = true;
+                        }
+                    });
+                    if (!rightFound) {
+                        allValid = false;
+                        deferred.reject('No saldo left');
+                        return deferred.promise;
+                    }
+                }
+
+                item.entity = absence.entity;
+            });
+
+            if (!allValid) {
+                deferred.reject();
+                return deferred.promise;
+            }
+
+            async.each(data, function(item, iterateCallback) {
+                AbsenceModel.save(item).then(function() {
+                    iterateCallback();
+                }, deferred.reject);
+            }, function(err) {
+                if (!err) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject(err);
+                }
+            });
+        });
     });
+
     return deferred.promise;
 };
 
-exports.list = function (conditions) {
+exports.list = function(conditions) {
     var deferred = Q.defer();
     AbsenceModel.find(conditions).then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
-exports.update = function (id, absence) {
-    var deferred = Q.defer();
-    AbsenceModel.update(id, absence).then(deferred.resolve, deferred.reject);
-    return deferred.promise;
-};
-
-exports.remove = function (id) {
+exports.remove = function(id) {
     var deferred = Q.defer();
     AbsenceModel.remove(id).then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
-exports.get = function (id) {
+exports.get = function(id) {
     var deferred = Q.defer();
     AbsenceModel.findById(id).then(deferred.resolve, deferred.reject);
     return deferred.promise;

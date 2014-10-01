@@ -34,7 +34,8 @@ module.exports = function (app) {
         Authstore.verifyToken(req.header('token')).then(function (entity) {
             var absence;
             absence = {
-                date: new Date(req.body.year, req.body.month - 1, req.body.day),
+                from: new Date(req.body.fromYear, req.body.fromMonth - 1, req.body.fromDay),
+                to: new Date(req.body.toYear, req.body.toMonth -1, req.body.toDay),
                 amount: req.body.amount,
                 prenoon: req.body.prenoon,
                 entity: entity

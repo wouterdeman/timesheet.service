@@ -12,8 +12,6 @@ var HolidayService = require('../../modules/timeandwork/service').HolidayService
 var Timetracker = require('../../modules/timetracker/service');
 var log = require('loggy').log;
 
-
-
 describe('Timesheet', function () {
     log('');
     this.timeout(3600);

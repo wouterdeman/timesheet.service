@@ -17,7 +17,8 @@ describe('Time and work absences', function () {
         it('should save the absence without errors', function (done) {
             var data = [];
             data.push({
-                date: new Date(2014, 1, 1),
+                from: new Date(2014, 0, 1),
+                to: new Date(2014, 0, 1),
                 amount: 1,
                 prenoon: false,
                 absenceright: test.dummyEntityId,
@@ -52,25 +53,7 @@ describe('Time and work absences', function () {
                 });
             });
         });
-    });
-    describe('when updating an existing absence', function () {
-        it('should update the absence without errors', function (done) {
-            AbsenceService.list().then(function (absences) {
-                var absence = absences[0];
-                absence.amount = 0.5;
-                AbsenceService.update(absence._id, absence).then(function () {
-                    done();
-                });
-            });
-        });
-        it('should return the new absence data when we list all absences', function (done) {
-            AbsenceService.list().then(function (absences) {
-                assert.equal(absences.length, 1);
-                assert.equal(absences[0].amount, 0.5);
-                done();
-            });
-        });
-    });
+    });   
     describe('when deleting an existing absence', function () {
         it('should update the absence without errors', function (done) {
             AbsenceService.list().then(function (absences) {
@@ -83,6 +66,37 @@ describe('Time and work absences', function () {
         it('should return the no absence when we list all absences', function (done) {
             AbsenceService.list().then(function (absences) {
                 assert.equal(absences.length, 0);
+                done();
+            });
+        });
+    });
+    describe('when saving a week of absence', function () {
+        test.clearDB();
+        it('should save the absence without errors', function (done) {
+            var data = [];
+            data.push({
+                from: new Date(2014, 0, 1),
+                to: new Date(2014, 0, 7),
+                amount: 1,
+                prenoon: false,
+                absenceright: test.dummyEntityId,
+                entity: test.dummyEntityId
+            });
+
+            async.each(data, function (absence, iterateCallback) {
+                AbsenceService.save(absence).then(function () {
+                    iterateCallback();
+                });
+            }, function (err) {
+                if (!err) {
+                    done();
+                }
+            });
+        });
+        it('should return 5 absences because we skip weekends', function (done) {
+            AbsenceService.list().then(function (absences) {
+                assert.equal(absences.length, 5);
+                assert.equal(absences[0].amount, 1);
                 done();
             });
         });
