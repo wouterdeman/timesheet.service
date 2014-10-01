@@ -471,4 +471,80 @@ describe('Time and work absences', function() {
             });
         });
     });
+
+    describe('when saving an absence on an existing absence', function() {
+        test.clearDB();
+        it('should save the absence right without errors', function(done) {
+            var data = [];
+            data.push({
+                name: 'Recup',
+                amount: 5,
+                year: 2014,
+                entity: test.dummyEntityId,
+                monthly: true,
+                seqnr: 1
+            });
+
+            async.each(data, function(absenceRight, iterateCallback) {
+                AbsenceRightService.save(absenceRight).then(function() {
+                    iterateCallback();
+                });
+            }, function(err) {
+                if (!err) {
+                    done();
+                }
+            });
+        });
+        it('should save the absence without errors', function(done) {
+            var data = [];
+            data.push({
+                from: new Date(2014, 4, 1),
+                to: new Date(2014, 4, 1),
+                amount: 1,
+                prenoon: false,
+                entity: test.dummyEntityId
+            });
+
+            async.each(data, function(absence, iterateCallback) {
+                AbsenceService.save(absence).then(function() {
+                    iterateCallback();
+                }).fail(function(err) {
+                    console.log(err);
+                });
+            }, function(err) {
+                if (!err) {
+                    done();
+                }
+            });
+        });
+        it('should save the absence without errors', function(done) {
+            var data = [];
+            data.push({
+                from: new Date(2014, 4, 1),
+                to: new Date(2014, 4, 1),
+                amount: 1,
+                prenoon: false,
+                entity: test.dummyEntityId
+            });
+
+            async.each(data, function(absence, iterateCallback) {
+                AbsenceService.save(absence).then(function() {
+                    iterateCallback();
+                }).fail(function(err) {
+                    assert.equal(err, 'The absences you try to register do not fall on working days');
+                    done();
+                });
+            }, function(err) {
+                if (err) {
+                    done();
+                }
+            });
+        });
+        it('should return 1 absences that were registered', function(done) {
+            AbsenceService.list().then(function(absences) {
+                assert.equal(absences.length, 1);
+                done();
+            });
+        });
+    });
 });
