@@ -23,13 +23,12 @@ describe('Time and work absences', function () {
                 prenoon: false,
                 absenceright: test.dummyEntityId,
                 entity: test.dummyEntityId
-            });
-
+            });            
             async.each(data, function (absence, iterateCallback) {
-                AbsenceService.save(absence).then(function () {
+                AbsenceService.save(absence).then(function () {                 
                     iterateCallback();
                 });
-            }, function (err) {
+            }, function (err) {                
                 if (!err) {
                     done();
                 }
@@ -84,7 +83,7 @@ describe('Time and work absences', function () {
             });
 
             async.each(data, function (absence, iterateCallback) {
-                AbsenceService.save(absence).then(function () {
+                AbsenceService.save(absence).then(function () {                    
                     iterateCallback();
                 });
             }, function (err) {

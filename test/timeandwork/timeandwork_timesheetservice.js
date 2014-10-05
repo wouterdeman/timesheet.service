@@ -83,13 +83,15 @@ describe('Timesheet', function () {
             before(function (done) {
                 var data = [];
                 data.push({
-                    date: new Date(conditions.year, conditions.month, dayOfAbsence1),
+                    from: new Date(conditions.year, conditions.month, dayOfAbsence1),
+                    to: new Date(conditions.year, conditions.month, dayOfAbsence1),
                     amount: 1,
                     absenceright: test.dummyEntityId,
                     entity: test.dummyEntityId
                 });
                 data.push({
-                    date: new Date(conditions.year, conditions.month, 11),
+                    from: new Date(conditions.year, conditions.month, 11),
+                    to: new Date(conditions.year, conditions.month, 11),
                     amount: 0.5,
                     absenceright: test.dummyEntityId,
                     entity: test.dummyEntityId

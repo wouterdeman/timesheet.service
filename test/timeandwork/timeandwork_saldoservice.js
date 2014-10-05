@@ -9,14 +9,14 @@ var AbsenceRightService = require('../../modules/timeandwork/service').AbsenceRi
 var AbsenceService = require('../../modules/timeandwork/service').AbsenceService;
 var SaldoService = require('../../modules/timeandwork/service').SaldoService;
 
-describe('Time and work absence rights', function () {
+describe('Time and work absence rights', function() {
     this.timeout(3600);
     test.createSandbox();
     test.mockVerifyToken();
     test.cleanupSandbox();
-    describe('when saving a new absence right', function () {
+    describe('when saving a new absence right', function() {
         test.clearDB();
-        it('should save the absence right without errors', function (done) {
+        it('should save the absence right without errors', function(done) {
             var data = [];
             data.push({
                 name: 'Wettelijk verlof',
@@ -27,37 +27,40 @@ describe('Time and work absence rights', function () {
                 seqnr: 1
             });
 
-            async.each(data, function (absenceRight, iterateCallback) {
-                AbsenceRightService.save(absenceRight).then(function () {
+            async.each(data, function(absenceRight, iterateCallback) {
+                AbsenceRightService.save(absenceRight).then(function() {
                     iterateCallback();
                 });
-            }, function (err) {
+            }, function(err) {
                 if (!err) {
                     done();
                 }
             });
         });
-        it('should save the absence without errors', function (done) {
+        it('should save the absence without errors', function(done) {
             var data = [];
             data.push({
-                date: new Date(2014, 1, 1),
+                from: new Date(2014, 0, 1),
+                to: new Date(2014, 0, 1),
                 amount: 1,
                 prenoon: false,
                 entity: test.dummyEntityId
             });
 
-            async.each(data, function (absence, iterateCallback) {
-                AbsenceService.save(absence).then(function () {
+            async.each(data, function(absence, iterateCallback) {
+                AbsenceService.save(absence).then(function() {
                     iterateCallback();
+                }, function(err) {
+                    console.log(err);
                 });
-            }, function (err) {
+            }, function(err) {
                 if (!err) {
                     done();
                 }
             });
         });
-        it('should return the correct saldo indicating one day is used', function (done) {
-            SaldoService.list().then(function (saldos) {
+        it('should return the correct saldo indicating one day is used', function(done) {
+            SaldoService.list().then(function(saldos) {
                 assert.equal(saldos.length, 1);
                 assert.equal(saldos[0].used, 1);
                 done();

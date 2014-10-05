@@ -151,7 +151,6 @@ describe('Timesheet service', function () {
                 month: new Date().getMonth(),
                 year: new Date().getFullYear()
             };
-            console.log(getTrackedTimeAndCustomerData);
             timesheetService.getTrackedTimeAndCustomer(getTrackedTimeAndCustomerData).then(function (trackedTime) {
                 try {
                     expect(trackedTime).to.have.length(1);

@@ -54,7 +54,8 @@ var createAbsencesForRange = function(absence, holidays, existingAbsences) {
                 date: new Date(d.getFullYear(), d.getMonth(), d.getDate()),
                 amount: absence.amount,
                 prenoon: absence.prenoon,
-                year: d.getFullYear()
+                year: d.getFullYear(),
+                absenceright: absence.absenceright
             };
             data.push(absenceToSave);
         }
@@ -95,7 +96,7 @@ exports.save = function(absence) {
                 });
 
                 // Validate absence rights    
-                _.forEach(data, function(item) {
+                _.forEach(data, function(item) {                    
                     if (!item.absenceright && !(absencerights && absencerights.length)) {
                         deferred.reject('No available absence rights found');
                         return deferred.promise;

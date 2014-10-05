@@ -8,4 +8,5 @@ module.exports = function (app) {
     require('./absence')(app);
     require('./saldo')(app);
     require('./timesheet')(app);
+    require('./absencemanagement')(app);
 };

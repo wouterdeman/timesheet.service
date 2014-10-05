@@ -167,9 +167,6 @@ exports.list = function (conditions) {
     var deferred = Q.defer();
     Q.all([getAbsences(conditions.entity), getHolidays(), getTrackedTime(conditions)])
         .spread(function (absences, holidays, trackedTime) {
-            console.log('absences', absences);
-            console.log('holidays', holidays);
-            console.log('trackedTime', trackedTime);
             var start = new Date(conditions.year, conditions.month, 1);
             var timesheetDays = calculate(start, absences, holidays, trackedTime, conditions);
             var summary = makeSummary(timesheetDays);

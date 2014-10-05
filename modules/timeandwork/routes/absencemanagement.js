@@ -4,16 +4,14 @@ module.exports = function (app) {
     var AbsenceService = require('../service').AbsenceService;
     var Authstore = require('../../authstore/service');
 
-    app.get('/timeandwork/absences', function (req, res) {
+    app.get('/timeandwork/absencemanagement', function (req, res) {
         if (!req.header('token')) {
             res.statusCode = 400;
             return res.send('Error 400: Missing security token.');
         }
 
-        Authstore.verifyToken(req.header('token')).then(function (entity) {
-            AbsenceService.list({
-                entity: entity
-            }).then(function (absences) {
+        Authstore.verifyToken(req.header('token')).then(function () {
+            AbsenceService.list().then(function (absences) {
                 res.json(absences);
             }).fail(function () {
                 res.statusCode = 401;
@@ -22,7 +20,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/timeandwork/absences', function (req, res) {
+    app.post('/timeandwork/absencemanagement', function (req, res) {
         if (!req.header('token')) {
             res.statusCode = 400;
             return res.send('Error 400: Missing security token.');
@@ -31,14 +29,14 @@ module.exports = function (app) {
         console.log('POST: ');
         console.log(req.body);
 
-        Authstore.verifyToken(req.header('token')).then(function (entity) {
+        Authstore.verifyToken(req.header('token')).then(function () {
             var absence;
             absence = {
                 from: new Date(req.body.fromYear, req.body.fromMonth - 1, req.body.fromDay),
                 to: new Date(req.body.toYear, req.body.toMonth -1, req.body.toDay),
                 amount: req.body.amount,
                 prenoon: req.body.prenoon,
-                entity: entity
+                entity: req.body.entity
             };
 
             AbsenceService.save(absence).then(function () {
@@ -56,7 +54,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/timeandwork/absences/:id', function (req, res) {
+    app.get('/timeandwork/absencemanagement/:id', function (req, res) {
         AbsenceService.get(req.params.id).then(function (absence) {
             res.json(absence);
         }).fail(function () {
@@ -65,7 +63,7 @@ module.exports = function (app) {
         });
     });    
 
-    app.delete('/timeandwork/absences/:id', function (req, res) {
+    app.delete('/timeandwork/absencemanagement/:id', function (req, res) {
         AbsenceService.remove(req.params.id).then(function () {
             console.log('absence removed');
         }).fail(function () {
