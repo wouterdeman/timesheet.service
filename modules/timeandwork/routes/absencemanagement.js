@@ -101,7 +101,7 @@ module.exports = function(app) {
 
     app.get('/timeandwork/absencemanagement/frozen', function(req, res) {
         AbsenceService.getFrozen().then(function(frozen) {
-            res.json(froze);
+            res.json(frozen);
         }).fail(function() {
             res.statusCode = 401;
             return res.send('Error 401: Invalid token.');
