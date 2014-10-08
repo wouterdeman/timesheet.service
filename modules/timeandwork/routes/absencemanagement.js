@@ -98,4 +98,13 @@ module.exports = function(app) {
             });
         });
     });
+
+    app.get('/timeandwork/absencemanagement/frozen', function(req, res) {
+        AbsenceService.get().then(function(frozen) {
+            res.json(froze);
+        }).fail(function() {
+            res.statusCode = 401;
+            return res.send('Error 401: Invalid token.');
+        });
+    });
 };
