@@ -63,6 +63,15 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/timeandwork/absencemanagement/frozen', function(req, res) {
+        AbsenceService.getFrozen().then(function(frozen) {
+            res.json(frozen);
+        }).fail(function() {
+            res.statusCode = 401;
+            return res.send('Error 401: Invalid token.');
+        });
+    });
+
     app.delete('/timeandwork/absencemanagement/:id', function(req, res) {
         AbsenceService.remove(req.params.id).then(function() {
             console.log('absence removed');
@@ -97,14 +106,5 @@ module.exports = function(app) {
                 });
             });
         });
-    });
-
-    app.get('/timeandwork/absencemanagement/frozen', function(req, res) {
-        AbsenceService.getFrozen().then(function(frozen) {
-            res.json(frozen);
-        }).fail(function() {
-            res.statusCode = 401;
-            return res.send('Error 401: Invalid token.');
-        });
-    });
+    });    
 };
