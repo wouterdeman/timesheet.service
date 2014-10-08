@@ -100,7 +100,7 @@ module.exports = function(app) {
     });
 
     app.get('/timeandwork/absencemanagement/frozen', function(req, res) {
-        AbsenceService.get().then(function(frozen) {
+        AbsenceService.getFrozen().then(function(frozen) {
             res.json(froze);
         }).fail(function() {
             res.statusCode = 401;
