@@ -9,48 +9,48 @@ var Q = require('q');
 var _ = require('lodash-node');
 var async = require('async');
 
-var list = function(conditions) {
+var list = function (conditions) {
     var deferred = Q.defer();
     AbsenceModel.find(conditions).then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
-var freeze = function(date) {
+var freeze = function (date) {
     var deferred = Q.defer();
     FreezeModel.save(date).then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
-var getFrozen = function() {
+var getFrozen = function () {
     var deferred = Q.defer();
     FreezeModel.findOne().then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
-var remove = function(id) {
+var remove = function (id) {
     var deferred = Q.defer();
     AbsenceModel.remove(id).then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
-var get = function(id) {
+var get = function (id) {
     var deferred = Q.defer();
     AbsenceModel.findById(id).then(deferred.resolve, deferred.reject);
     return deferred.promise;
 };
 
-var createAbsencesForRange = function(absence, holidays, existingAbsences) {
+var createAbsencesForRange = function (absence, holidays, existingAbsences) {
     // We ignore absence requests on holidays
-    var isHoliday = function(d) {
-        return _.find(holidays, function(holiday) {
+    var isHoliday = function (d) {
+        return _.find(holidays, function (holiday) {
             var holidayDate = holiday.date;
             return holidayDate.getFullYear() === d.getFullYear() && holidayDate.getMonth() === d.getMonth() && holidayDate.getDate() === d.getDate();
         });
     };
 
     // We ignore existing absences
-    var isExistingAbsence = function(d) {
-        return _.find(existingAbsences, function(existingAbsence) {
+    var isExistingAbsence = function (d) {
+        return _.find(existingAbsences, function (existingAbsence) {
             var existingAbsenceDate = existingAbsence.date;
             return existingAbsenceDate.getFullYear() === d.getFullYear() && existingAbsenceDate.getMonth() === d.getMonth() && existingAbsenceDate.getDate() === d.getDate();
         });
@@ -75,16 +75,16 @@ var createAbsencesForRange = function(absence, holidays, existingAbsences) {
     return data;
 };
 
-var save = function(absence) {
+var save = function (absence) {
     var deferred = Q.defer();
 
-    getFrozen().then(function(frozen) {
+    getFrozen().then(function (frozen) {
         if (absence.to.isBefore(absence.from)) {
             deferred.reject('The from date should fall before the to date!');
             return deferred.promise;
         }
 
-        if (frozen && absence.from.isBefore(frozen.date)) {
+        if (frozen && (absence.from.isBefore(frozen.date) || absence.from.equals(frozen.date))) {
             deferred.reject('Absences before ' + frozen.date.toFormat('DD/MM/YYYY') + ' are now allowed. Contact your administrator for more information!');
             return deferred.promise;
         }
@@ -94,13 +94,13 @@ var save = function(absence) {
                 '$gte': absence.from,
                 '$lte': absence.to
             }
-        }).then(function(absences) {
+        }).then(function (absences) {
             holidayservice.list({
                 date: {
                     '$gte': absence.from,
                     '$lte': absence.to
                 }
-            }).then(function(holidays) {
+            }).then(function (holidays) {
                 var data = createAbsencesForRange(absence, holidays, absences);
 
                 if (!data.length) {
@@ -111,23 +111,23 @@ var save = function(absence) {
                 SaldoService.list({
                     entity: absence.entity,
                     year: absence.from.getFullYear()
-                }).then(function(absencerights) {
+                }).then(function (absencerights) {
                     var allValid = true;
 
-                    absencerights = _.sortBy(absencerights, function(right) {
+                    absencerights = _.sortBy(absencerights, function (right) {
                         return right.seqnr;
                     });
 
-                    // Validate absence rights    
-                    _.forEach(data, function(item) {
+                    // Validate absence rights
+                    _.forEach(data, function (item) {
                         if (!item.absenceright && !(absencerights && absencerights.length)) {
                             deferred.reject('No available absence rights found');
                             return deferred.promise;
                         }
                         if (!item.absenceright) {
                             var rightFound = false;
-                            _.forEach(absencerights, function(right) {
-                                // Monthly absence rights check                
+                            _.forEach(absencerights, function (right) {
+                                // Monthly absence rights check
                                 var monthlyUsageAvailable = !right.monthly || (right.monthly && right.used < item.date.getMonth() + 1);
                                 // Enough right amount check
                                 if (right.amount - right.used >= 1 && !item.absenceright && monthlyUsageAvailable) {
@@ -151,11 +151,11 @@ var save = function(absence) {
                         return deferred.promise;
                     }
 
-                    async.each(data, function(item, iterateCallback) {
-                        AbsenceModel.save(item).then(function() {
+                    async.each(data, function (item, iterateCallback) {
+                        AbsenceModel.save(item).then(function () {
                             iterateCallback();
                         }, deferred.reject);
-                    }, function(err) {
+                    }, function (err) {
                         if (!err) {
                             deferred.resolve();
                         } else {
