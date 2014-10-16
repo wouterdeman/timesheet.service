@@ -85,7 +85,7 @@ var save = function (absence) {
         }
 
         if (frozen && (absence.from.isBefore(frozen.date) || absence.from.equals(frozen.date))) {
-            deferred.reject('Absences before ' + frozen.date.toFormat('DD/MM/YYYY') + ' are now allowed. Contact your administrator for more information!');
+            deferred.reject('Absences before ' + frozen.date.toFormat('DD/MM/YYYY') + ' are not allowed. Contact your administrator for more information!');
             return deferred.promise;
         }
 
