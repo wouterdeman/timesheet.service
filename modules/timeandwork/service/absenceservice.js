@@ -92,8 +92,9 @@ var save = function (absence) {
         list({
             date: {
                 '$gte': absence.from,
-                '$lte': absence.to
-            }
+                '$lte': absence.to,
+            },
+            entity: absence.entity
         }).then(function (absences) {
             holidayservice.list({
                 date: {
