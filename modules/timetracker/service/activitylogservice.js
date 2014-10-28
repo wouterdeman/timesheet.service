@@ -38,3 +38,46 @@ exports.getLast20 = function (object) {
 
     return deferred.promise;
 };
+
+exports.getActivityLast12Hours = function (object) {
+    var deferred = Q.defer();
+
+    crumbleModel.aggregate([{
+        $unwind: '$crumbles'
+    }, {
+        $sort: {
+            'crumbles.endtime': 1
+        }
+    }, {
+        $match: {
+            'crumbles.object': object
+        }
+    }, {
+        $group: {
+            _id: {
+                hour: {
+                    $hour: '$crumbles.endtime'
+                },
+                month: {
+                    $month: '$crumbles.endtime'
+                },
+                day: {
+                    $dayOfMonth: '$crumbles.endtime'
+                },
+                year: {
+                    $year: '$crumbles.endtime'
+                }
+            },
+            count: {
+                $sum: '$crumbles.counter'
+            },
+            object: {
+                $first: '$crumbles.object'
+            }
+        }
+    }, {
+        $limit: 12
+    }]).then(deferred.resolve, deferred.reject);
+
+    return deferred.promise;
+};
