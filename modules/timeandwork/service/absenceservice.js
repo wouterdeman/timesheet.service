@@ -57,7 +57,7 @@ var createAbsencesForRange = function (absence, holidays, existingAbsences) {
     };
 
     var data = [];
-    for (var d = absence.from; d <= absence.to; d.setDate(d.getDate() + 1)) {
+    for (var d = new Date(absence.from.getFullYear(), absence.from.getMonth(), absence.from.getDate()); d <= absence.to; d.setDate(d.getDate() + 1)) {
         var dayOfWeek = d.getDay();
 
         // We ignore weekend days by default
