@@ -129,7 +129,7 @@ var save = function (absence) {
                             var rightFound = false;
                             _.forEach(absencerights, function (right) {
                                 // Monthly absence rights check
-                                var monthlyUsageAvailable = !right.monthly || (right.monthly && right.used <= item.date.getMonth() + 1);
+                                var monthlyUsageAvailable = !right.monthly || (right.monthly && right.used < item.date.getMonth() + 1);
                                 // Enough right amount check
                                 if (right.amount - right.used >= 1 && !item.absenceright && monthlyUsageAvailable) {
                                     item.absenceright = right._id;

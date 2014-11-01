@@ -2,9 +2,12 @@
 
 module.exports = function (app) {
     var AbsenceRightService = require('../service').AbsenceRightService;
+    var SaldoService = require('../service').SaldoService;
 
-    app.get('/timeandwork/absencerights', function (req, res) {
-        AbsenceRightService.list().then(function (absencerights) {
+    app.get('/timeandwork/absencerights/:year', function (req, res) {
+        SaldoService.list({
+            year: req.params.id
+        }).then(function (absencerights) {
             res.json(absencerights);
         }).fail(function () {
             res.statusCode = 401;
