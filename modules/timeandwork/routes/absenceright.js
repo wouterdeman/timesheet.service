@@ -6,7 +6,7 @@ module.exports = function (app) {
 
     app.get('/timeandwork/absencerights/:year', function (req, res) {
         SaldoService.list({
-            year: req.params.id
+            year: req.params.year
         }).then(function (absencerights) {
             res.json(absencerights);
         }).fail(function () {
