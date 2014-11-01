@@ -15,7 +15,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/timeandwork/absencerights', function (req, res) {
+    app.post('/timeandwork/absenceright', function (req, res) {
         var absenceright;
         console.log('POST: ');
         console.log(req.body);
@@ -38,7 +38,7 @@ module.exports = function (app) {
         return res.json(absenceright);
     });
 
-    app.get('/timeandwork/absencerights/:id', function (req, res) {
+    app.get('/timeandwork/absenceright/:id', function (req, res) {
         AbsenceRightService.get(req.params.id).then(function (absenceright) {
             res.json(absenceright);
         }).fail(function () {
@@ -47,7 +47,7 @@ module.exports = function (app) {
         });
     });
 
-    app.put('/timeandwork/absencerights/:id', function (req, res) {
+    app.put('/timeandwork/absenceright/:id', function (req, res) {
         var absenceright;
         console.log('PUT: ');
         console.log(req.body);
@@ -70,7 +70,7 @@ module.exports = function (app) {
         return res.json(absenceright);
     });
 
-    app.delete('/timeandwork/absencerights/:id', function (req, res) {
+    app.delete('/timeandwork/absenceright/:id', function (req, res) {
         AbsenceRightService.remove(req.params.id).then(function () {
             console.log('absenceright removed');
         }).fail(function () {

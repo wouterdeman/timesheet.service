@@ -4,7 +4,7 @@ module.exports = function (app) {
     var AbsenceService = require('../service').AbsenceService;
     var Authstore = require('../../authstore/service');
 
-    app.get('/timeandwork/absencemanagement/:year', function (req, res) {
+    app.get('/timeandwork/absencesmanagement/:year', function (req, res) {
         if (!req.header('token')) {
             res.statusCode = 400;
             return res.send('Error 400: Missing security token.');
