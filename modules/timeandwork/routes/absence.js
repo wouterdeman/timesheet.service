@@ -95,7 +95,6 @@ module.exports = function (app) {
                 var prenoon = halfDay && parseInt(startDate.toFormat('HH')) < 12;
                 var description = 'Absence ' + startDate.toFormat('DD/MM/YYYY');
                 var summary = 'Absence';
-                console.log(hoursBetween + ' -> ' + halfDay + ' prenoon ' + prenoon);
 
                 if (halfDay) {
                     description += prenoon ? ' prenoon' : ' Afternoon';
@@ -118,7 +117,7 @@ module.exports = function (app) {
 
                 res.writeHead(200, {
                     'Content-Type': 'Application/octet-stream',
-                    'Content-disposition': 'attachment; filename=' + filename + '.ics'
+                    'Content-disposition': 'attachment; filename=' + filename + '.vcs'
                 });
                 res.end(icalFile);
             }).fail(function () {
