@@ -89,15 +89,25 @@ module.exports = function (app) {
                 var event = new ICalEvent();
                 var startDate = new Date(req.params.start);
                 var endDate = new Date(req.params.end);
-                var description = 'Verlof ' + startDate.toFormat('DD/MM/YYYY HH:00') + ' - ' + endDate.toFormat('DD/MM/YYYY HH:00');
-                var filename = 'Verlof' + startDate.toFormat('DDMMYY') + '-' + endDate.toFormat('DDMMYY');
+                var filename = 'Absence' + startDate.toFormat('DDMMYY') + '-' + endDate.toFormat('DDMMYY');
+                var hoursBetween = startDate.getHoursBetween(endDate);
+                var halfDay = hoursBetween == 4;
+                var prenoon = halfDay && parseInt(startDate.toFormat('HH')) < 12;
+                var description = 'Absence ' + startDate.toFormat('DD/MM/YYYY');
+                var summary = 'Absence';
+                console.log(hoursBetween + ' -> ' + halfDay + ' prenoon ' + prenoon);
+
+                if (halfDay) {
+                    description += prenoon ? ' prenoon' : ' Afternoon';
+                    summary += prenoon ? ' prenoon' : ' Afternoon';
+                }
 
                 event.set('method', 'request');
                 event.set('offset', new Date().getTimezoneOffset());
                 event.set('status', 'confirmed');
                 event.set('start', startDate);
                 event.set('end', endDate);
-                event.set('summary', 'Verlof');
+                event.set('summary', summary);
                 event.set('description', description);
                 event.set('organizer', {
                     name: user.firstname + ' ' + user.lastname,
