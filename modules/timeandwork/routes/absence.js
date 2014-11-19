@@ -116,7 +116,7 @@ module.exports = function (app) {
                 var icalFile = event.toFile();
 
                 res.writeHead(200, {
-                    'Content-Type': 'Application/octet-stream',
+                    'Content-Type': 'text/x-vCalendar',
                     'Content-disposition': 'attachment; filename=' + filename + '.vcs'
                 });
                 res.end(icalFile);
